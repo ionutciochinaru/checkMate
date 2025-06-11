@@ -1,10 +1,14 @@
+// app.config.ts
+
 export default {
   expo: {
     name: "CheckMate",
     slug: "checkmate-tasks",
-    eas: {
-      "projectId": "b8e37823-81ef-47df-af55-69a2609d4380"
-    }
+    extra: {
+      eas: {
+        projectId: "b8e37823-81ef-47df-af55-69a2609d4380"
+      }
+    },
     version: "1.0.0",
     orientation: "portrait",
     icon: "./assets/icon.png",
@@ -45,6 +49,6 @@ export default {
     web: {
       favicon: "./assets/favicon.png"
     },
-    owner: "cjohnd",
+    owner: "cjohnd"
   }
 };
