@@ -12,6 +12,7 @@
     "@expo-google-fonts/jetbrains-mono": "^0.4.0",
     "@react-native-async-storage/async-storage": "2.1.2",
     "@react-native-community/datetimepicker": "8.3.0",
+    "@react-native-community/slider": "^4.5.7",
     "expo": "^53.0.11",
     "expo-dev-client": "~5.2.0",
     "expo-font": "~13.3.1",
@@ -20,14 +21,16 @@
     "expo-status-bar": "~2.2.3",
     "nativewind": "^4.1.23",
     "react": "19.0.0",
+    "react-dom": "19.0.0",
     "react-hook-form": "^7.57.0",
     "react-native": "0.79.3",
+    "react-native-date-picker": "^5.0.13",
+    "react-native-gesture-handler": "~2.22.0",
     "react-native-paper": "^5.14.5",
     "react-native-reanimated": "~3.17.4",
-    "tailwindcss": "^3.4.17",
-    "zustand": "^5.0.5",
     "react-native-web": "~0.20.0",
-    "react-dom": "19.0.0"
+    "tailwindcss": "^3.4.17",
+    "zustand": "^5.0.5"
   },
   "devDependencies": {
     "@babel/core": "^7.27.4",

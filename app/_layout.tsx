@@ -4,6 +4,7 @@ import { PaperProvider } from 'react-native-paper';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect, useState } from 'react';
 import { useTaskStore } from '../hooks/useTaskStore';
+import { ThemeProvider, useTheme } from '../hooks/useTheme';
 import * as Font from 'expo-font';
 import {
   JetBrainsMono_400Regular,
@@ -11,49 +12,79 @@ import {
   JetBrainsMono_700Bold,
 } from '@expo-google-fonts/jetbrains-mono';
 
-const einkTheme = {
+const createPaperTheme = (isDark: boolean) => ({
   colors: {
-    primary: '#1a1a1a',
-    onPrimary: '#f5f5f0',
-    primaryContainer: '#e8e8e0',
-    onPrimaryContainer: '#1a1a1a',
-    secondary: '#4a4a4a',
-    onSecondary: '#f5f5f0',
-    secondaryContainer: '#d0d0c8',
-    onSecondaryContainer: '#1a1a1a',
-    tertiary: '#2a2a2a',
-    onTertiary: '#f5f5f0',
-    tertiaryContainer: '#e8e8e0',
-    onTertiaryContainer: '#1a1a1a',
-    error: '#ff3b30',
+    primary: isDark ? '#f5f5f0' : '#1a1a1a',
+    onPrimary: isDark ? '#1a1a1a' : '#f5f5f0',
+    primaryContainer: isDark ? '#2a2a2a' : '#e8e8e0',
+    onPrimaryContainer: isDark ? '#f5f5f0' : '#1a1a1a',
+    secondary: isDark ? '#c0c0c0' : '#4a4a4a',
+    onSecondary: isDark ? '#1a1a1a' : '#f5f5f0',
+    secondaryContainer: isDark ? '#3a3a3a' : '#d0d0c8',
+    onSecondaryContainer: isDark ? '#f5f5f0' : '#1a1a1a',
+    tertiary: isDark ? '#f5f5f0' : '#2a2a2a',
+    onTertiary: isDark ? '#1a1a1a' : '#f5f5f0',
+    tertiaryContainer: isDark ? '#2a2a2a' : '#e8e8e0',
+    onTertiaryContainer: isDark ? '#f5f5f0' : '#1a1a1a',
+    error: isDark ? '#ff453a' : '#ff3b30',
     onError: '#f5f5f0',
-    errorContainer: '#ffeae8',
-    onErrorContainer: '#1a1a1a',
-    background: '#f5f5f0',
-    onBackground: '#1a1a1a',
-    surface: '#f5f5f0',
-    onSurface: '#1a1a1a',
-    surfaceVariant: '#e8e8e0',
-    onSurfaceVariant: '#4a4a4a',
-    outline: '#d0d0c8',
-    outlineVariant: '#e8e8e0',
+    errorContainer: isDark ? '#3a1a1a' : '#ffeae8',
+    onErrorContainer: isDark ? '#ff453a' : '#1a1a1a',
+    background: isDark ? '#0a0a0a' : '#f5f5f0',
+    onBackground: isDark ? '#f5f5f0' : '#1a1a1a',
+    surface: isDark ? '#1a1a1a' : '#f5f5f0',
+    onSurface: isDark ? '#f5f5f0' : '#1a1a1a',
+    surfaceVariant: isDark ? '#2a2a2a' : '#e8e8e0',
+    onSurfaceVariant: isDark ? '#c0c0c0' : '#4a4a4a',
+    outline: isDark ? '#3a3a3a' : '#d0d0c8',
+    outlineVariant: isDark ? '#2a2a2a' : '#e8e8e0',
     shadow: '#000000',
     scrim: '#000000',
-    inverseSurface: '#1a1a1a',
-    inverseOnSurface: '#f5f5f0',
-    inversePrimary: '#8a8a8a',
+    inverseSurface: isDark ? '#f5f5f0' : '#1a1a1a',
+    inverseOnSurface: isDark ? '#1a1a1a' : '#f5f5f0',
+    inversePrimary: isDark ? '#1a1a1a' : '#8a8a8a',
     elevation: {
       level0: 'transparent',
-      level1: '#f8f8f3',
-      level2: '#f2f2ed',
-      level3: '#eaeae5',
-      level4: '#e8e8e3',
-      level5: '#e5e5e0',
+      level1: isDark ? '#1a1a1a' : '#f8f8f3',
+      level2: isDark ? '#2a2a2a' : '#f2f2ed',
+      level3: isDark ? '#3a3a3a' : '#eaeae5',
+      level4: isDark ? '#4a4a4a' : '#e8e8e3',
+      level5: isDark ? '#5a5a5a' : '#e5e5e0',
     },
-    surfaceDisabled: 'rgba(26, 26, 26, 0.12)',
-    onSurfaceDisabled: 'rgba(26, 26, 26, 0.38)',
-    backdrop: 'rgba(74, 74, 74, 0.4)',
+    surfaceDisabled: isDark ? 'rgba(245, 245, 240, 0.12)' : 'rgba(26, 26, 26, 0.12)',
+    onSurfaceDisabled: isDark ? 'rgba(245, 245, 240, 0.38)' : 'rgba(26, 26, 26, 0.38)',
+    backdrop: isDark ? 'rgba(0, 0, 0, 0.6)' : 'rgba(74, 74, 74, 0.4)',
   },
+});
+
+const ThemedLayout = () => {
+  const { colors, isDark } = useTheme();
+  
+  return (
+    <PaperProvider theme={createPaperTheme(isDark)}>
+      <Stack
+        screenOptions={{
+          headerStyle: {
+            backgroundColor: colors.surface,
+          },
+          headerTintColor: colors.text,
+          headerTitleStyle: {
+            fontFamily: 'JetBrainsMono_500Medium',
+            fontSize: 16,
+          },
+        }}
+      >
+        <Stack.Screen name="index" options={{ headerShown: false }} />
+        <Stack.Screen 
+          name="add-task" 
+          options={{ 
+            headerShown: false
+          }} 
+        />
+      </Stack>
+      <StatusBar style={isDark ? 'light' : 'dark'} backgroundColor={colors.background} />
+    </PaperProvider>
+  );
 };
 
 export default function RootLayout() {
@@ -79,37 +110,8 @@ export default function RootLayout() {
   }
 
   return (
-    <PaperProvider theme={einkTheme}>
-      <Stack
-        screenOptions={{
-          headerStyle: {
-            backgroundColor: '#f5f5f0',
-          },
-          headerTintColor: '#1a1a1a',
-          headerTitleStyle: {
-            fontFamily: 'JetBrainsMono_500Medium',
-            fontSize: 16,
-          },
-        }}
-      >
-        <Stack.Screen name="index" options={{ headerShown: false }} />
-        <Stack.Screen 
-          name="add-task" 
-          options={{ 
-            presentation: 'modal',
-            title: 'NEW_TASK.EXE',
-            headerStyle: {
-              backgroundColor: '#f5f5f0',
-            },
-            headerTitleStyle: {
-              fontFamily: 'JetBrainsMono_500Medium',
-              fontSize: 14,
-              color: '#1a1a1a',
-            },
-          }} 
-        />
-      </Stack>
-      <StatusBar style="dark" backgroundColor="#f5f5f0" />
-    </PaperProvider>
+    <ThemeProvider>
+      <ThemedLayout />
+    </ThemeProvider>
   );
 }

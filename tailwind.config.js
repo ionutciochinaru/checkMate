@@ -18,6 +18,24 @@ module.exports = {
           'red': '#ff3b30',        // Nothing red
           'green': '#34c759',      // Success green
           'blue': '#007aff',       // System blue
+        },
+        // Y2K Design Elements
+        'y2k': {
+          'pink': '#FF69B4',       // Bubblegum Pink
+          'chrome': '#C8C8C8',     // Chrome Silver
+          'electric': '#00FFFF',   // Electric Cyan
+          'lime': '#32CD32',       // Lime Flash Green
+          'purple': '#9932CC',     // Digital Purple
+          'orange': '#FF6347',     // Neon Orange
+        },
+        // Windows XP Gradients
+        'xp': {
+          'blue-start': '#245EDC', // XP Blue Start
+          'blue-end': '#3889FF',   // XP Blue End
+          'green-start': '#73B618', // XP Green Start
+          'green-end': '#8BC34A',   // XP Green End
+          'orange-start': '#FF8C00', // XP Orange Start
+          'orange-end': '#FFB347',   // XP Orange End
         }
       },
       fontFamily: {

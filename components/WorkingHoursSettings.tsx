@@ -2,13 +2,17 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { useTaskStore } from '../hooks/useTaskStore';
+import { useThemedStyles } from '../hooks/useTheme';
 
 const WorkingHoursSettings: React.FC = () => {
   const { settings, updateSettings } = useTaskStore();
   const [showStartPicker, setShowStartPicker] = useState(false);
   const [showEndPicker, setShowEndPicker] = useState(false);
 
-  if (!settings.workingHoursEnabled) return null;
+  if (!settings.workingHoursEnabled) {
+    return null;
+  }
+
 
   const handleTimeChange = (type: 'start' | 'end', time: string) => {
     if (type === 'start') {
@@ -29,6 +33,39 @@ const WorkingHoursSettings: React.FC = () => {
     return date.toTimeString().slice(0, 5);
   };
 
+  const styles = useThemedStyles((colors, isDark) => StyleSheet.create({
+    container: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 8,
+      flex: 1,
+    },
+    timeContainer: {
+      alignItems: 'center',
+    },
+    timeLabel: {
+      fontFamily: 'JetBrainsMono_500Medium',
+      fontSize: 9,
+      color: colors.textMuted,
+      letterSpacing: 0.5,
+      marginBottom: 2,
+    },
+    timeButton: {
+      backgroundColor: colors.surface,
+      borderWidth: 1,
+      borderColor: colors.border,
+      paddingHorizontal: 8,
+      paddingVertical: 6,
+      alignItems: 'center',
+    },
+    timeText: {
+      fontFamily: 'JetBrainsMono_500Medium',
+      fontSize: 11,
+      color: colors.text,
+      letterSpacing: 0.5,
+    },
+  }));
+
   return (
     <View style={styles.container}>
       <View style={styles.timeContainer}>
@@ -44,6 +81,7 @@ const WorkingHoursSettings: React.FC = () => {
           <DateTimePicker
             value={createDateFromTime(settings.workingHoursStart)}
             mode="time"
+            minuteInterval={15}
             onChange={(event, selectedDate) => {
               setShowStartPicker(false);
               if (selectedDate) {
@@ -67,6 +105,7 @@ const WorkingHoursSettings: React.FC = () => {
           <DateTimePicker
             value={createDateFromTime(settings.workingHoursEnd)}
             mode="time"
+            minuteInterval={15}
             onChange={(event, selectedDate) => {
               setShowEndPicker(false);
               if (selectedDate) {
@@ -79,37 +118,5 @@ const WorkingHoursSettings: React.FC = () => {
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    gap: 12,
-  },
-  timeContainer: {
-    flex: 1,
-  },
-  timeLabel: {
-    fontFamily: 'JetBrainsMono_500Medium',
-    fontSize: 9,
-    color: '#8a8a8a',
-    letterSpacing: 0.5,
-    marginBottom: 4,
-  },
-  timeButton: {
-    backgroundColor: '#f5f5f0',
-    borderWidth: 1,
-    borderColor: '#d0d0c8',
-    paddingHorizontal: 8,
-    paddingVertical: 6,
-    alignItems: 'center',
-  },
-  timeText: {
-    fontFamily: 'JetBrainsMono_500Medium',
-    fontSize: 11,
-    color: '#1a1a1a',
-    letterSpacing: 0.5,
-  },
-});
 
 export default WorkingHoursSettings;
