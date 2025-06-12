@@ -30,41 +30,77 @@ interface ThemeColors {
 }
 
 const lightTheme: ThemeColors = {
-  background: '#f5f5f0',
-  surface: '#f5f5f0', 
-  surfaceVariant: '#e8e8e0',
-  border: '#d0d0c8',
-  text: '#1a1a1a',
-  textSecondary: '#4a4a4a',
-  textMuted: '#8a8a8a',
-  accent: '#2a2a2a',
-  danger: '#ff3b30',
-  success: '#34c759',
-  warning: '#ff9500',
-  // Y2K colors remain vibrant in both themes
-  y2kPink: '#FF69B4',
-  y2kCyan: '#00FFFF', 
-  y2kLime: '#32CD32',
-  y2kPurple: '#9932CC',
+  background: '#f8f8f6',
+  surface: '#ffffff', 
+  surfaceVariant: '#f0f0ee',
+  border: '#c0c0c0',
+  text: '#000000',
+  textSecondary: '#333333',
+  textMuted: '#666666',
+  accent: '#000000',
+  danger: '#800000',
+  success: '#006400',
+  warning: '#ff6600',
+  // Minimal Y2K accents for e-ink aesthetic
+  y2kPink: '#cc3366',
+  y2kCyan: '#006666', 
+  y2kLime: '#009900',
+  y2kPurple: '#663399',
 };
 
 const darkTheme: ThemeColors = {
-  background: '#0a0a0a',
-  surface: '#1a1a1a',
-  surfaceVariant: '#2a2a2a',
-  border: '#3a3a3a',
-  text: '#f5f5f0',
-  textSecondary: '#c0c0c0',
-  textMuted: '#8a8a8a',
-  accent: '#f5f5f0',
-  danger: '#ff453a',
-  success: '#30d158',
-  warning: '#ff9f0a',
-  // Y2K colors with slight adjustment for dark mode
-  y2kPink: '#FF69B4',
-  y2kCyan: '#00FFFF',
-  y2kLime: '#32CD32', 
-  y2kPurple: '#9932CC',
+  background: '#000000',
+  surface: '#111111',
+  surfaceVariant: '#1a1a1a',
+  border: '#333333',
+  text: '#00ff00',
+  textSecondary: '#00cc00',
+  textMuted: '#008800',
+  accent: '#00ff00',
+  danger: '#ff0000',
+  success: '#00ff00',
+  warning: '#ffff00',
+  // Terminal-style Y2K accents
+  y2kPink: '#ff00ff',
+  y2kCyan: '#00ffff',
+  y2kLime: '#00ff00', 
+  y2kPurple: '#8000ff',
+};
+
+const darkHighContrastTheme: ThemeColors = {
+  background: '#000000',
+  surface: '#000000',
+  surfaceVariant: '#000000',
+  border: '#ffffff',
+  text: '#ffffff',
+  textSecondary: '#ffffff',
+  textMuted: '#cccccc',
+  accent: '#ffffff',
+  danger: '#ff0000',
+  success: '#00ff00',
+  warning: '#ffff00',
+  y2kPink: '#ff00ff',
+  y2kCyan: '#00ffff',
+  y2kLime: '#00ff00',
+  y2kPurple: '#8000ff',
+};
+
+const lightHighContrastTheme: ThemeColors = {
+  background: '#ffffff',
+  surface: '#ffffff',
+  surfaceVariant: '#ffffff',
+  border: '#000000',
+  text: '#000000',
+  textSecondary: '#000000',
+  textMuted: '#333333',
+  accent: '#000000',
+  danger: '#cc0000',
+  success: '#006600',
+  warning: '#cc6600',
+  y2kPink: '#cc0066',
+  y2kCyan: '#006666',
+  y2kLime: '#009900',
+  y2kPurple: '#663399',
 };
 
 interface ThemeContextValue {
@@ -75,6 +111,9 @@ interface ThemeContextValue {
   animatedBackgroundStyle: any;
   animatedSurfaceStyle: any;
   animatedTextStyle: any;
+  fontScale: number;
+  highContrast: boolean;
+  reducedMotion: boolean;
 }
 
 const ThemeContext = createContext<ThemeContextValue | undefined>(undefined);
@@ -84,6 +123,11 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const [systemColorScheme, setSystemColorScheme] = useState<ColorSchemeName>(
     Appearance.getColorScheme()
   );
+  const [accessibilitySettings, setAccessibilitySettings] = useState({
+    fontScale: 1.0,
+    highContrast: false,
+    reducedMotion: false
+  });
 
   // Animated values for smooth transitions
   const backgroundProgress = useSharedValue(0);
@@ -91,21 +135,41 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const textProgress = useSharedValue(0);
 
   const isDark = theme === 'dark' || (theme === 'auto' && systemColorScheme === 'dark');
-  const colors = isDark ? darkTheme : lightTheme;
+  
+  // Apply high contrast theme if enabled
+  let colors: ThemeColors;
+  if (accessibilitySettings.highContrast) {
+    colors = isDark ? darkHighContrastTheme : lightHighContrastTheme;
+  } else {
+    colors = isDark ? darkTheme : lightTheme;
+  }
 
-  // Load saved theme on mount
+  // Load saved theme and accessibility settings on mount
   useEffect(() => {
-    const loadTheme = async () => {
+    const loadSettings = async () => {
       try {
-        const savedTheme = await AsyncStorage.getItem('theme');
+        const [savedTheme, savedSettings] = await Promise.all([
+          AsyncStorage.getItem('theme'),
+          AsyncStorage.getItem('settings')
+        ]);
+        
         if (savedTheme && ['light', 'dark', 'auto'].includes(savedTheme)) {
           setThemeState(savedTheme as Theme);
         }
+        
+        if (savedSettings) {
+          const settings = JSON.parse(savedSettings);
+          setAccessibilitySettings({
+            fontScale: settings.fontScale || 1.0,
+            highContrast: settings.highContrast || false,
+            reducedMotion: settings.reducedMotion || false
+          });
+        }
       } catch (error) {
-        console.error('Failed to load theme:', error);
+        console.error('Failed to load settings:', error);
       }
     };
-    loadTheme();
+    loadSettings();
   }, []);
 
   // Listen to system color scheme changes
@@ -116,13 +180,14 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     return () => subscription?.remove();
   }, []);
 
-  // Animate theme transitions
+  // Animate theme transitions (respect reduced motion setting)
   useEffect(() => {
     const targetValue = isDark ? 1 : 0;
-    backgroundProgress.value = withTiming(targetValue, { duration: 300 });
-    surfaceProgress.value = withTiming(targetValue, { duration: 300 });
-    textProgress.value = withTiming(targetValue, { duration: 300 });
-  }, [isDark, backgroundProgress, surfaceProgress, textProgress]);
+    const duration = accessibilitySettings.reducedMotion ? 0 : 300;
+    backgroundProgress.value = withTiming(targetValue, { duration });
+    surfaceProgress.value = withTiming(targetValue, { duration });
+    textProgress.value = withTiming(targetValue, { duration });
+  }, [isDark, accessibilitySettings.reducedMotion, backgroundProgress, surfaceProgress, textProgress]);
 
   const setTheme = async (newTheme: Theme) => {
     setThemeState(newTheme);
@@ -163,6 +228,29 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     ),
   }));
 
+  // Listen for settings changes from AsyncStorage
+  useEffect(() => {
+    const checkForSettingsUpdates = async () => {
+      try {
+        const savedSettings = await AsyncStorage.getItem('settings');
+        if (savedSettings) {
+          const settings = JSON.parse(savedSettings);
+          setAccessibilitySettings({
+            fontScale: settings.fontScale || 1.0,
+            highContrast: settings.highContrast || false,
+            reducedMotion: settings.reducedMotion || false
+          });
+        }
+      } catch (error) {
+        console.error('Failed to load updated settings:', error);
+      }
+    };
+    
+    // Check for updates every second (simple polling)
+    const interval = setInterval(checkForSettingsUpdates, 1000);
+    return () => clearInterval(interval);
+  }, []);
+
   const value: ThemeContextValue = {
     theme,
     colors,
@@ -171,6 +259,9 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     animatedBackgroundStyle,
     animatedSurfaceStyle,
     animatedTextStyle,
+    fontScale: accessibilitySettings.fontScale,
+    highContrast: accessibilitySettings.highContrast,
+    reducedMotion: accessibilitySettings.reducedMotion,
   };
 
   return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>;
@@ -184,10 +275,10 @@ export const useTheme = (): ThemeContextValue => {
   return context;
 };
 
-// Theme-aware hook for creating dynamic styles
+// Theme-aware hook for creating dynamic styles with accessibility support
 export const useThemedStyles = <T extends Record<string, any>>(
-  styleFactory: (colors: ThemeColors, isDark: boolean) => T
+  styleFactory: (colors: ThemeColors, isDark: boolean, fontScale: number, reducedMotion: boolean) => T
 ): T => {
-  const { colors, isDark } = useTheme();
-  return styleFactory(colors, isDark);
+  const { colors, isDark, fontScale, reducedMotion } = useTheme();
+  return styleFactory(colors, isDark, fontScale, reducedMotion);
 };

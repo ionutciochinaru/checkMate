@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, ScrollView, Text, StyleSheet, TouchableOpacity, TextInput } from 'react-native';
+import { View, ScrollView, Text, StyleSheet, TouchableOpacity, TextInput, Linking, Alert, Platform } from 'react-native';
 import { Switch } from 'react-native-paper';
 import { router } from 'expo-router';
 import { useTaskStore } from '../hooks/useTaskStore';
@@ -69,7 +69,7 @@ export default function HomeScreen() {
     day: '2-digit'
   }).replace(/\//g, '.');
 
-  const styles = useThemedStyles((colors, isDark) => StyleSheet.create({
+  const styles = useThemedStyles((colors, isDark, fontScale, reducedMotion) => StyleSheet.create({
     container: {
       flex: 1,
       backgroundColor: colors.background,
@@ -79,118 +79,250 @@ export default function HomeScreen() {
       borderBottomWidth: 2,
       borderBottomColor: colors.border,
       paddingTop: 50,
-      paddingBottom: 16,
-      paddingHorizontal: 16,
+      paddingBottom: 12,
+      paddingHorizontal: 12,
     },
     terminalBar: {
       flexDirection: 'row',
       justifyContent: 'space-between',
       alignItems: 'center',
-      marginBottom: 8,
+      marginBottom: 6,
+      flexWrap: 'wrap',
+      minHeight: 32,
+    },
+    helpText: {
+      fontFamily: 'JetBrainsMono_400Regular',
+      fontSize: 12 * fontScale,
+      color: colors.textMuted,
+      letterSpacing: 0.5,
+      marginBottom: 6,
+      lineHeight: 16 * fontScale,
     },
     terminalTitle: {
       fontFamily: 'JetBrainsMono_700Bold',
-      fontSize: 16,
+      fontSize: 18 * fontScale,
       color: colors.text,
       letterSpacing: 1,
+      fontWeight: '800',
+      flexShrink: 1,
     },
     terminalTime: {
-      fontFamily: 'JetBrainsMono_400Regular',
-      fontSize: 12,
+      fontFamily: 'JetBrainsMono_500Medium',
+      fontSize: 12 * fontScale,
       color: colors.textSecondary,
       letterSpacing: 0.5,
+      fontWeight: '600',
+      flexShrink: 0,
     },
     topRightControls: {
       flexDirection: 'row',
       alignItems: 'center',
-      gap: 12,
+      gap: 8,
+      flexShrink: 1,
     },
     themeToggle: {
-      padding: 4,
+      padding: 6,
+      backgroundColor: colors.surfaceVariant,
+      borderWidth: 2,
+      borderColor: colors.accent,
+      borderRadius: 2,
+      minWidth: 48,
+      alignItems: 'center',
+      justifyContent: 'center',
     },
     themeToggleText: {
-      fontSize: 16,
+      fontFamily: 'JetBrainsMono_700Bold',
+      fontSize: 12 * fontScale,
+      color: colors.accent,
+      letterSpacing: 0.5,
+      fontWeight: '800',
     },
     statusLine: {
       backgroundColor: colors.surfaceVariant,
       borderWidth: 1,
       borderColor: colors.border,
-      padding: 8,
-      marginBottom: 16,
+      padding: 6,
+      marginBottom: 12,
       flexDirection: 'row',
       justifyContent: 'space-between',
       alignItems: 'center',
+      flexWrap: 'wrap',
+      minHeight: 36,
     },
     settingsButton: {
-      padding: 4,
+      padding: 6,
+      backgroundColor: colors.surfaceVariant,
+      borderWidth: 2,
+      borderColor: colors.accent,
+      borderRadius: 2,
+      minWidth: 48,
+      alignItems: 'center',
+      justifyContent: 'center',
     },
     settingsIcon: {
-      fontSize: 14,
+      fontFamily: 'JetBrainsMono_700Bold',
+      fontSize: 12 * fontScale,
+      color: colors.accent,
+      letterSpacing: 0.5,
+      fontWeight: '800',
     },
     statusText: {
-      fontFamily: 'JetBrainsMono_400Regular',
-      fontSize: 10,
+      fontFamily: 'JetBrainsMono_500Medium',
+      fontSize: 12 * fontScale,
       color: colors.textSecondary,
-      letterSpacing: 0.5,
+      letterSpacing: 0.3,
+      fontWeight: '600',
+      flexShrink: 1,
     },
-    settingsPanel: {
+    settingsCard: {
       backgroundColor: colors.surfaceVariant,
       borderWidth: 1,
+      padding: 8,
       borderColor: colors.border,
-      padding: 12,
+      marginBottom: 8,
+    },
+    settingsCardHeader: {
+      paddingVertical: 4,
+    },
+    settingsCardTitle: {
+      fontFamily: 'JetBrainsMono_700Bold',
+      fontSize: Math.max(12, 11 * fontScale),
+      color: colors.text,
+      letterSpacing: 1,
+      fontWeight: '800',
+    },
+    settingsCardDivider: {
+      height: 1,
+      backgroundColor: colors.border,
+    },
+    settingsCardContent: {
+      paddingVertical: 12,
     },
     settingRow: {
       flexDirection: 'row',
       justifyContent: 'space-between',
       alignItems: 'center',
-      marginBottom: 8,
-    },
-    inlineSettingRow: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      marginBottom: 8,
-      gap: 12,
+      marginBottom: 12,
+      minHeight: 32,
     },
     delayInput: {
       backgroundColor: colors.surface,
       borderWidth: 1,
       borderColor: colors.border,
       paddingHorizontal: 8,
-      paddingVertical: 4,
+      paddingVertical: 6,
       fontFamily: 'JetBrainsMono_500Medium',
-      fontSize: 11,
+      fontSize: Math.max(12, 10 * fontScale),
       color: colors.text,
       letterSpacing: 0.5,
       minWidth: 60,
+      textAlign: 'center',
+    },
+    fontScaleContainer: {
+      flexDirection: 'row',
+      gap: 6,
+    },
+    fontScaleButton: {
+      backgroundColor: colors.surface,
+      borderWidth: 1,
+      borderColor: colors.border,
+      paddingHorizontal: 8,
+      paddingVertical: 6,
+      minWidth: 36,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    fontScaleButtonActive: {
+      backgroundColor: colors.accent,
+      borderColor: colors.accent,
+    },
+    fontScaleText: {
+      fontFamily: 'JetBrainsMono_700Bold',
+      fontSize: Math.max(12, 9 * fontScale),
+      color: colors.textSecondary,
+      letterSpacing: 0.5,
+    },
+    fontScaleTextActive: {
+      color: colors.background,
+    },
+    supportText: {
+      fontFamily: 'JetBrainsMono_400Regular',
+      fontSize: Math.max(12, 10 * fontScale),
+      color: colors.textSecondary,
+      letterSpacing: 0.3,
+      lineHeight: Math.max(16, 14 * fontScale),
+      marginBottom: 16,
+    },
+    coffeeButton: {
+      backgroundColor: colors.y2kCyan,
+      borderWidth: 2,
+      borderColor: colors.y2kCyan,
+      paddingHorizontal: 16,
+      paddingVertical: 12,
+      alignItems: 'center',
+      justifyContent: 'center',
+      marginBottom: 16,
+      shadowColor: colors.y2kCyan,
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.3,
+      shadowRadius: 4,
+      elevation: 4,
+    },
+    coffeeButtonText: {
+      fontFamily: 'JetBrainsMono_700Bold',
+      fontSize: Math.max(12, 11 * fontScale),
+      color: colors.background,
+      letterSpacing: 1,
+      fontWeight: '800',
+      marginBottom: 2,
+    },
+    coffeeSubtext: {
+      fontFamily: 'JetBrainsMono_400Regular',
+      fontSize: Math.max(12, 9 * fontScale),
+      color: colors.background,
+      letterSpacing: 0.5,
+      opacity: 0.8,
+    },
+    gratitudeText: {
+      fontFamily: 'JetBrainsMono_400Regular',
+      fontSize: Math.max(12, 9 * fontScale),
+      color: colors.textMuted,
+      letterSpacing: 0.3,
+      lineHeight: Math.max(14, 12 * fontScale),
+      textAlign: 'center',
+      fontStyle: 'italic',
     },
     settingLabel: {
-      fontFamily: 'JetBrainsMono_500Medium',
-      fontSize: 11,
+      fontFamily: 'JetBrainsMono_700Bold',
+      fontSize: Math.max(12, 10 * fontScale),
       color: colors.text,
-      letterSpacing: 0.5,
+      letterSpacing: 0.8,
+      fontWeight: '700',
+      flexShrink: 0,
+      minWidth: 100,
     },
     content: {
       flex: 1,
     },
     contentContainer: {
-      padding: 16,
+      padding: 12,
     },
     emptyState: {
       flex: 1,
       justifyContent: 'center',
       alignItems: 'center',
-      paddingVertical: 60,
+      paddingVertical: 10,
     },
     emptyTitle: {
       fontFamily: 'JetBrainsMono_700Bold',
-      fontSize: 18,
+      fontSize: 18 * fontScale,
       color: colors.text,
       letterSpacing: 1,
       marginBottom: 8,
     },
     emptySubtitle: {
       fontFamily: 'JetBrainsMono_400Regular',
-      fontSize: 12,
+      fontSize: 12 * fontScale,
       color: colors.textSecondary,
       letterSpacing: 0.5,
       marginBottom: 16,
@@ -200,8 +332,8 @@ export default function HomeScreen() {
     },
     emptyCommand: {
       fontFamily: 'JetBrainsMono_500Medium',
-      fontSize: 11,
-      color: colors.textMuted,
+      fontSize: 12 * fontScale,
+      color: colors.surface,
       backgroundColor: colors.accent,
       paddingHorizontal: 12,
       paddingVertical: 6,
@@ -220,10 +352,12 @@ export default function HomeScreen() {
     },
     sectionTitle: {
       fontFamily: 'JetBrainsMono_700Bold',
-      fontSize: 12,
+      fontSize: 14 * fontScale,
       color: colors.text,
-      letterSpacing: 1,
-      marginRight: 16,
+      letterSpacing: 0.8,
+      marginRight: 12,
+      fontWeight: '800',
+      flexShrink: 1,
     },
     sectionLine: {
       flex: 1,
@@ -235,47 +369,53 @@ export default function HomeScreen() {
     },
     addButton: {
       position: 'absolute',
-      bottom: 20,
-      right: 20,
+      bottom: 16,
+      right: 16,
       backgroundColor: colors.accent,
       borderWidth: 2,
       borderColor: colors.textSecondary,
-      paddingHorizontal: 16,
-      paddingVertical: 12,
+      paddingHorizontal: 12,
+      paddingVertical: 10,
+      color: colors.surface,
+      maxWidth: '60%',
     },
     addButtonText: {
       fontFamily: 'JetBrainsMono_700Bold',
-      fontSize: 10,
-      color: colors.background,
-      letterSpacing: 1,
+      fontSize: 12 * fontScale,
+      color: colors.surface,
+      letterSpacing: 0.5,
+      textAlign: 'center',
     },
     filterContainer: {
       backgroundColor: colors.surface,
       paddingHorizontal: 0,
-      paddingTop: 16,
+      paddingVertical: 0,
       position: 'relative',
     },
     filterButton: {
       backgroundColor: colors.surfaceVariant,
       borderWidth: 1,
       borderColor: colors.border,
-      paddingHorizontal: 12,
+      paddingHorizontal: 8,
       paddingVertical: 6,
-      alignSelf: 'flex-start',
       flexDirection: 'row',
       alignItems: 'center',
+      flexShrink: 1,
+      minWidth: 100,
     },
     filterText: {
-      fontFamily: 'JetBrainsMono_500Medium',
-      fontSize: 10,
-      color: isDark ? colors.text : colors.text,
+      fontFamily: 'JetBrainsMono_700Bold',
+      fontSize: 12 * fontScale,
+      color: colors.text,
       letterSpacing: 0.5,
+      fontWeight: '700',
+      flexShrink: 1,
     },
     filterDropdown: {
       position: 'absolute',
-      top: 42,
-      left: 16,
-      right: 16,
+      top: 38,
+      left: 12,
+      right: 12,
       backgroundColor: colors.surfaceVariant,
       borderWidth: 1,
       borderColor: colors.border,
@@ -285,24 +425,28 @@ export default function HomeScreen() {
       shadowOffset: { width: 0, height: 2 },
       shadowOpacity: isDark ? 0.5 : 0.25,
       shadowRadius: 4,
+      maxHeight: 200,
     },
     filterOption: {
-      paddingHorizontal: 16,
-      paddingVertical: 12,
+      paddingHorizontal: 12,
+      paddingVertical: 10,
       borderBottomWidth: 1,
       borderBottomColor: colors.border,
       flexDirection: 'row',
       alignItems: 'center',
       justifyContent: 'space-between',
+      minHeight: 36,
     },
     selectedFilterOption: {
       backgroundColor: colors.accent,
     },
     filterOptionText: {
-      fontFamily: 'JetBrainsMono_400Regular',
-      fontSize: 11,
+      fontFamily: 'JetBrainsMono_500Medium',
+      fontSize: 12 * fontScale,
       color: colors.text,
       letterSpacing: 0.5,
+      fontWeight: '600',
+      flexShrink: 1,
     },
     selectedFilterOptionText: {
       color: colors.background,
@@ -312,6 +456,8 @@ export default function HomeScreen() {
       flexDirection: 'row',
       justifyContent: 'space-between',
       alignItems: 'center',
+      flexWrap: 'wrap',
+      gap: 8,
     },
     filterButtonActive: {
       backgroundColor: colors.accent,
@@ -319,7 +465,7 @@ export default function HomeScreen() {
     },
     filterArrow: {
       marginLeft: 8,
-      fontSize: 10,
+      fontSize: 12,
       color: colors.textSecondary,
       transform: [{ rotate: '0deg' }],
     },
@@ -329,36 +475,45 @@ export default function HomeScreen() {
     },
     quickFilters: {
       flexDirection: 'row',
-      gap: 8,
+      gap: 6,
+      flexShrink: 0,
     },
     quickFilterChip: {
       backgroundColor: colors.surfaceVariant,
       borderWidth: 1,
       borderColor: colors.border,
-      paddingHorizontal: 8,
-      paddingVertical: 6,
-      borderRadius: 12,
+      paddingHorizontal: 6,
+      paddingVertical: 4,
+      borderRadius: 8,
+      minWidth: 32,
+      alignItems: 'center',
+      justifyContent: 'center',
     },
     quickFilterChipActive: {
       backgroundColor: colors.accent,
       borderColor: colors.accent,
     },
     quickFilterText: {
-      fontSize: 12,
+      fontFamily: 'JetBrainsMono_700Bold',
+      fontSize: 12 * fontScale,
+      color: colors.textSecondary,
+      letterSpacing: 0.3,
     },
     quickFilterTextActive: {
-      fontSize: 12,
+      color: colors.background,
     },
     filterCheckmark: {
-      fontSize: 12,
-      color: isDark ? colors.background : '#ffffff',
+      fontSize: 12 * fontScale,
+      color: colors.textSecondary,
       fontFamily: 'JetBrainsMono_700Bold',
+      letterSpacing: 0.3,
+      flexShrink: 0,
     },
     lastFilterOption: {
       borderBottomWidth: 0,
     },
     filterIndicator: {
-      fontSize: 10,
+      fontSize: 12,
       color: colors.textMuted,
       fontFamily: 'JetBrainsMono_400Regular',
     },
@@ -382,7 +537,7 @@ export default function HomeScreen() {
     },
     filterEmptySubtitle: {
       fontFamily: 'JetBrainsMono_400Regular',
-      fontSize: 11,
+      fontSize: 12,
       color: colors.textSecondary,
       letterSpacing: 0.5,
       marginBottom: 24,
@@ -401,7 +556,7 @@ export default function HomeScreen() {
     },
     filterSuggestionText: {
       fontFamily: 'JetBrainsMono_500Medium',
-      fontSize: 11,
+      fontSize: 12,
       color: colors.textSecondary,
       letterSpacing: 0.5,
     },
@@ -422,45 +577,166 @@ export default function HomeScreen() {
               }}
             >
               <Text style={styles.themeToggleText}>
-                {theme === 'light' ? '☀️' : theme === 'dark' ? '🌙' : '🌓'}
+                {theme === 'light' ? '[LGT]' : theme === 'dark' ? '[TRM]' : '[AUTO]'}
               </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+                style={styles.settingsButton}
+                onPress={() => setShowSettings(!showSettings)}
+            >
+              <Text style={styles.settingsIcon}>[CFG]</Text>
             </TouchableOpacity>
             <Text style={styles.terminalTime}>{currentTime}</Text>
           </View>
         </View>
+
+        {/* Settings Panel */}
+        {showSettings && (
+          <View style={styles.settingsCard}>
+            <View style={styles.settingsCardHeader}>
+              <Text style={styles.settingsCardTitle}>GENERAL SETTINGS</Text>
+            </View>
+            <View style={styles.settingsCardDivider} />
+            
+            <View style={styles.settingsCardContent}>
+              {/* Work Hours */}
+              <View style={styles.settingRow}>
+                <Text style={styles.settingLabel}>WORK_HOURS:</Text>
+                <WorkingHoursSettings />
+              </View>
+              
+              {/* Delay */}
+              <View style={styles.settingRow}>
+                <Text style={styles.settingLabel}>DELAY:</Text>
+                <TextInput
+                  style={styles.delayInput}
+                  value={settings.defaultDelay || '30m'}
+                  onChangeText={(value) => updateSettings({ defaultDelay: value })}
+                  placeholder="30m"
+                  placeholderTextColor={colors.textMuted}
+                />
+              </View>
+            </View>
+            
+            <View style={styles.settingsCardDivider} />
+            <View style={styles.settingsCardHeader}>
+              <Text style={styles.settingsCardTitle}>ACCESSIBILITY</Text>
+            </View>
+            <View style={styles.settingsCardDivider} />
+            
+            <View style={styles.settingsCardContent}>
+              {/* Font Scale */}
+              <View style={styles.settingRow}>
+                <Text style={styles.settingLabel}>FONT SIZE:</Text>
+                <View style={styles.fontScaleContainer}>
+                  {[1.0, 1.2, 1.5].map(scale => (
+                    <TouchableOpacity
+                      key={scale}
+                      style={[
+                        styles.fontScaleButton,
+                        settings.fontScale === scale && styles.fontScaleButtonActive
+                      ]}
+                      onPress={() => updateSettings({ fontScale: scale })}
+                    >
+                      <Text style={[
+                        styles.fontScaleText,
+                        settings.fontScale === scale && styles.fontScaleTextActive
+                      ]}>
+                        {scale === 1.0 ? '[S]' : scale === 1.2 ? '[M]' : '[L]'}
+                      </Text>
+                    </TouchableOpacity>
+                  ))}
+                </View>
+              </View>
+              
+              {/* High Contrast */}
+              <View style={styles.settingRow}>
+                <Text style={styles.settingLabel}>HIGH CONTRAST:</Text>
+                <Switch
+                  value={settings.highContrast}
+                  onValueChange={(value) => updateSettings({ highContrast: value })}
+                  trackColor={{ false: colors.border, true: colors.textSecondary }}
+                  thumbColor={settings.highContrast ? colors.accent : colors.textMuted}
+                />
+              </View>
+              
+              {/* Reduced Motion */}
+              <View style={styles.settingRow}>
+                <Text style={styles.settingLabel}>REDUCE MOTION:</Text>
+                <Switch
+                  value={settings.reducedMotion}
+                  onValueChange={(value) => updateSettings({ reducedMotion: value })}
+                  trackColor={{ false: colors.border, true: colors.textSecondary }}
+                  thumbColor={settings.reducedMotion ? colors.accent : colors.textMuted}
+                />
+              </View>
+            </View>
+            
+            <View style={styles.settingsCardDivider} />
+            <View style={styles.settingsCardHeader}>
+              <Text style={styles.settingsCardTitle}>SUPPORT THE DEVELOPER</Text>
+            </View>
+            <View style={styles.settingsCardDivider} />
+            
+            <View style={styles.settingsCardContent}>
+              <Text style={styles.supportText}>
+                // If you enjoy using checkMate and find it helpful,{"\n"}
+                // consider buying me a coffee! Your support helps{"\n"}
+                // keep this app free and motivates continued development.
+              </Text>
+              
+              <TouchableOpacity 
+                style={styles.coffeeButton}
+                onPress={async () => {
+                  const urls = [
+                    'https://revolut.me/ionutn9j',
+                    'http://revolut.me/ionutn9j'
+                  ];
+                  
+                  let opened = false;
+                  
+                  // Try different URL formats
+                  for (const url of urls) {
+                    try {
+                      await Linking.openURL(url);
+                      opened = true;
+                      break;
+                    } catch (error) {
+                      console.log(`Failed to open ${url}:`, error);
+                      continue;
+                    }
+                  }
+                  
+                  // If all attempts failed, show manual instructions
+                  if (!opened) {
+                    Alert.alert(
+                      'Buy me a coffee ☕',
+                      'Please visit:\nrevolut.me/ionutn9j\n\nOr search "ionutn9j" in the Revolut app to send a tip!\n\nThank you for wanting to support! 💚',
+                      [
+                        { text: 'Got it!' }
+                      ]
+                    );
+                  }
+                }}
+                activeOpacity={0.8}
+              >
+                <Text style={styles.coffeeButtonText}>[BUY ME A COFFEE]</Text>
+                <Text style={styles.coffeeSubtext}>via Revolut</Text>
+              </TouchableOpacity>
+              
+              <Text style={styles.gratitudeText}>
+                // Thank you for using checkMate! Every bit of support{"\n"}
+                // means the world to an independent developer.
+              </Text>
+            </View>
+          </View>
+        )}
         
         <View style={styles.statusLine}>
           <Text style={styles.statusText}>
             SYS: {currentDate} | TASKS: {tasks.length} | PENDING: {pendingTasks.length} | DONE: {completedTasks.length}
           </Text>
-          <TouchableOpacity 
-            style={styles.settingsButton}
-            onPress={() => setShowSettings(!showSettings)}
-          >
-            <Text style={styles.settingsIcon}>⚙️</Text>
-          </TouchableOpacity>
         </View>
-
-        {/* Settings Panel */}
-        {showSettings && (
-          <View style={styles.settingsPanel}>
-            <View style={styles.inlineSettingRow}>
-              <Text style={styles.settingLabel}>WORK_HOURS:</Text>
-              <WorkingHoursSettings />
-            </View>
-            
-            <View style={styles.inlineSettingRow}>
-              <Text style={styles.settingLabel}>DELAY:</Text>
-              <TextInput
-                style={styles.delayInput}
-                value={settings.defaultDelay || '30m'}
-                onChangeText={(value) => updateSettings({ defaultDelay: value })}
-                placeholder="30m"
-                placeholderTextColor={colors.textMuted}
-              />
-            </View>
-          </View>
-        )}
 
         {/* Filter Dropdown */}
         <View style={styles.filterContainer}>
@@ -474,10 +750,10 @@ export default function HomeScreen() {
                 styles.filterText,
                 showFilterDropdown && { color: isDark ? colors.background : '#ffffff' }
               ]}>
-                🔍 FILTER: {selectedFilter}
+                [FILTER]: {selectedFilter}
               </Text>
               <Text style={[styles.filterArrow, showFilterDropdown && styles.filterArrowRotated]}>
-                ▾
+                {showFilterDropdown ? '^' : 'v'}
               </Text>
             </TouchableOpacity>
 
@@ -500,7 +776,7 @@ export default function HomeScreen() {
                       styles.quickFilterText,
                       selectedFilter === filter && styles.quickFilterTextActive
                     ]}>
-                      {filter === 'Today' ? '📅' : '🌐'}
+                      {filter === 'Today' ? '[T]' : '[*]'}
                     </Text>
                   </TouchableOpacity>
               ))}
@@ -530,7 +806,7 @@ export default function HomeScreen() {
                         {filter}
                       </Text>
                       <Text style={styles.filterCheckmark}>
-                        {selectedFilter === filter ? '✓' : ' '}
+                        {selectedFilter === filter ? '[X]' : '[ ]'}
                       </Text>
                     </TouchableOpacity>
                 ))}
@@ -551,7 +827,12 @@ export default function HomeScreen() {
         {tasks.length === 0 && (
           <View style={styles.emptyState}>
             <Text style={styles.emptyTitle}>NO_TASKS_LOADED</Text>
-            <Text style={styles.emptySubtitle}>// Initialize new task to begin</Text>
+            <Text style={styles.emptySubtitle}>// Create your first task to get started</Text>
+            <Text style={styles.helpText}>
+              Tasks are scheduled reminders with optional recurring intervals.
+              Configure work hours to restrict notifications during off-hours.
+              Use delay feature to postpone tasks when they become overdue.
+            </Text>
             <TouchableOpacity
               style={styles.emptyStateButton}
               onPress={() => router.push('/add-task')}
@@ -564,7 +845,6 @@ export default function HomeScreen() {
         {/* Filter Empty State - Tasks exist but filter shows nothing */}
         {tasks.length > 0 && filteredTasks.length === 0 && (
           <View style={styles.filterEmptyState}>
-            <Text style={styles.filterEmptyIcon}>🔍</Text>
             <Text style={styles.filterEmptyTitle}>NO_TASKS_FOUND</Text>
             <Text style={styles.filterEmptySubtitle}>
               // No tasks match filter: {selectedFilter}
@@ -575,12 +855,6 @@ export default function HomeScreen() {
                 onPress={() => setSelectedFilter('All')}
               >
                 <Text style={styles.filterSuggestionText}>$ show --all</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={styles.filterSuggestion}
-                onPress={() => router.push('/add-task')}
-              >
-                <Text style={styles.filterSuggestionText}>$ ./add_task --for={selectedFilter.toLowerCase()}</Text>
               </TouchableOpacity>
             </View>
           </View>

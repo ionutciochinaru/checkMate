@@ -45,7 +45,10 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
     workingHoursEnabled: true,
     workingHoursStart: "09:00",
     workingHoursEnd: "17:00",
-    defaultDelay: "30m"
+    defaultDelay: "30m",
+    fontScale: 1.0,
+    highContrast: false,
+    reducedMotion: false
   },
 
   addTask: (taskData) => {

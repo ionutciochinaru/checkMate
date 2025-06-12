@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Text as RNText, StyleSheet, TouchableOpacity, Alert } from 'react-native';
 import { Text } from 'react-native-paper';
 import Animated, { FadeInUp, FadeOutRight } from 'react-native-reanimated';
+import { useTheme } from '../hooks/useTheme';
 import { router } from 'expo-router';
 import { useTaskStore } from '../hooks/useTaskStore';
 import { Task } from '../types/task';
@@ -14,8 +15,9 @@ interface TaskItemProps {
 
 const TaskItem: React.FC<TaskItemProps> = React.memo(({ task }) => {
   const { toggleComplete, delayTask, deleteTask } = useTaskStore();
+  const { reducedMotion } = useTheme();
 
-  const styles = useThemedStyles((colors, isDark) => StyleSheet.create({
+  const styles = useThemedStyles((colors, isDark, fontScale, reducedMotion) => StyleSheet.create({
     container: {
       marginBottom: 12,
     },
@@ -44,25 +46,27 @@ const TaskItem: React.FC<TaskItemProps> = React.memo(({ task }) => {
       marginBottom: 4,
     },
     taskId: {
-      fontFamily: 'JetBrainsMono_500Medium',
-      fontSize: 10,
+      fontFamily: 'JetBrainsMono_700Bold',
+      fontSize: 12 * fontScale,
       color: colors.textMuted,
-      letterSpacing: 1,
+      letterSpacing: 1.2,
+      fontWeight: '700',
     },
     statusIndicators: {
       flexDirection: 'row',
       gap: 6,
     },
     statusBadge: {
-      fontFamily: 'JetBrainsMono_400Regular',
-      fontSize: 8,
+      fontFamily: 'JetBrainsMono_700Bold',
+      fontSize: 10 * fontScale,
       color: colors.textSecondary,
       backgroundColor: colors.surfaceVariant,
-      paddingHorizontal: 6,
-      paddingVertical: 2,
+      paddingHorizontal: 8,
+      paddingVertical: 4,
       borderWidth: 1,
       borderColor: colors.border,
-      letterSpacing: 0.5,
+      letterSpacing: 0.8,
+      fontWeight: '700',
     },
     delayBadge: {
       color: colors.danger,
@@ -80,31 +84,35 @@ const TaskItem: React.FC<TaskItemProps> = React.memo(({ task }) => {
       backgroundColor: isDark ? 'rgba(50, 205, 50, 0.2)' : 'rgba(50, 205, 50, 0.1)',
     },
     timestamp: {
-      fontFamily: 'JetBrainsMono_400Regular',
-      fontSize: 9,
+      fontFamily: 'JetBrainsMono_500Medium',
+      fontSize: 11 * fontScale,
       color: colors.textMuted,
-      letterSpacing: 0.5,
+      letterSpacing: 0.8,
+      fontWeight: '600',
     },
     originalTimestamp: {
-      fontFamily: 'JetBrainsMono_400Regular',
-      fontSize: 9,
+      fontFamily: 'JetBrainsMono_500Medium',
+      fontSize: 11 * fontScale,
       color: colors.textMuted,
-      letterSpacing: 0.5,
+      letterSpacing: 0.8,
       textDecorationLine: 'line-through',
       opacity: 0.7,
+      fontWeight: '500',
     },
     newTimestamp: {
-      fontFamily: 'JetBrainsMono_500Medium',
-      fontSize: 9,
-      color: y2kColors.bubblegumPink,
-      letterSpacing: 0.5,
+      fontFamily: 'JetBrainsMono_700Bold',
+      fontSize: 11 * fontScale,
+      color: colors.y2kPink,
+      letterSpacing: 0.8,
       marginTop: 2,
+      fontWeight: '700',
     },
     statusIndicator: {
-      fontFamily: 'JetBrainsMono_400Regular',
-      fontSize: 9,
-      letterSpacing: 0.5,
+      fontFamily: 'JetBrainsMono_700Bold',
+      fontSize: 11 * fontScale,
+      letterSpacing: 0.8,
       marginTop: 4,
+      fontWeight: '700',
     },
     status_completed: {
       color: y2kColors.limeGreen,
@@ -136,10 +144,9 @@ const TaskItem: React.FC<TaskItemProps> = React.memo(({ task }) => {
       marginTop: 2,
     },
     checkbox: {
-      width: 20,
-      height: 20,
-      borderWidth: 1,
-      borderColor: colors.textSecondary,
+      width: 28,
+      height: 16,
+      borderWidth: 0,
       backgroundColor: 'transparent',
       alignItems: 'center',
       justifyContent: 'center',
@@ -150,21 +157,24 @@ const TaskItem: React.FC<TaskItemProps> = React.memo(({ task }) => {
     },
     checkboxText: {
       fontFamily: 'JetBrainsMono_700Bold',
-      fontSize: 12,
+      fontSize: 12 * fontScale,
       color: colors.textSecondary,
+      letterSpacing: 0.8,
+      fontWeight: '800',
     },
     checkedText: {
-      color: colors.background,
+      color: colors.success,
     },
     textContainer: {
       flex: 1,
     },
     taskTitle: {
-      fontFamily: 'JetBrainsMono_500Medium',
-      fontSize: 14,
+      fontFamily: 'JetBrainsMono_700Bold',
+      fontSize: 16 * fontScale,
       color: colors.text,
-      letterSpacing: 0.5,
-      lineHeight: 20,
+      letterSpacing: 0.8,
+      lineHeight: 24 * fontScale,
+      fontWeight: '700',
     },
     completedTitle: {
       color: colors.textMuted,
@@ -172,11 +182,12 @@ const TaskItem: React.FC<TaskItemProps> = React.memo(({ task }) => {
     },
     taskDescription: {
       fontFamily: 'JetBrainsMono_400Regular',
-      fontSize: 11,
+      fontSize: 13 * fontScale,
       color: colors.textSecondary,
-      marginTop: 4,
-      letterSpacing: 0.3,
-      lineHeight: 16,
+      marginTop: 6,
+      letterSpacing: 0.5,
+      lineHeight: 18 * fontScale,
+      fontWeight: '400',
     },
     completedDescription: {
       color: colors.textMuted,
@@ -184,61 +195,65 @@ const TaskItem: React.FC<TaskItemProps> = React.memo(({ task }) => {
     actions: {
       flexDirection: 'row',
       justifyContent: 'flex-end',
-      gap: 8,
+      gap: 6,
       flexWrap: 'wrap',
+      marginTop: 4,
     },
     actionButton: {
-      borderWidth: 1,
-      borderColor: colors.textSecondary,
-      backgroundColor: 'transparent',
+      borderWidth: 2,
+      borderColor: colors.border,
+      backgroundColor: colors.surface,
       paddingHorizontal: 12,
-      paddingVertical: 6,
+      paddingVertical: 8,
+      minWidth: 56,
+      minHeight: 36,
+      alignItems: 'center',
+      justifyContent: 'center',
     },
     completedButton: {
       borderColor: colors.textMuted,
+      backgroundColor: colors.surface,
     },
     actionText: {
-      fontFamily: 'JetBrainsMono_500Medium',
-      fontSize: 9,
+      fontFamily: 'JetBrainsMono_700Bold',
+      fontSize: 11 * fontScale,
       color: colors.textSecondary,
-      letterSpacing: 1,
+      letterSpacing: 1.5,
+      fontWeight: '800',
     },
     completedActionText: {
       color: colors.textMuted,
     },
     delayButton: {
-      backgroundColor: isDark ? 'rgba(255, 105, 180, 0.2)' : 'rgba(255, 105, 180, 0.1)',
-      borderColor: y2kColors.bubblegumPink,
+      backgroundColor: colors.surfaceVariant,
+      borderColor: colors.y2kPink,
     },
     delayButtonText: {
-      color: y2kColors.bubblegumPink,
+      color: colors.y2kPink,
     },
     doneButton: {
-      ...y2kStyles.xpGreenGradient,
-      borderWidth: 1,
+      backgroundColor: colors.success,
+      borderColor: colors.success,
     },
     doneButtonText: {
-      color: '#FFFFFF',
-      fontWeight: 'bold',
-      textShadowColor: 'rgba(0, 0, 0, 0.3)',
-      textShadowOffset: { width: 1, height: 1 },
-      textShadowRadius: 1,
+      color: isDark ? colors.background : '#ffffff',
+      fontFamily: 'JetBrainsMono_700Bold',
     },
     deleteButton: {
-      backgroundColor: colors.danger,
+      backgroundColor: colors.surfaceVariant,
       borderColor: colors.danger,
     },
     deleteButtonText: {
-      color: '#ffffff',
-      fontWeight: 'bold',
+      color: colors.danger,
+      fontFamily: 'JetBrainsMono_700Bold',
     },
     editButton: {
-      backgroundColor: y2kColors.electricCyan,
-      borderColor: y2kColors.electricCyan,
+      backgroundColor: colors.surfaceVariant,
+      borderColor: colors.y2kCyan,
     },
     editButtonText: {
-      color: '#000000',
-      fontWeight: 'bold',
+      color: colors.y2kCyan,
+      fontFamily: 'JetBrainsMono_700Bold',
     },
   }));
 
@@ -295,40 +310,44 @@ const TaskItem: React.FC<TaskItemProps> = React.memo(({ task }) => {
     // Ensure reminderTime is a proper Date object
     const reminderDate = task.reminderTime instanceof Date ? task.reminderTime : new Date(task.reminderTime);
     if (isNaN(reminderDate.getTime())) {
-      return { icon: '⚠️', text: 'Invalid date', style: 'overdue' };
+      return { icon: '[ERR]', text: 'Invalid date', style: 'overdue' };
     }
     
     const taskDate = new Date(reminderDate.getFullYear(), reminderDate.getMonth(), reminderDate.getDate());
     
     if (task.isCompleted) {
-      return { icon: '✅', text: 'Completed', style: 'completed' };
+      return { icon: '[OK]', text: 'Completed', style: 'completed' };
     }
     
     if (task.delayCount > 0) {
       if (taskDate.getTime() === today.getTime()) {
-        return { icon: '🔔', text: 'Delayed to today', style: 'delayed' };
+        return { icon: '[DLY]', text: 'Delayed to today', style: 'delayed' };
       } else if (taskDate.getTime() === tomorrow.getTime()) {
-        return { icon: '⏭', text: 'Delayed to tomorrow', style: 'delayed' };
+        return { icon: '[DLY]', text: 'Delayed to tomorrow', style: 'delayed' };
       } else if (taskDate.getTime() > tomorrow.getTime()) {
-        return { icon: '📅', text: 'Delayed to future', style: 'delayed' };
+        return { icon: '[DLY]', text: 'Delayed to future', style: 'delayed' };
       }
     }
     
     if (taskDate.getTime() === today.getTime()) {
-      return { icon: '🔔', text: 'Scheduled for today', style: 'today' };
+      return { icon: '[NOW]', text: 'Scheduled for today', style: 'today' };
     } else if (taskDate.getTime() === tomorrow.getTime()) {
-      return { icon: '⏭', text: 'Scheduled for tomorrow', style: 'tomorrow' };
+      return { icon: '[TMR]', text: 'Scheduled for tomorrow', style: 'tomorrow' };
     } else if (taskDate.getTime() > tomorrow.getTime()) {
-      return { icon: '🗓', text: 'Scheduled for later', style: 'future' };
+      return { icon: '[FUT]', text: 'Scheduled for later', style: 'future' };
     } else {
-      return { icon: '⚠️', text: 'Overdue', style: 'overdue' };
+      return { icon: '[OVR]', text: 'Overdue', style: 'overdue' };
     }
   };
 
   const taskStatus = getTaskStatus();
 
   return (
-    <Animated.View entering={FadeInUp} exiting={FadeOutRight} style={styles.container}>
+    <Animated.View 
+      entering={reducedMotion ? undefined : FadeInUp} 
+      exiting={reducedMotion ? undefined : FadeOutRight} 
+      style={styles.container}
+    >
       <View style={[
         styles.taskCard, 
         task.isCompleted && styles.completedCard,
@@ -369,7 +388,7 @@ const TaskItem: React.FC<TaskItemProps> = React.memo(({ task }) => {
           )}
           
           {/* Status indicator */}
-          <RNText style={[styles.statusIndicator, styles[`status_${taskStatus.style}`]]}>
+          <RNText style={[styles.statusIndicator, (styles as any)[`status_${taskStatus.style}`]]}>
             STATUS: {taskStatus.icon} {taskStatus.text}
           </RNText>
         </View>
@@ -384,7 +403,7 @@ const TaskItem: React.FC<TaskItemProps> = React.memo(({ task }) => {
             <View style={styles.checkboxContainer}>
               <View style={[styles.checkbox, task.isCompleted && styles.checkedBox]}>
                 <RNText style={[styles.checkboxText, task.isCompleted && styles.checkedText]}>
-                  // {task.isCompleted ? '✓' : '○'}
+                  {task.isCompleted ? '[X]' : '[ ]'}
                 </RNText>
               </View>
             </View>
@@ -411,7 +430,7 @@ const TaskItem: React.FC<TaskItemProps> = React.memo(({ task }) => {
               onPress={() => delayTask(task.id)}
               activeOpacity={0.7}
             >
-              <RNText style={[styles.actionText, styles.delayButtonText]}>DELAY</RNText>
+              <RNText style={[styles.actionText, styles.delayButtonText]}>[DLY]</RNText>
             </TouchableOpacity>
           )}
           
@@ -427,7 +446,7 @@ const TaskItem: React.FC<TaskItemProps> = React.memo(({ task }) => {
               styles.actionText, 
               task.isCompleted ? styles.completedActionText : styles.doneButtonText
             ]}>
-              {task.isCompleted ? 'UNDO' : 'DONE'}
+              {task.isCompleted ? '[UDO]' : '[OK]'}
             </RNText>
           </TouchableOpacity>
 
@@ -436,7 +455,7 @@ const TaskItem: React.FC<TaskItemProps> = React.memo(({ task }) => {
             onPress={() => router.push(`/add-task?edit=${task.id}`)}
             activeOpacity={0.7}
           >
-            <RNText style={[styles.actionText, styles.editButtonText]}>EDIT</RNText>
+            <RNText style={[styles.actionText, styles.editButtonText]}>[EDT]</RNText>
           </TouchableOpacity>
 
           <TouchableOpacity 
@@ -444,7 +463,7 @@ const TaskItem: React.FC<TaskItemProps> = React.memo(({ task }) => {
             onPress={showDeleteConfirmation}
             activeOpacity={0.7}
           >
-            <RNText style={[styles.actionText, styles.deleteButtonText]}>DELETE</RNText>
+            <RNText style={[styles.actionText, styles.deleteButtonText]}>[DEL]</RNText>
           </TouchableOpacity>
         </View>
       </View>

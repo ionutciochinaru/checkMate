@@ -24,10 +24,15 @@ export default function AddTaskScreen() {
   const isEditing = !!edit;
   const editingTask = isEditing ? tasks.find(t => t.id === edit) : null;
 
-  // Form state
+  // Form state - set default time 10 minutes ahead
+  const getDefaultTime = () => {
+    const now = new Date();
+    return new Date(now.getTime() + 10 * 60 * 1000); // Add 10 minutes
+  };
+  
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
-  const [reminderTime, setReminderTime] = useState(new Date());
+  const [reminderTime, setReminderTime] = useState(getDefaultTime());
   const [isRecurring, setIsRecurring] = useState(false);
   const [recurringInterval, setRecurringInterval] = useState(24);
   const [ignoreWorkingHours, setIgnoreWorkingHours] = useState(false);
@@ -86,14 +91,16 @@ export default function AddTaskScreen() {
       return;
     }
 
-    // Check if the scheduled time is in the past
-    const now = new Date();
-    if (reminderTime <= now) {
-      Alert.alert(
-        'Invalid Time', 
-        'Cannot schedule tasks in the past. Please select a future date and time.'
-      );
-      return;
+    // Only check past time for new tasks, not when editing
+    if (!isEditing) {
+      const now = new Date();
+      if (reminderTime <= now) {
+        Alert.alert(
+          'Invalid Time', 
+          'Cannot schedule tasks in the past. Please select a future date and time.'
+        );
+        return;
+      }
     }
 
     const taskData = {
@@ -132,14 +139,16 @@ export default function AddTaskScreen() {
             newDateTime.setMonth(selectedDate.getMonth());
             newDateTime.setDate(selectedDate.getDate());
             
-            // Check if the new date/time is in the past
-            const now = new Date();
-            if (newDateTime <= now) {
-              Alert.alert(
-                'Invalid Date', 
-                'Cannot schedule tasks in the past. Please select a future date.'
-              );
-              return;
+            // Only check past date for new tasks, not when editing
+            if (!isEditing) {
+              const now = new Date();
+              if (newDateTime <= now) {
+                Alert.alert(
+                  'Invalid Date', 
+                  'Cannot schedule tasks in the past. Please select a future date.'
+                );
+                return;
+              }
             }
             
             setReminderTime(newDateTime);
@@ -167,14 +176,16 @@ export default function AddTaskScreen() {
             newDateTime.setSeconds(0);
             newDateTime.setMilliseconds(0);
             
-            // Check if the new date/time is in the past
-            const now = new Date();
-            if (newDateTime <= now) {
-              Alert.alert(
-                'Invalid Time', 
-                'Cannot schedule tasks in the past. Please select a future time.'
-              );
-              return;
+            // Only check past time for new tasks, not when editing
+            if (!isEditing) {
+              const now = new Date();
+              if (newDateTime <= now) {
+                Alert.alert(
+                  'Invalid Time', 
+                  'Cannot schedule tasks in the past. Please select a future time.'
+                );
+                return;
+              }
             }
             
             setReminderTime(newDateTime);
@@ -193,15 +204,17 @@ export default function AddTaskScreen() {
       newDateTime.setMonth(selectedDate.getMonth());
       newDateTime.setDate(selectedDate.getDate());
       
-      // Check if the new date/time is in the past
-      const now = new Date();
-      if (newDateTime <= now) {
-        Alert.alert(
-          'Invalid Date', 
-          'Cannot schedule tasks in the past. Please select a future date.'
-        );
-        setShowDatePicker(false);
-        return;
+      // Only check past date for new tasks, not when editing
+      if (!isEditing) {
+        const now = new Date();
+        if (newDateTime <= now) {
+          Alert.alert(
+            'Invalid Date', 
+            'Cannot schedule tasks in the past. Please select a future date.'
+          );
+          setShowDatePicker(false);
+          return;
+        }
       }
       
       setReminderTime(newDateTime);
@@ -218,15 +231,17 @@ export default function AddTaskScreen() {
       newDateTime.setSeconds(0);
       newDateTime.setMilliseconds(0);
       
-      // Check if the new date/time is in the past
-      const now = new Date();
-      if (newDateTime <= now) {
-        Alert.alert(
-          'Invalid Time', 
-          'Cannot schedule tasks in the past. Please select a future time.'
-        );
-        setShowTimePicker(false);
-        return;
+      // Only check past time for new tasks, not when editing
+      if (!isEditing) {
+        const now = new Date();
+        if (newDateTime <= now) {
+          Alert.alert(
+            'Invalid Time', 
+            'Cannot schedule tasks in the past. Please select a future time.'
+          );
+          setShowTimePicker(false);
+          return;
+        }
       }
       
       setReminderTime(newDateTime);
@@ -234,7 +249,7 @@ export default function AddTaskScreen() {
     setShowTimePicker(false);
   };
 
-  const styles = useThemedStyles((colors, isDark) => StyleSheet.create({
+  const styles = useThemedStyles((colors, isDark, fontScale, reducedMotion) => StyleSheet.create({
     container: {
       flex: 1,
       backgroundColor: colors.background,
@@ -254,18 +269,41 @@ export default function AddTaskScreen() {
     },
     terminalTitle: {
       fontFamily: 'JetBrainsMono_700Bold',
-      fontSize: 16,
+      fontSize: 20 * fontScale,
       color: colors.text,
-      letterSpacing: 1,
+      letterSpacing: 1.2,
+      fontWeight: '800',
     },
     backButton: {
-      padding: 8,
+      padding: 0,
     },
     backButtonText: {
+      fontFamily: 'JetBrainsMono_700Bold',
+      fontSize: 14 * fontScale,
+      color: colors.textSecondary,
+      letterSpacing: 1,
+      fontWeight: '700',
+    },
+    helpText: {
+      fontFamily: 'JetBrainsMono_400Regular',
+      fontSize: 10 * fontScale,
+      color: colors.textMuted,
+      letterSpacing: 0.5,
+      marginBottom: 8,
+      lineHeight: 12 * fontScale,
+    },
+    instructionText: {
       fontFamily: 'JetBrainsMono_500Medium',
       fontSize: 12,
       color: colors.textSecondary,
       letterSpacing: 0.5,
+      marginBottom: 16,
+      paddingHorizontal: 12,
+      paddingVertical: 10,
+      backgroundColor: colors.surfaceVariant,
+      borderLeftWidth: 4,
+      borderLeftColor: colors.accent,
+      fontWeight: '600',
     },
     content: {
       flex: 1,
@@ -278,20 +316,22 @@ export default function AddTaskScreen() {
     },
     label: {
       fontFamily: 'JetBrainsMono_700Bold',
-      fontSize: 11,
+      fontSize: 14 * fontScale,
       color: colors.text,
-      letterSpacing: 1,
+      letterSpacing: 1.2,
       marginBottom: 8,
+      fontWeight: '800',
     },
     textInput: {
-      fontFamily: 'JetBrainsMono_400Regular',
-      fontSize: 14,
+      fontFamily: 'JetBrainsMono_500Medium',
+      fontSize: 12 * fontScale,
       color: colors.text,
       backgroundColor: colors.surface,
-      borderWidth: 1,
+      borderWidth: 2,
       borderColor: colors.border,
-      padding: 12,
-      letterSpacing: 0.3,
+      padding: 14,
+      letterSpacing: 0.5,
+      fontWeight: '500',
     },
     multilineInput: {
       height: 80,
@@ -304,10 +344,11 @@ export default function AddTaskScreen() {
       padding: 12,
     },
     dateTimeText: {
-      fontFamily: 'JetBrainsMono_500Medium',
-      fontSize: 12,
+      fontFamily: 'JetBrainsMono_700Bold',
+      fontSize: 14 * fontScale,
       color: colors.text,
-      letterSpacing: 0.5,
+      letterSpacing: 0.8,
+      fontWeight: '700',
     },
     toggleCard: {
       backgroundColor: colors.surfaceVariant,
@@ -323,16 +364,18 @@ export default function AddTaskScreen() {
     },
     toggleLabel: {
       fontFamily: 'JetBrainsMono_700Bold',
-      fontSize: 11,
+      fontSize: 14 * fontScale,
       color: colors.text,
-      letterSpacing: 1,
+      letterSpacing: 1.2,
+      fontWeight: '800',
     },
     toggleSubtext: {
       fontFamily: 'JetBrainsMono_400Regular',
-      fontSize: 9,
+      fontSize: 11,
       color: colors.textMuted,
-      marginTop: 2,
-      letterSpacing: 0.3,
+      marginTop: 4,
+      letterSpacing: 0.5,
+      lineHeight: 16,
     },
     intervalSection: {
       marginTop: 12,
@@ -404,9 +447,10 @@ export default function AddTaskScreen() {
     },
     submitButtonText: {
       fontFamily: 'JetBrainsMono_700Bold',
-      fontSize: 11,
+      fontSize: 14 * fontScale,
       color: colors.background,
-      letterSpacing: 1,
+      letterSpacing: 1.2,
+      fontWeight: '800',
     },
     bottomPadding: {
       height: 40,
@@ -418,25 +462,38 @@ export default function AddTaskScreen() {
       {/* Header - Same pattern as index.tsx */}
       <View style={styles.header}>
         <View style={styles.terminalBar}>
+          <TouchableOpacity
+              style={styles.backButton}
+              onPress={() => {
+                console.log('Back button pressed');
+                router.back();
+              }}
+          >
+            <Text style={styles.backButtonText}>[ESC] BACK</Text>
+          </TouchableOpacity>
           <Text style={styles.terminalTitle}>
             {isEditing ? 'EDIT_TASK.EXE' : 'NEW_TASK.EXE'}
           </Text>
-          <TouchableOpacity
-            style={styles.backButton}
-            onPress={() => {
-              console.log('Back button pressed');
-              router.back();
-            }}
-          >
-            <Text style={styles.backButtonText}>← BACK</Text>
-          </TouchableOpacity>
         </View>
+
       </View>
 
       <ScrollView style={styles.content} contentContainerStyle={styles.contentContainer}>
+        {/* Instructions */}
+        <Text style={styles.instructionText}>
+          {isEditing 
+            ? '// Edit task details and schedule - past times allowed when rescheduling'
+            : '// Create a new task with scheduled reminder time (default: 10min from now)'
+          }
+          {'\n'}// Required fields marked with (*), optional settings below
+        </Text>
+        
         {/* Title Field */}
         <View style={styles.section}>
           <Text style={styles.label}>TASK_NAME *</Text>
+          <Text style={styles.helpText}>
+            // Short descriptive name for the task (required)
+          </Text>
           <TextInput
             style={styles.textInput}
             value={title}
@@ -449,6 +506,9 @@ export default function AddTaskScreen() {
         {/* Description Field */}
         <View style={styles.section}>
           <Text style={styles.label}>DESCRIPTION</Text>
+          <Text style={styles.helpText}>
+            // Optional detailed description or notes for the task
+          </Text>
           <TextInput
             style={[styles.textInput, styles.multilineInput]}
             value={description}
@@ -464,6 +524,12 @@ export default function AddTaskScreen() {
         {/* Schedule Date */}
         <View style={styles.section}>
           <Text style={styles.label}>SCHEDULE_DATE</Text>
+          <Text style={styles.helpText}>
+            {isEditing 
+              ? '// Date when the task reminder should be triggered (past dates allowed when editing)'
+              : '// Date when the task reminder should be triggered (cannot be in the past)'
+            }
+          </Text>
           <TouchableOpacity
             style={styles.dateTimeButton}
             onPress={() => {
@@ -491,6 +557,12 @@ export default function AddTaskScreen() {
         {/* Schedule Time */}
         <View style={styles.section}>
           <Text style={styles.label}>SCHEDULE_TIME</Text>
+          <Text style={styles.helpText}>
+            {isEditing 
+              ? '// Time when the task reminder should be triggered (24-hour format, past times allowed)'
+              : '// Time when the task reminder should be triggered (24-hour format, must be future)'
+            }
+          </Text>
           <TouchableOpacity
             style={styles.dateTimeButton}
             onPress={() => {
@@ -517,7 +589,10 @@ export default function AddTaskScreen() {
         {/* Loop Mode */}
         <View style={styles.toggleCard}>
           <View style={styles.toggleRow}>
-            <Text style={styles.toggleLabel}>LOOP_MODE</Text>
+            <View style={{ flex: 1 }}>
+              <Text style={styles.toggleLabel}>LOOP_MODE</Text>
+              <Text style={styles.toggleSubtext}>// Automatically reschedule task at intervals</Text>
+            </View>
             <Switch
               value={isRecurring}
               onValueChange={setIsRecurring}
@@ -529,6 +604,9 @@ export default function AddTaskScreen() {
           {isRecurring && (
             <View style={styles.intervalSection}>
               <Text style={styles.intervalLabel}>LOOP_INTERVAL</Text>
+              <Text style={styles.helpText}>
+                Time between automatic task rescheduling (H=hours, D=days, W=weeks)
+              </Text>
               <View style={styles.chipContainer}>
                 {intervalOptions.map(option => (
                   <TouchableOpacity
@@ -561,7 +639,7 @@ export default function AddTaskScreen() {
           <View style={styles.toggleRow}>
             <View style={{ flex: 1 }}>
               <Text style={styles.toggleLabel}>24H_MODE</Text>
-              <Text style={styles.toggleSubtext}>// Bypass work hours restriction</Text>
+              <Text style={styles.toggleSubtext}>// Allow notifications outside configured work hours</Text>
             </View>
             <Switch
               value={ignoreWorkingHours}
@@ -577,24 +655,22 @@ export default function AddTaskScreen() {
           <TouchableOpacity
             style={styles.cancelButton}
             onPress={() => {
-              console.log('Cancel button pressed');
               router.back();
             }}
             activeOpacity={0.7}
           >
-            <Text style={styles.cancelButtonText}>CANCEL</Text>
+            <Text style={styles.cancelButtonText}>[ESC]</Text>
           </TouchableOpacity>
           
           <TouchableOpacity
             style={styles.submitButton}
             onPress={() => {
-              console.log('Submit button pressed!');
               handleSubmit();
             }}
             activeOpacity={0.7}
           >
             <Text style={styles.submitButtonText}>
-              {isEditing ? 'UPDATE' : 'EXECUTE'}
+              {isEditing ? '[UPD]' : '[EXE]'}
             </Text>
           </TouchableOpacity>
         </View>

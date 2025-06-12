@@ -33,7 +33,7 @@ const WorkingHoursSettings: React.FC = () => {
     return date.toTimeString().slice(0, 5);
   };
 
-  const styles = useThemedStyles((colors, isDark) => StyleSheet.create({
+  const styles = useThemedStyles((colors, isDark, fontScale, reducedMotion) => StyleSheet.create({
     container: {
       flexDirection: 'row',
       alignItems: 'center',
@@ -42,10 +42,11 @@ const WorkingHoursSettings: React.FC = () => {
     },
     timeContainer: {
       alignItems: 'center',
+      width: 100,
     },
     timeLabel: {
       fontFamily: 'JetBrainsMono_500Medium',
-      fontSize: 9,
+      fontSize: 12 * fontScale,
       color: colors.textMuted,
       letterSpacing: 0.5,
       marginBottom: 2,
@@ -54,13 +55,13 @@ const WorkingHoursSettings: React.FC = () => {
       backgroundColor: colors.surface,
       borderWidth: 1,
       borderColor: colors.border,
-      paddingHorizontal: 8,
-      paddingVertical: 6,
+      paddingHorizontal: 6,
+      paddingVertical: 4,
       alignItems: 'center',
     },
     timeText: {
       fontFamily: 'JetBrainsMono_500Medium',
-      fontSize: 11,
+      fontSize: 12 * fontScale,
       color: colors.text,
       letterSpacing: 0.5,
     },

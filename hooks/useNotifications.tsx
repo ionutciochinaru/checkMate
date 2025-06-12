@@ -94,7 +94,7 @@ export const useNotifications = () => {
         categoryIdentifier: 'task_reminder',
         data: { taskId: task.id }
       },
-      trigger: reminderTime
+      trigger: reminderTime as any
     });
   };
 
