@@ -30,6 +30,10 @@ const TaskItem: React.FC<TaskItemProps> = React.memo(({ task }) => {
       backgroundColor: colors.surfaceVariant,
       borderColor: isDark ? '#3a3a3a' : '#c0c0b8',
     },
+    futureCard: {
+      opacity: 0.7,
+      borderStyle: 'dashed',
+    },
     header: {
       marginBottom: 12,
     },
@@ -95,6 +99,30 @@ const TaskItem: React.FC<TaskItemProps> = React.memo(({ task }) => {
       color: y2kColors.bubblegumPink,
       letterSpacing: 0.5,
       marginTop: 2,
+    },
+    statusIndicator: {
+      fontFamily: 'JetBrainsMono_400Regular',
+      fontSize: 9,
+      letterSpacing: 0.5,
+      marginTop: 4,
+    },
+    status_completed: {
+      color: y2kColors.limeGreen,
+    },
+    status_today: {
+      color: colors.accent,
+    },
+    status_tomorrow: {
+      color: y2kColors.electricCyan,
+    },
+    status_future: {
+      color: colors.textSecondary,
+    },
+    status_delayed: {
+      color: y2kColors.bubblegumPink,
+    },
+    status_overdue: {
+      color: colors.danger,
     },
     content: {
       marginBottom: 12,
@@ -235,25 +263,77 @@ const TaskItem: React.FC<TaskItemProps> = React.memo(({ task }) => {
     return `DELAY_${count.toString().padStart(2, '0')}`;
   };
 
-  const formatTime = (date: Date) => {
-    return date.toLocaleTimeString('en-US', { 
+  const formatTime = (date: Date | string) => {
+    const dateObj = date instanceof Date ? date : new Date(date);
+    if (isNaN(dateObj.getTime())) {
+      return 'Invalid Time';
+    }
+    return dateObj.toLocaleTimeString('en-US', { 
       hour12: false, 
       hour: '2-digit', 
       minute: '2-digit' 
     });
   };
 
-  const formatDate = (date: Date) => {
-    return date.toLocaleDateString('en-US', {
+  const formatDate = (date: Date | string) => {
+    const dateObj = date instanceof Date ? date : new Date(date);
+    if (isNaN(dateObj.getTime())) {
+      return 'Invalid Date';
+    }
+    return dateObj.toLocaleDateString('en-US', {
       year: 'numeric',
       month: '2-digit',
       day: '2-digit'
     }).replace(/\//g, '.');
   };
 
+  const getTaskStatus = () => {
+    const now = new Date();
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const tomorrow = new Date(today.getTime() + 24 * 60 * 60 * 1000);
+    
+    // Ensure reminderTime is a proper Date object
+    const reminderDate = task.reminderTime instanceof Date ? task.reminderTime : new Date(task.reminderTime);
+    if (isNaN(reminderDate.getTime())) {
+      return { icon: '⚠️', text: 'Invalid date', style: 'overdue' };
+    }
+    
+    const taskDate = new Date(reminderDate.getFullYear(), reminderDate.getMonth(), reminderDate.getDate());
+    
+    if (task.isCompleted) {
+      return { icon: '✅', text: 'Completed', style: 'completed' };
+    }
+    
+    if (task.delayCount > 0) {
+      if (taskDate.getTime() === today.getTime()) {
+        return { icon: '🔔', text: 'Delayed to today', style: 'delayed' };
+      } else if (taskDate.getTime() === tomorrow.getTime()) {
+        return { icon: '⏭', text: 'Delayed to tomorrow', style: 'delayed' };
+      } else if (taskDate.getTime() > tomorrow.getTime()) {
+        return { icon: '📅', text: 'Delayed to future', style: 'delayed' };
+      }
+    }
+    
+    if (taskDate.getTime() === today.getTime()) {
+      return { icon: '🔔', text: 'Scheduled for today', style: 'today' };
+    } else if (taskDate.getTime() === tomorrow.getTime()) {
+      return { icon: '⏭', text: 'Scheduled for tomorrow', style: 'tomorrow' };
+    } else if (taskDate.getTime() > tomorrow.getTime()) {
+      return { icon: '🗓', text: 'Scheduled for later', style: 'future' };
+    } else {
+      return { icon: '⚠️', text: 'Overdue', style: 'overdue' };
+    }
+  };
+
+  const taskStatus = getTaskStatus();
+
   return (
     <Animated.View entering={FadeInUp} exiting={FadeOutRight} style={styles.container}>
-      <View style={[styles.taskCard, task.isCompleted && styles.completedCard]}>
+      <View style={[
+        styles.taskCard, 
+        task.isCompleted && styles.completedCard,
+        taskStatus.style === 'future' && styles.futureCard
+      ]}>
         {/* Header with status indicators */}
         <View style={styles.header}>
           <View style={styles.statusRow}>
@@ -287,6 +367,11 @@ const TaskItem: React.FC<TaskItemProps> = React.memo(({ task }) => {
               SCHED: {formatDate(task.reminderTime)} {formatTime(task.reminderTime)}
             </RNText>
           )}
+          
+          {/* Status indicator */}
+          <RNText style={[styles.statusIndicator, styles[`status_${taskStatus.style}`]]}>
+            {taskStatus.icon} {taskStatus.text}
+          </RNText>
         </View>
 
         {/* Task content */}
