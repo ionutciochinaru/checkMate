@@ -370,7 +370,7 @@ const TaskItem: React.FC<TaskItemProps> = React.memo(({ task }) => {
           
           {/* Status indicator */}
           <RNText style={[styles.statusIndicator, styles[`status_${taskStatus.style}`]]}>
-            {taskStatus.icon} {taskStatus.text}
+            STATUS: {taskStatus.icon} {taskStatus.text}
           </RNText>
         </View>
 
@@ -384,7 +384,7 @@ const TaskItem: React.FC<TaskItemProps> = React.memo(({ task }) => {
             <View style={styles.checkboxContainer}>
               <View style={[styles.checkbox, task.isCompleted && styles.checkedBox]}>
                 <RNText style={[styles.checkboxText, task.isCompleted && styles.checkedText]}>
-                  {task.isCompleted ? '✓' : '○'}
+                  // {task.isCompleted ? '✓' : '○'}
                 </RNText>
               </View>
             </View>
