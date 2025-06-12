@@ -203,7 +203,15 @@ export default function HomeScreen() {
       justifyContent: 'space-between',
       alignItems: 'center',
       marginBottom: 12,
+      minHeight: 20,
+    },
+    settingRowWorkHours: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      marginBottom: 12,
       minHeight: 32,
+      flexWrap: 'wrap',
     },
     delayInput: {
       backgroundColor: colors.surface,
@@ -297,6 +305,18 @@ export default function HomeScreen() {
       fontSize: Math.max(12, 10 * fontScale),
       color: colors.text,
       letterSpacing: 0.8,
+      paddingEnd: 8,
+      fontWeight: '700',
+      flexShrink: 0,
+      minWidth: 100,
+    },
+    settingLabelWorkHours: {
+      fontFamily: 'JetBrainsMono_700Bold',
+      fontSize: Math.max(12, 10 * fontScale),
+      color: colors.text,
+      letterSpacing: 0.8,
+      paddingEnd: 8,
+      paddingTop: 20,
       fontWeight: '700',
       flexShrink: 0,
       minWidth: 100,
@@ -600,8 +620,8 @@ export default function HomeScreen() {
             
             <View style={styles.settingsCardContent}>
               {/* Work Hours */}
-              <View style={styles.settingRow}>
-                <Text style={styles.settingLabel}>WORK_HOURS:</Text>
+              <View style={styles.settingRowWorkHours}>
+                <Text style={styles.settingLabelWorkHours}>WORK_HOURS:</Text>
                 <WorkingHoursSettings />
               </View>
               
@@ -734,7 +754,7 @@ export default function HomeScreen() {
         
         <View style={styles.statusLine}>
           <Text style={styles.statusText}>
-            SYS: {currentDate} | TSK: {tasks.length} | PEN: {pendingTasks.length} | DONE: {completedTasks.length}
+            SYS:{currentDate} | TSK:{tasks.length} | PEN:{pendingTasks.length} | DONE:{completedTasks.length}
           </Text>
         </View>
 

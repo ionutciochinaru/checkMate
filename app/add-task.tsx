@@ -492,7 +492,7 @@ export default function AddTaskScreen() {
         <View style={styles.section}>
           <Text style={styles.label}>TASK_NAME *</Text>
           <Text style={styles.helpText}>
-            // Short descriptive name for the task (required)
+            // Short name for the task
           </Text>
           <TextInput
             style={styles.textInput}
@@ -507,7 +507,7 @@ export default function AddTaskScreen() {
         <View style={styles.section}>
           <Text style={styles.label}>DESCRIPTION</Text>
           <Text style={styles.helpText}>
-            // Optional detailed description or notes for the task
+            // Detailed description or notes for the task
           </Text>
           <TextInput
             style={[styles.textInput, styles.multilineInput]}
@@ -533,7 +533,6 @@ export default function AddTaskScreen() {
           <TouchableOpacity
             style={styles.dateTimeButton}
             onPress={() => {
-              console.log('Date picker button pressed!');
               openDatePicker();
             }}
             activeOpacity={0.7}
@@ -566,7 +565,6 @@ export default function AddTaskScreen() {
           <TouchableOpacity
             style={styles.dateTimeButton}
             onPress={() => {
-              console.log('Time picker button pressed!');
               openTimePicker();
             }}
             activeOpacity={0.7}
@@ -591,7 +589,8 @@ export default function AddTaskScreen() {
           <View style={styles.toggleRow}>
             <View style={{ flex: 1 }}>
               <Text style={styles.toggleLabel}>LOOP_MODE</Text>
-              <Text style={styles.toggleSubtext}>// Automatically reschedule task at intervals</Text>
+              <Text style={styles.toggleSubtext}>// Reschedule task at intervals</Text>
+              <Text style={styles.toggleSubtext}>// [Ex: Eat, Drink water]</Text>
             </View>
             <Switch
               value={isRecurring}
@@ -616,7 +615,6 @@ export default function AddTaskScreen() {
                       recurringInterval === option.value && styles.selectedChip
                     ]}
                     onPress={() => {
-                      console.log('Setting interval to:', option.value);
                       setRecurringInterval(option.value);
                     }}
                     activeOpacity={0.7}
