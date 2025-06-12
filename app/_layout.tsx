@@ -5,6 +5,7 @@ import { StatusBar } from 'expo-status-bar';
 import { useEffect, useState } from 'react';
 import { useTaskStore } from '../hooks/useTaskStore';
 import { ThemeProvider, useTheme } from '../hooks/useTheme';
+import { useNotifications } from '../hooks/useNotifications';
 import * as Font from 'expo-font';
 import {
   JetBrainsMono_400Regular,
@@ -59,6 +60,8 @@ const createPaperTheme = (isDark: boolean) => ({
 
 const ThemedLayout = () => {
   const { colors, isDark } = useTheme();
+  // Initialize notifications system
+  useNotifications();
   
   return (
     <PaperProvider theme={createPaperTheme(isDark)}>

@@ -5,19 +5,60 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="171acf02-a826-4aaf-937f-dcb4d8420b57" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/settings-layout-test.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dist/_expo/static/js/ios/index-d41d8cd98f00b204e9800998ecf8427e.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dist/assets/017bc6ba3fc25503e5eb5e53826d48a8" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dist/assets/0747a1317bbe9c6fc340b889ef8ab3ae" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dist/assets/0a328cd9c1afd0afe8e3b1ec5165b1b4" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dist/assets/0ea69b5077e7c4696db85dbcba75b0e1" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dist/assets/0fb94560a2bb19eb54892e497fb29c67" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dist/assets/1190ab078c57159f4245a328118fcd9a" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dist/assets/19eeb73b9593a38f8e9f418337fc7d10" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dist/assets/20e71bdf79e3a97bf55fd9e164041578" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dist/assets/2379ae894c2c9f63b852a9f3676c2763" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dist/assets/2c20f32cbea6e03d91e0db149eb82466" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dist/assets/2d0a9133e39524f138be6d4db9f4851f" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dist/assets/34216e1124b11af7747ecc363ee3504b" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dist/assets/369745d4a4a6fa62fa0ed495f89aa964" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dist/assets/3aba5b9b33104e426ed11fe6b5789753" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dist/assets/3cd68ccdb8938e3711da2e8831b85493" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dist/assets/412dd9275b6b48ad28f5e3d81bb1f626" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dist/assets/49969685a0e949f34240ac994e4f6ac2" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dist/assets/4f355ba1efca4b9c0e7a6271af047f61" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dist/assets/5b50965d3dfbc518fe50ce36c314a6ec" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dist/assets/61ca7e64b7d605716c57706cef640b9a" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dist/assets/629142e9d264355129ad45763caa52e0" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dist/assets/69d9370ee127c4606da21f105d346f3f" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dist/assets/6f6d2ebd4e9e8050c1b761f0290518b2" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dist/assets/78c625386b4d0690b421eb0fc78f7b9c" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dist/assets/7bef26e508e26a73412f3430432b8d79" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dist/assets/7cd8630e1bc8cae364a3616418f954ed" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dist/assets/7d40544b395c5949f4646f5e150fe020" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dist/assets/817aca47ff3cea63020753d336e628a4" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dist/assets/822a285e32f16f218ae505dc3c51cae7" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dist/assets/9200bf1d80f2f4947b496a2e6ab2e224" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dist/assets/9d1d8c76cca7c52b5ba85124ea0dde52" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dist/assets/a0147b5ab9e4946e81879aef45313def" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dist/assets/a132ecc4ba5c1517ff83c0fb321bc7fc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dist/assets/ab19f4cbc543357183a20571f68380a3" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dist/assets/aff2c65b39a296d4f7e96d0f58169170" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dist/assets/b62641afc9ab487008e996a5c5865e56" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dist/assets/c1e8599bfdb164b1006ac9bc662f2f08" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dist/assets/d1ea1496f9057eb392d5bbf3732a61b7" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dist/assets/d62ddc38b69aff346c20a28774933d6a" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dist/assets/d84e297c3b3e49a614248143d53e40ca" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dist/assets/d8b800c443b8972542883e0b9de2bdc6" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dist/assets/d8e7601e3df962f83c62371ac14964d8" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dist/assets/dad2fa9f4394a630f0f9a0d6dabd44bc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dist/assets/e0e8df064ed52d72d70f586f36cee7f7" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dist/assets/e62addcde857ebdb7342e6b9f1095e97" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dist/assets/f3a81967828232c893d547162e922764" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dist/assets/fa8c03a52bf38d2fb2967f54fbf28a75" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dist/metadata.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/add-task.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/add-task.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/_layout.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/_layout.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/index.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/index.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/components/TaskItem.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/components/TaskItem.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/components/WorkingHoursSettings.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/components/WorkingHoursSettings.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/hooks/useNotifications.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/hooks/useNotifications.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/hooks/useTaskStore.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/hooks/useTaskStore.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/hooks/useTheme.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/hooks/useTheme.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/types/task.ts" beforeDir="false" afterPath="$PROJECT_DIR$/types/task.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/utils/y2k-styles.ts" beforeDir="false" afterPath="$PROJECT_DIR$/utils/y2k-styles.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -27,7 +68,7 @@
   <component name="Git.Settings">
     <option name="RECENT_BRANCH_BY_REPOSITORY">
       <map>
-        <entry key="$PROJECT_DIR$" value="master" />
+        <entry key="$PROJECT_DIR$" value="improvements-03" />
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -49,7 +90,7 @@
     "ASKED_SHARE_PROJECT_CONFIGURATION_FILES": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "git-widget-placeholder": "improvements-03",
+    "git-widget-placeholder": "improvements-04",
     "last_opened_file_path": "D:/WebDev/checkMate/assets",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.standard": "true",
@@ -176,7 +217,15 @@
       <option name="project" value="LOCAL" />
       <updated>1749722780951</updated>
     </task>
-    <option name="localTasksCounter" value="7" />
+    <task id="LOCAL-00007" summary="improvements">
+      <option name="closed" value="true" />
+      <created>1749743463453</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1749743463453</updated>
+    </task>
+    <option name="localTasksCounter" value="8" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">

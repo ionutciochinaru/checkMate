@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as Notifications from 'expo-notifications';
 import { Task, AppSettings } from '../types/task';
 
 // Parse delay string formats like "30m", "1h", "1h30m", "90s", etc.
@@ -37,6 +38,7 @@ interface TaskStore {
   updateSettings: (settings: Partial<AppSettings>) => void;
   loadData: () => Promise<void>;
   saveData: () => Promise<void>;
+  scheduleNotification: (task: Task) => Promise<void>;
 }
 
 export const useTaskStore = create<TaskStore>((set, get) => ({
@@ -62,6 +64,9 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
     
     set(state => ({ tasks: [...state.tasks, newTask] }));
     get().saveData();
+    
+    // Schedule notification for the new task
+    get().scheduleNotification(newTask);
   },
 
   updateTask: (id, updates) => {
@@ -71,6 +76,14 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
       )
     }));
     get().saveData();
+    
+    // If reminder time was updated, reschedule notification
+    if (updates.reminderTime) {
+      const updatedTask = get().tasks.find(task => task.id === id);
+      if (updatedTask) {
+        get().scheduleNotification(updatedTask);
+      }
+    }
   },
 
   toggleComplete: (id) => {
@@ -80,6 +93,15 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
       )
     }));
     get().saveData();
+    
+    // Cancel notification when task is completed
+    const task = get().tasks.find(t => t.id === id);
+    if (task?.isCompleted) {
+      Notifications.cancelScheduledNotificationAsync(id);
+    } else {
+      // Reschedule if uncompleted
+      get().scheduleNotification(task!);
+    }
   },
 
   delayTask: (id) => {
@@ -100,9 +122,18 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
       )
     }));
     get().saveData();
+    
+    // Reschedule notification with new delay time
+    const delayedTask = get().tasks.find(task => task.id === id);
+    if (delayedTask) {
+      get().scheduleNotification(delayedTask);
+    }
   },
 
   deleteTask: (id) => {
+    // Cancel notification before deleting task
+    Notifications.cancelScheduledNotificationAsync(id);
+    
     set(state => ({
       tasks: state.tasks.filter(task => task.id !== id)
     }));
@@ -150,5 +181,108 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
     } catch (error) {
       console.error('Failed to save data:', error);
     }
+  },
+
+  scheduleNotification: async (task: Task) => {
+    if (task.isCompleted) {
+      // Don't schedule notifications for completed tasks
+      return;
+    }
+
+    try {
+      // Cancel existing notification first
+      await Notifications.cancelScheduledNotificationAsync(task.id);
+
+      const { settings } = get();
+      const { workingHoursEnabled, workingHoursStart, workingHoursEnd } = settings;
+      
+      let reminderTime = new Date(task.reminderTime);
+      
+      // Check working hours if enabled and task doesn't ignore them
+      if (workingHoursEnabled && !task.ignoreWorkingHours) {
+        reminderTime = adjustForWorkingHours(reminderTime, workingHoursStart, workingHoursEnd);
+      }
+
+      // Create notification title with task name
+      const title = task.title.length > 30 ? `${task.title.substring(0, 27)}...` : task.title;
+      
+      // Create notification body with description and delay info
+      let body = '';
+      
+      if (task.description) {
+        // Add part of description with ellipsis if too long
+        const desc = task.description.length > 60 ? `${task.description.substring(0, 57)}...` : task.description;
+        body += desc;
+      }
+      
+      // Add delay information if task has been delayed
+      if (task.delayCount > 0) {
+        const delayInfo = task.delayCount === 1 ? ' (Delayed once)' : ` (Delayed ${task.delayCount}x)`;
+        body += delayInfo;
+      }
+      
+      // Add original vs new time info if delayed
+      if (task.originalReminderTime && task.delayCount > 0) {
+        const originalTime = new Date(task.originalReminderTime).toLocaleTimeString('en-US', {
+          hour: '2-digit',
+          minute: '2-digit',
+          hour12: false
+        });
+        const newTime = reminderTime.toLocaleTimeString('en-US', {
+          hour: '2-digit', 
+          minute: '2-digit',
+          hour12: false
+        });
+        body += ` | ${originalTime} → ${newTime}`;
+      }
+      
+      // Fallback body if empty
+      if (!body.trim()) {
+        body = 'Task reminder - tap for details';
+      }
+
+      await Notifications.scheduleNotificationAsync({
+        identifier: task.id,
+        content: {
+          title,
+          body,
+          categoryIdentifier: 'task_reminder',
+          data: { taskId: task.id },
+          sound: 'default'
+        },
+        trigger: {
+          type: 'date',
+          date: reminderTime
+        } as any
+      });
+      
+      console.log(`Scheduled notification for task "${title}" at ${reminderTime}`);
+    } catch (error) {
+      console.error('Failed to schedule notification:', error);
+    }
   }
 }));
+
+// Helper function for working hours adjustment
+const adjustForWorkingHours = (date: Date, startTime: string, endTime: string): Date => {
+  const [startHour, startMinute] = startTime.split(':').map(Number);
+  const [endHour, endMinute] = endTime.split(':').map(Number);
+  
+  const hour = date.getHours();
+  const minute = date.getMinutes();
+  
+  const currentTime = hour * 60 + minute;
+  const workStart = startHour * 60 + startMinute;
+  const workEnd = endHour * 60 + endMinute;
+  
+  if (currentTime < workStart) {
+    // Before work hours - move to start of work
+    date.setHours(startHour, startMinute, 0, 0);
+  } else if (currentTime > workEnd) {
+    // After work hours - move to next day start
+    date.setDate(date.getDate() + 1);
+    date.setHours(startHour, startMinute, 0, 0);
+  }
+  
+  return date;
+};

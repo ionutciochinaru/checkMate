@@ -734,7 +734,7 @@ export default function HomeScreen() {
         
         <View style={styles.statusLine}>
           <Text style={styles.statusText}>
-            SYS: {currentDate} | TASKS: {tasks.length} | PENDING: {pendingTasks.length} | DONE: {completedTasks.length}
+            SYS: {currentDate} | TSK: {tasks.length} | PEN: {pendingTasks.length} | DONE: {completedTasks.length}
           </Text>
         </View>
 
