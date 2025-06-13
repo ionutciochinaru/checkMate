@@ -9,6 +9,7 @@ export default {
         projectId: "b8e37823-81ef-47df-af55-69a2609d4380"
       }
     },
+    jsEngine: "hermes",
     version: "1.0.0",
     orientation: "portrait",
     icon: "./assets/icon.png",
@@ -36,12 +37,13 @@ export default {
     },
     ios: {
       bundleIdentifier: "com.yourname.checkmate",
-      supportsTablet: true
+      supportsTablet: true,
+      jsEngine: "jsc"
     },
     android: {
       package: "com.yourname.checkmate",
       adaptiveIcon: {
-        foregroundImage: "./assets/adaptive-icon.png",
+        foregroundImage: "./assets/icon.png",
         backgroundColor: "#ffffff"
       },
       edgeToEdgeEnabled: true
@@ -49,6 +51,12 @@ export default {
     web: {
       favicon: "./assets/favicon.png"
     },
-    owner: "cjohnd"
+    owner: "cjohnd",
+    updates: {
+      url: "https://u.expo.dev/b8e37823-81ef-47df-af55-69a2609d4380"
+    },
+    runtimeVersion: {
+      policy: "appVersion"
+    }
   }
 };

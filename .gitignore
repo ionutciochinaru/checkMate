@@ -36,6 +36,7 @@ build/
 # VSCode/JetBrains/WebStorm/IDEs
 .vscode/
 .idea/
+.idea
 
 # Expo EAS files
 *.turtle/
