@@ -1,49 +1,35 @@
-# Node
+# dependencies
 node_modules/
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-package-lock.json
-yarn.lock
-
-# Claude
-.claude
 
 # Expo
 .expo/
-.expo-shared/
-
-# OS files
-.DS_Store
-Thumbs.db
-
-# TypeScript
-*.tsbuildinfo
-
-# Expo Prebuild
-/android/
-/ios/
-
-# Build output
 dist/
-build/
+web-build/
+expo-env.d.ts
 
-# Misc
-.env
-.env.*.local
-*.local
+# Native
+.kotlin/
+*.orig.*
+*.jks
+*.p8
+*.p12
+*.key
+*.mobileprovision
 
-# VSCode/JetBrains/WebStorm/IDEs
-.vscode/
-.idea/
-.idea
+# Metro
+.metro-health-check*
 
-# Expo EAS files
-*.turtle/
-eas.json
+# debug
+npm-debug.*
+yarn-debug.*
+yarn-error.*
 
-# Logs
-*.log
+# macOS
+.DS_Store
+*.pem
 
-# Coverage
-coverage/
+# local env files
+.env*.local
+
+# typescript
+*.tsbuildinfo
