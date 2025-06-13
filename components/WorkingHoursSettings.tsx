@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Platform } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { useTaskStore } from '../hooks/useTaskStore';
 import { useThemedStyles } from '../hooks/useTheme';
@@ -16,9 +16,45 @@ const WorkingHoursSettings: React.FC = () => {
 
   const handleTimeChange = (type: 'start' | 'end', time: string) => {
     if (type === 'start') {
-      updateSettings({ workingHoursStart: time });
+      // Validate start time is before end time
+      const [startHour, startMinute] = time.split(':').map(Number);
+      const [endHour, endMinute] = settings.workingHoursEnd.split(':').map(Number);
+      const startMinutes = startHour * 60 + startMinute;
+      const endMinutes = endHour * 60 + endMinute;
+      
+      if (startMinutes >= endMinutes) {
+        // If start time would be after/equal to end time, adjust end time
+        const newEndMinutes = startMinutes + 60; // Add 1 hour minimum
+        const newEndHour = Math.floor(newEndMinutes / 60) % 24;
+        const newEndMinute = newEndMinutes % 60;
+        const newEndTime = `${newEndHour.toString().padStart(2, '0')}:${newEndMinute.toString().padStart(2, '0')}`;
+        updateSettings({ 
+          workingHoursStart: time,
+          workingHoursEnd: newEndTime
+        });
+      } else {
+        updateSettings({ workingHoursStart: time });
+      }
     } else {
-      updateSettings({ workingHoursEnd: time });
+      // Validate end time is after start time
+      const [startHour, startMinute] = settings.workingHoursStart.split(':').map(Number);
+      const [endHour, endMinute] = time.split(':').map(Number);
+      const startMinutes = startHour * 60 + startMinute;
+      const endMinutes = endHour * 60 + endMinute;
+      
+      if (endMinutes <= startMinutes) {
+        // If end time would be before/equal to start time, adjust start time
+        const newStartMinutes = endMinutes - 60; // Subtract 1 hour minimum
+        const newStartHour = Math.max(0, Math.floor(newStartMinutes / 60));
+        const newStartMinute = Math.max(0, newStartMinutes % 60);
+        const newStartTime = `${newStartHour.toString().padStart(2, '0')}:${newStartMinute.toString().padStart(2, '0')}`;
+        updateSettings({ 
+          workingHoursStart: newStartTime,
+          workingHoursEnd: time
+        });
+      } else {
+        updateSettings({ workingHoursEnd: time });
+      }
     }
   };
 
@@ -88,11 +124,19 @@ const WorkingHoursSettings: React.FC = () => {
           <DateTimePicker
             value={createDateFromTime(settings.workingHoursStart)}
             mode="time"
+            is24Hour={true}
             minuteInterval={15}
             onChange={(event, selectedDate) => {
-              setShowStartPicker(false);
-              if (selectedDate) {
+              if (Platform.OS === 'android') {
+                setShowStartPicker(false);
+              }
+              if (event.type === 'set' && selectedDate) {
                 handleTimeChange('start', formatTimeFromDate(selectedDate));
+                if (Platform.OS === 'ios') {
+                  setShowStartPicker(false);
+                }
+              } else if (event.type === 'dismissed') {
+                setShowStartPicker(false);
               }
             }}
           />
@@ -112,11 +156,19 @@ const WorkingHoursSettings: React.FC = () => {
           <DateTimePicker
             value={createDateFromTime(settings.workingHoursEnd)}
             mode="time"
+            is24Hour={true}
             minuteInterval={15}
             onChange={(event, selectedDate) => {
-              setShowEndPicker(false);
-              if (selectedDate) {
+              if (Platform.OS === 'android') {
+                setShowEndPicker(false);
+              }
+              if (event.type === 'set' && selectedDate) {
                 handleTimeChange('end', formatTimeFromDate(selectedDate));
+                if (Platform.OS === 'ios') {
+                  setShowEndPicker(false);
+                }
+              } else if (event.type === 'dismissed') {
+                setShowEndPicker(false);
               }
             }}
           />

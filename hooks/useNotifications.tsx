@@ -32,7 +32,7 @@ export const useNotifications = () => {
   useEffect(() => {
     setupNotificationHandler(colors, isDark);
     setupNotifications();
-  }, [colors, isDark]);
+  }, [colors, isDark, settings.defaultDelay]);
 
   const setupNotifications = async () => {
     // Request permissions
@@ -42,11 +42,14 @@ export const useNotifications = () => {
       return;
     }
 
+    // Get delay time for button title
+    const delayTime = settings.defaultDelay || '30m';
+
     // Setup notification categories with Done and Delay actions
     await Notifications.setNotificationCategoryAsync('task_reminder', [
       {
         identifier: 'done_action',
-        buttonTitle: '[DONE]',
+        buttonTitle: 'DONE',
         options: {
           opensAppToForeground: false,
           isDestructive: false,
@@ -55,7 +58,7 @@ export const useNotifications = () => {
       },
       {
         identifier: 'delay_action', 
-        buttonTitle: '[DELAY]',
+        buttonTitle: `DELAY ${delayTime}`,
         options: {
           opensAppToForeground: false,
           isDestructive: false,
@@ -66,16 +69,23 @@ export const useNotifications = () => {
 
     // Handle notification responses (button taps and dismissals)
     const responseSubscription = Notifications.addNotificationResponseReceivedListener(
-      (response: any) => {
+      async (response: any) => {
         const taskId = response.notification.request.content.data?.taskId || response.notification.request.identifier;
         const { actionIdentifier } = response;
         
         console.log('Notification response:', { taskId, actionIdentifier });
         
         if (actionIdentifier === 'done_action') {
+          // Mark task as done and cancel all notifications for this task
           toggleComplete(taskId);
+          await Notifications.cancelScheduledNotificationAsync(taskId);
+          await Notifications.dismissNotificationAsync(response.notification.request.identifier);
+          console.log(`Task ${taskId} marked as done, notification dismissed and cancelled`);
         } else if (actionIdentifier === 'delay_action') {
+          // Delay task and dismiss current notification
           delayTask(taskId);
+          await Notifications.dismissNotificationAsync(response.notification.request.identifier);
+          console.log(`Task ${taskId} delayed, notification dismissed`);
         } else if (actionIdentifier === Notifications.DEFAULT_ACTION_IDENTIFIER) {
           // User tapped the notification body - open app
           console.log('Notification tapped, opening app');

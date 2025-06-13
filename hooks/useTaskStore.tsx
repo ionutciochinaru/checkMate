@@ -97,7 +97,10 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
     // Cancel notification when task is completed
     const task = get().tasks.find(t => t.id === id);
     if (task?.isCompleted) {
+      // Cancel all scheduled notifications for this task
       Notifications.cancelScheduledNotificationAsync(id);
+      // Also dismiss any currently presented notifications
+      Notifications.dismissAllNotificationsAsync();
     } else {
       // Reschedule if uncompleted
       get().scheduleNotification(task!);
@@ -107,6 +110,9 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
   delayTask: (id) => {
     const { settings } = get();
     const delayMs = parseDelayString(settings.defaultDelay || '30m');
+    
+    // Cancel current notification first
+    Notifications.cancelScheduledNotificationAsync(id);
     
     set(state => ({
       tasks: state.tasks.map(task => 

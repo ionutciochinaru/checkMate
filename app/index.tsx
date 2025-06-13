@@ -389,8 +389,8 @@ export default function HomeScreen() {
     },
     addButton: {
       position: 'absolute',
-      bottom: 16,
-      right: 16,
+      bottom: 26,
+      right: 26,
       backgroundColor: colors.accent,
       borderWidth: 2,
       borderColor: colors.textSecondary,
@@ -628,13 +628,18 @@ export default function HomeScreen() {
               {/* Delay */}
               <View style={styles.settingRow}>
                 <Text style={styles.settingLabel}>DELAY:</Text>
-                <TextInput
-                  style={styles.delayInput}
-                  value={settings.defaultDelay || '30m'}
-                  onChangeText={(value) => updateSettings({ defaultDelay: value })}
-                  placeholder="30m"
-                  placeholderTextColor={colors.textMuted}
-                />
+                <View style={{ flexDirection: 'column', alignItems: 'flex-end' }}>
+                  <TextInput
+                    style={styles.delayInput}
+                    value={settings.defaultDelay || '30m'}
+                    onChangeText={(value) => updateSettings({ defaultDelay: value })}
+                    placeholder="30m"
+                    placeholderTextColor={colors.textMuted}
+                  />
+                  <Text style={[styles.helpText, { fontSize: Math.max(10, 8 * settings.fontScale), marginTop: 4, textAlign: 'right' }]}>
+                    // Format: 30m, 1h, 1h30m, 90s
+                  </Text>
+                </View>
               </View>
             </View>
             
