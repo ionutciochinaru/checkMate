@@ -21,8 +21,6 @@ let db: SQLite.SQLiteDatabase | null = null;
 export const initializeDatabase = async (): Promise<SQLite.SQLiteDatabase> => {
   if (db) return db;
   
-  console.log('🗄️ Initializing SQLite database...');
-  
   try {
     db = await SQLite.openDatabaseAsync('checkmate.db');
     
@@ -53,10 +51,8 @@ export const initializeDatabase = async (): Promise<SQLite.SQLiteDatabase> => {
       );
     `);
     
-    console.log('✅ Database initialized successfully');
     return db;
   } catch (error) {
-    console.error('❌ Failed to initialize database:', error);
     throw error;
   }
 };
@@ -69,9 +65,7 @@ export const saveSetting = async (key: string, value: any): Promise<void> => {
       'INSERT OR REPLACE INTO settings (key, value) VALUES (?, ?)',
       key, JSON.stringify(value)
     );
-    console.log(`✅ Setting ${key} saved successfully`);
   } catch (error) {
-    console.error(`❌ Failed to save setting ${key}:`, error);
     throw error;
   }
 };
@@ -90,14 +84,12 @@ export const loadSettings = async (): Promise<AppSettings> => {
           (settings as any)[key] = JSON.parse(row.value);
         }
       } catch (error) {
-        console.warn(`Failed to parse setting ${row.key}:`, error);
+        // Skip invalid settings
       }
     });
     
-    console.log('✅ Settings loaded successfully');
     return settings;
   } catch (error) {
-    console.error('❌ Failed to load settings:', error);
     return defaultSettings;
   }
 };
@@ -126,7 +118,6 @@ export const useMainStore = create<MainStore>((set, get) => ({
     
     if (isInitialized || isLoading) return;
     
-    console.log('🚀 Initializing main store...');
     set({ isLoading: true });
     
     try {
@@ -138,10 +129,7 @@ export const useMainStore = create<MainStore>((set, get) => ({
         isInitialized: true,
         isLoading: false 
       });
-      
-      console.log('✅ Main store initialized successfully');
     } catch (error) {
-      console.error('❌ Failed to initialize main store:', error);
       set({ 
         settings: defaultSettings,
         isInitialized: true,
@@ -151,25 +139,18 @@ export const useMainStore = create<MainStore>((set, get) => ({
   },
 
   updateSetting: async (key, value) => {
-    console.log(`🔧 Main Store: Updating ${key} to ${value}`);
-    
     try {
       await saveSetting(key, value);
       
       set(state => ({
         settings: { ...state.settings, [key]: value }
       }));
-      
-      console.log(`✅ Main Store: ${key} updated successfully`);
     } catch (error) {
-      console.error(`❌ Main Store: Failed to update ${key}:`, error);
       throw error;
     }
   },
 
   updateSettings: async (updates) => {
-    console.log('🔧 Main Store: Updating multiple settings:', updates);
-    
     try {
       // Save all settings to database
       await Promise.all(
@@ -180,10 +161,7 @@ export const useMainStore = create<MainStore>((set, get) => ({
       set(state => ({
         settings: { ...state.settings, ...updates }
       }));
-      
-      console.log('✅ Main Store: Multiple settings updated successfully');
     } catch (error) {
-      console.error('❌ Main Store: Failed to update settings:', error);
       throw error;
     }
   },

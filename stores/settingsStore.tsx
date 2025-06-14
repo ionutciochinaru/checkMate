@@ -22,7 +22,6 @@ export const useSettingsStore = create<SettingsStore>((set, get) => ({
   isLoading: false,
 
   loadSettingsForPage: async () => {
-    console.log('🔄 Settings Store: Loading settings for page...');
     set({ isLoading: true });
     
     try {
@@ -40,10 +39,7 @@ export const useSettingsStore = create<SettingsStore>((set, get) => ({
         isLoaded: true,
         isLoading: false 
       });
-      
-      console.log('✅ Settings Store: Settings loaded from main store');
     } catch (error) {
-      console.error('❌ Settings Store: Failed to load settings:', error);
       set({ 
         isLoaded: true,
         isLoading: false 
@@ -52,8 +48,6 @@ export const useSettingsStore = create<SettingsStore>((set, get) => ({
   },
 
   updateSetting: async (key, value) => {
-    console.log(`🔧 Settings Store: Updating ${key} to ${value}`);
-    
     try {
       const currentSettings = get().settings;
       let newSettings = { ...currentSettings, [key]: value };
@@ -61,12 +55,10 @@ export const useSettingsStore = create<SettingsStore>((set, get) => ({
       // Apply mutual exclusivity logic
       if (key === 'workingHoursEnabled' && !value) {
         newSettings.twentyFourHourMode = true;
-        console.log('🔄 Settings Store: Auto-enabled 24H mode (work hours disabled)');
       }
       
       if (key === 'twentyFourHourMode' && value) {
         newSettings.workingHoursEnabled = false;
-        console.log('🔄 Settings Store: Auto-disabled work hours (24H mode enabled)');
       }
       
       // Update local store immediately for responsive UI
@@ -88,10 +80,7 @@ export const useSettingsStore = create<SettingsStore>((set, get) => ({
       } else {
         await mainStore.updateSetting(key, value);
       }
-      
-      console.log(`✅ Settings Store: ${key} saved successfully`);
     } catch (error) {
-      console.error(`❌ Settings Store: Failed to save ${key}:`, error);
       
       // Revert local changes on error
       const mainStore = useMainStore.getState();
@@ -103,8 +92,6 @@ export const useSettingsStore = create<SettingsStore>((set, get) => ({
   },
 
   updateMultipleSettings: async (updates) => {
-    console.log('🔧 Settings Store: Updating multiple settings:', updates);
-    
     try {
       const currentSettings = get().settings;
       const newSettings = { ...currentSettings, ...updates };
@@ -115,10 +102,7 @@ export const useSettingsStore = create<SettingsStore>((set, get) => ({
       // Update main store
       const mainStore = useMainStore.getState();
       await mainStore.updateSettings(updates);
-      
-      console.log('✅ Settings Store: Multiple settings saved successfully');
     } catch (error) {
-      console.error('❌ Settings Store: Failed to save multiple settings:', error);
       
       // Revert local changes on error
       const mainStore = useMainStore.getState();
@@ -130,18 +114,14 @@ export const useSettingsStore = create<SettingsStore>((set, get) => ({
   },
 
   saveAndExit: async () => {
-    console.log('💾 Settings Store: Saving settings on exit...');
-    
     try {
       const { settings } = get();
       
       // Sync all settings to main store
       const mainStore = useMainStore.getState();
       await mainStore.updateSettings(settings);
-      
-      console.log('✅ Settings Store: All settings synced on exit');
     } catch (error) {
-      console.error('❌ Settings Store: Failed to save on exit:', error);
+      // Silently fail on exit
     }
   }
 }));

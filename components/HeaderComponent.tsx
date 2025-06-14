@@ -3,6 +3,7 @@ import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { router } from 'expo-router';
 import { useThemedStyles, useTheme } from '../hooks/useTheme';
 import { FilterType } from '../hooks/useTaskFilter';
+import { typography, spacing } from '../utils/y2k-styles';
 
 interface HeaderComponentProps {
   tasks: any[];
@@ -25,12 +26,7 @@ export default function HeaderComponent({
 }: HeaderComponentProps) {
   const { colors, isDark, theme, setTheme } = useTheme();
 
-  const currentTime = new Date().toLocaleTimeString('en-US', { 
-    hour12: false, 
-    hour: '2-digit', 
-    minute: '2-digit',
-    second: '2-digit'
-  });
+  // Removed time display for cleaner layout
 
   const currentDate = new Date().toLocaleDateString('en-US', {
     year: 'numeric',
@@ -44,91 +40,88 @@ export default function HeaderComponent({
       borderBottomWidth: 2,
       borderBottomColor: colors.border,
       paddingTop: 50,
-      paddingBottom: 12,
-      paddingHorizontal: 12,
+      paddingBottom: spacing.md,
+      paddingHorizontal: spacing.screenMargin,
     },
     terminalBar: {
       flexDirection: 'row',
       justifyContent: 'space-between',
       alignItems: 'center',
-      marginBottom: 6,
+      marginBottom: spacing.xs,
       flexWrap: 'wrap',
-      minHeight: 32,
+      minHeight: spacing.xl,
     },
     terminalTitle: {
+      ...typography.sectionHeader,
       fontFamily: 'JetBrainsMono_700Bold',
-      fontSize: 18 * fontScale,
+      fontSize: typography.sectionHeader.fontSize * fontScale,
       color: colors.text,
       letterSpacing: 1,
-      fontWeight: '800',
       flexShrink: 1,
     },
-    terminalTime: {
-      fontFamily: 'JetBrainsMono_500Medium',
-      fontSize: 12 * fontScale,
-      color: colors.textSecondary,
-      letterSpacing: 0.5,
-      fontWeight: '600',
-      flexShrink: 0,
-    },
+    // Removed terminal time styles
     topRightControls: {
       flexDirection: 'row',
       alignItems: 'center',
-      gap: 8,
-      flexShrink: 1,
+      gap: spacing.xs,
+      flexShrink: 0,
     },
     themeToggle: {
-      padding: 6,
+      paddingHorizontal: spacing.xs,
+      paddingVertical: spacing.xs,
       backgroundColor: colors.surfaceVariant,
-      borderWidth: 2,
+      borderWidth: 1,
       borderColor: colors.accent,
       borderRadius: 2,
-      minWidth: 48,
+      minWidth: 36,
+      minHeight: 28,
       alignItems: 'center',
       justifyContent: 'center',
     },
     themeToggleText: {
       fontFamily: 'JetBrainsMono_700Bold',
-      fontSize: 12 * fontScale,
+      fontSize: 10 * fontScale,
       color: colors.accent,
-      letterSpacing: 0.5,
+      letterSpacing: 0.3,
       fontWeight: '800',
     },
     statusLine: {
       backgroundColor: colors.surfaceVariant,
       borderWidth: 1,
       borderColor: colors.border,
-      padding: 6,
-      marginBottom: 12,
+      padding: spacing.sm,
+      marginBottom: spacing.componentGap,
       flexDirection: 'row',
       justifyContent: 'space-between',
       alignItems: 'center',
       flexWrap: 'wrap',
-      minHeight: 36,
+      minHeight: spacing.touchTarget - 8,
     },
     settingsButton: {
-      padding: 6,
+      paddingHorizontal: spacing.xs,
+      paddingVertical: spacing.xs,
       backgroundColor: colors.surfaceVariant,
-      borderWidth: 2,
+      borderWidth: 1,
       borderColor: colors.accent,
       borderRadius: 2,
-      minWidth: 48,
+      minWidth: 36,
+      minHeight: 28,
       alignItems: 'center',
       justifyContent: 'center',
     },
     settingsIcon: {
       fontFamily: 'JetBrainsMono_700Bold',
-      fontSize: 12 * fontScale,
+      fontSize: 10 * fontScale,
       color: colors.accent,
-      letterSpacing: 0.5,
+      letterSpacing: 0.3,
       fontWeight: '800',
     },
     statusText: {
+      ...typography.caption,
       fontFamily: 'JetBrainsMono_500Medium',
-      fontSize: 12 * fontScale,
+      fontSize: typography.caption.fontSize * fontScale,
       color: colors.textSecondary,
       letterSpacing: 0.3,
-      fontWeight: '600',
       flexShrink: 1,
     },
     filterContainer: {
@@ -272,16 +265,15 @@ export default function HeaderComponent({
             }}
           >
             <Text style={styles.themeToggleText}>
-              {theme === 'light' ? '[+LGT]' : theme === 'dark' ? '[+TRM]' : '[+AUTO]'}
+              {theme === 'light' ? 'LGT' : theme === 'dark' ? 'TRM' : 'AUTO'}
             </Text>
           </TouchableOpacity>
           <TouchableOpacity
               style={styles.settingsButton}
               onPress={() => router.push('/settings')}
           >
-            <Text style={styles.settingsIcon}>[+CFG]</Text>
+            <Text style={styles.settingsIcon}>CFG</Text>
           </TouchableOpacity>
-          <Text style={styles.terminalTime}>{currentTime}</Text>
         </View>
       </View>
 

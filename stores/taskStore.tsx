@@ -50,22 +50,19 @@ export const loadTasks = async (): Promise<Task[]> => {
       lastCompletedAt: row.lastCompletedAt ? new Date(row.lastCompletedAt) : undefined
     }));
   } catch (error) {
-    console.error('❌ Failed to load tasks:', error);
     return [];
   }
 };
 
 export const saveTask = async (task: Task): Promise<void> => {
   try {
-    console.log(`💾 Attempting to save task: ${task.title}`);
     const database = await initializeDatabase();
     
     if (!database) {
       throw new Error('Database not initialized');
     }
     
-    console.log(`💾 Database ready, executing INSERT for task: ${task.title}`);
-    const result = await database.runAsync(`
+    await database.runAsync(`
       INSERT OR REPLACE INTO tasks (
         id, title, description, isRecurring, recurringInterval, reminderTime, 
         createdAt, delayCount, isCompleted, originalReminderTime, ignoreWorkingHours,
@@ -85,10 +82,7 @@ export const saveTask = async (task: Task): Promise<void> => {
       task.completionCount || 0,
       task.lastCompletedAt?.toISOString() || null
     );
-    
-    console.log(`✅ Task ${task.title} saved successfully, result:`, result);
   } catch (error) {
-    console.error(`❌ Failed to save task ${task.title}:`, error);
     throw error;
   }
 };
@@ -97,9 +91,7 @@ export const deleteTaskFromDb = async (id: string): Promise<void> => {
   try {
     const database = await initializeDatabase();
     await database.runAsync('DELETE FROM tasks WHERE id = ?', id);
-    console.log(`✅ Task ${id} deleted successfully`);
   } catch (error) {
-    console.error(`❌ Failed to delete task ${id}:`, error);
     throw error;
   }
 };
@@ -132,7 +124,6 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
     const { isLoading } = get();
     if (isLoading) return;
     
-    console.log('📂 Loading tasks...');
     set({ isLoading: true });
     
     try {
@@ -142,9 +133,7 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
         isLoaded: true,
         isLoading: false 
       });
-      console.log(`✅ Loaded ${loadedTasks.length} tasks`);
     } catch (error) {
-      console.error('❌ Failed to load tasks:', error);
       set({ 
         isLoaded: true,
         isLoading: false 
@@ -155,7 +144,6 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
   addTask: async (taskData) => {
     const { isLoaded } = get();
     if (!isLoaded) {
-      console.warn('Task store not fully loaded, waiting...');
       await get().loadTasks();
     }
 
@@ -170,16 +158,12 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
     };
     
     try {
-      console.log(`📝 Adding task "${newTask.title}"...`);
       await saveTask(newTask);
       set(state => ({ tasks: [...state.tasks, newTask] }));
       
       // Schedule notification for the new task
       await get().scheduleNotification(newTask);
-      console.log(`✅ Task "${newTask.title}" added successfully`);
-      return newTask;
     } catch (error) {
-      console.error(`❌ Failed to add task "${newTask.title}":`, error);
       throw error;
     }
   },
@@ -189,12 +173,10 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
     const taskIndex = currentTasks.findIndex(task => task.id === id);
     
     if (taskIndex === -1) {
-      console.warn(`Task ${id} not found for update`);
       return;
     }
     
     try {
-      console.log(`📝 Updating task ${id}...`);
       const updatedTask = { ...currentTasks[taskIndex], ...updates };
       await saveTask(updatedTask);
       
@@ -206,10 +188,7 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
       if (updates.reminderTime) {
         await get().scheduleNotification(updatedTask);
       }
-      
-      console.log(`✅ Task ${id} updated successfully`);
     } catch (error) {
-      console.error(`❌ Failed to update task ${id}:`, error);
       throw error;
     }
   },
@@ -219,7 +198,6 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
     const task = currentTasks.find(t => t.id === id);
     
     if (!task) {
-      console.warn(`Task ${id} not found for toggle`);
       return;
     }
     
@@ -240,11 +218,9 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
           originalReminderTime: undefined // Clear original time since this is a fresh schedule
         };
         
-        console.log(`🔄 Loop task ${id} completed. Count: ${updatedTask.completionCount}, Next: ${nextReminderTime}`);
       } else {
         // Regular task: toggle completion status
         updatedTask = { ...task, isCompleted: !task.isCompleted };
-        console.log(`✅ Regular task ${id} toggled to ${updatedTask.isCompleted ? 'completed' : 'active'}`);
       }
       
       await saveTask(updatedTask);
@@ -264,7 +240,6 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
       }
       
     } catch (error) {
-      console.error(`❌ Failed to toggle task ${id}:`, error);
       throw error;
     }
   },
@@ -277,7 +252,6 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
     const task = currentTasks.find(t => t.id === id);
     
     if (!task) {
-      console.warn(`Task ${id} not found for delay`);
       return;
     }
 
@@ -301,10 +275,7 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
 
       // Reschedule notification with new delay time
       await get().scheduleNotification(updatedTask);
-      
-      console.log(`✅ Task ${id} delayed by ${defaultDelay}`);
     } catch (error) {
-      console.error(`❌ Failed to delay task ${id}:`, error);
       throw error;
     }
   },
@@ -318,10 +289,7 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
       set(state => ({
         tasks: state.tasks.filter(task => task.id !== id)
       }));
-      
-      console.log(`✅ Task ${id} deleted successfully`);
     } catch (error) {
-      console.error(`❌ Failed to delete task ${id}:`, error);
       throw error;
     }
   },
@@ -367,10 +335,8 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
           date: task.reminderTime
         } as any
       });
-      
-      console.log(`✅ Notification scheduled for task "${title}" at ${task.reminderTime}`);
     } catch (error) {
-      console.error('❌ Failed to schedule notification:', error);
+      // Silently fail notification scheduling
     }
   }
 }));

@@ -77,22 +77,17 @@ export const useNotifications = () => {
         const taskId = response.notification.request.content.data?.taskId || response.notification.request.identifier;
         const { actionIdentifier } = response;
         
-        console.log('Notification response:', { taskId, actionIdentifier });
-        
         if (actionIdentifier === 'done_action') {
           // Mark task as done and cancel all notifications for this task
           toggleComplete(taskId);
           await Notifications.cancelScheduledNotificationAsync(taskId);
           await Notifications.dismissNotificationAsync(response.notification.request.identifier);
-          console.log(`Task ${taskId} marked as done, notification dismissed and cancelled`);
         } else if (actionIdentifier === 'delay_action') {
           // Delay task and dismiss current notification
           delayTask(taskId);
           await Notifications.dismissNotificationAsync(response.notification.request.identifier);
-          console.log(`Task ${taskId} delayed, notification dismissed`);
         } else if (actionIdentifier === Notifications.DEFAULT_ACTION_IDENTIFIER) {
           // User tapped the notification body - open app
-          console.log('Notification tapped, opening app');
         }
       }
     );
@@ -113,12 +108,11 @@ export const useNotifications = () => {
             
             // If notification was dismissed without action, treat as delay
             if (!stillPresent) {
-              console.log('Notification dismissed, applying delay for task:', taskId);
               // Note: We can't definitively detect dismissal vs action, 
               // so this is a best-effort approach
             }
           } catch (error) {
-            console.error('Error checking notification status:', error);
+            // Silently handle error
           }
         }, 1000); // Check after 1 second
       }
@@ -144,7 +138,6 @@ export const useNotifications = () => {
       
       if (!isWithinWorkingHours) {
         // Don't schedule notification if outside working hours and not in 24h mode
-        console.log(`Task "${task.title}" scheduled outside working hours, notification not scheduled (24h mode disabled)`);
         return;
       }
       
@@ -211,10 +204,8 @@ export const useNotifications = () => {
           date: reminderTime
         } as any
       });
-      
-      console.log(`Scheduled notification for task "${title}" at ${reminderTime}`);
     } catch (error) {
-      console.error('Failed to schedule notification:', error);
+      // Silently handle notification scheduling errors
     }
   };
 

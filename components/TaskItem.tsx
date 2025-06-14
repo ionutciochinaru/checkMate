@@ -1,21 +1,18 @@
 import React from 'react';
 import { View, Text as RNText, StyleSheet, TouchableOpacity } from 'react-native';
-import { Text } from 'react-native-paper';
 import Animated, { 
   FadeInUp, 
   FadeOutRight, 
   useSharedValue, 
   useAnimatedStyle, 
   withSpring,
-  withTiming,
-  runOnJS
 } from 'react-native-reanimated';
-import { useTheme } from '../hooks/useTheme';
+import { useTheme , useThemedStyles } from '../hooks/useTheme';
 import { router } from 'expo-router';
 import { useTaskStore, useMainStore } from '../hooks/useTaskStore';
 import { Task } from '../types/task';
-import { y2kStyles, y2kColors } from '../utils/y2k-styles';
-import { useThemedStyles } from '../hooks/useTheme';
+import { y2kColors, typography, spacing } from '../utils/y2k-styles';
+
 import { showAlert } from './CustomAlert';
 
 interface TaskItemProps {
@@ -27,11 +24,9 @@ const TaskItem: React.FC<TaskItemProps> = React.memo(({ task }) => {
   const { getSettings } = useMainStore();
   const { colors, reducedMotion } = useTheme();
   
-  // Get delay time from settings
   const settings = getSettings();
   const delayTime = settings.defaultDelay || '30m';
   
-  // Animation values
   const cardScale = useSharedValue(1);
   const buttonPulse = useSharedValue(1);
 
@@ -40,7 +35,6 @@ const TaskItem: React.FC<TaskItemProps> = React.memo(({ task }) => {
     const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
     const tomorrow = new Date(today.getTime() + 24 * 60 * 60 * 1000);
     
-    // Ensure reminderTime is a proper Date object
     const reminderDate = task.reminderTime instanceof Date ? task.reminderTime : new Date(task.reminderTime);
     if (isNaN(reminderDate.getTime())) {
       return { icon: '[ERR]', text: 'Invalid date', style: 'overdue' };
@@ -48,7 +42,6 @@ const TaskItem: React.FC<TaskItemProps> = React.memo(({ task }) => {
     
     const taskDate = new Date(reminderDate.getFullYear(), reminderDate.getMonth(), reminderDate.getDate());
     
-    // Loop tasks are never "completed" - they just keep cycling
     if (task.isCompleted && !task.isRecurring) {
       return { icon: '[OK]', text: 'Completed', style: 'completed' };
     }
@@ -76,7 +69,6 @@ const TaskItem: React.FC<TaskItemProps> = React.memo(({ task }) => {
 
   const taskStatus = getTaskStatus();
 
-  // Get card border color based on task status
   const getCardBorderColor = () => {
     if (task.isCompleted) return y2kColors.limeGreen;
     
@@ -91,14 +83,14 @@ const TaskItem: React.FC<TaskItemProps> = React.memo(({ task }) => {
 
   const styles = useThemedStyles((colors, isDark, fontScale, reducedMotion) => StyleSheet.create({
     container: {
-      marginBottom: 12,
+      marginBottom: spacing.componentGap,
     },
     taskCard: {
       backgroundColor: colors.surface,
       borderWidth: 2,
       borderColor: getCardBorderColor(),
       borderRadius: 0,
-      padding: 12,
+      padding: spacing.cardPadding,
       shadowColor: isDark ? getCardBorderColor() : 'transparent',
       shadowOffset: { width: 0, height: 0 },
       shadowOpacity: isDark ? 0.3 : 0,
@@ -114,16 +106,24 @@ const TaskItem: React.FC<TaskItemProps> = React.memo(({ task }) => {
       borderStyle: 'dashed',
     },
     mainTaskLine: {
+      marginBottom: spacing.sm,
+      minHeight: spacing.touchTarget,
+    },
+    
+    firstRow: {
       flexDirection: 'row',
       justifyContent: 'space-between',
       alignItems: 'center',
-      marginBottom: 8,
+      marginBottom: spacing.xs,
+    },
+    
+    titleRow: {
+      marginBottom: spacing.xs,
     },
     leftSection: {
       flexDirection: 'row',
       alignItems: 'center',
-      flex: 1,
-      gap: 8,
+      gap: spacing.sm,
     },
     rightSection: {
       flexDirection: 'row',
@@ -283,12 +283,13 @@ const TaskItem: React.FC<TaskItemProps> = React.memo(({ task }) => {
       flex: 1,
     },
     taskTitle: {
+      ...typography.secondary,
       fontFamily: 'JetBrainsMono_700Bold',
-      fontSize: 14 * fontScale,
+      fontSize: typography.secondary.fontSize * fontScale,
       color: colors.text,
       letterSpacing: 0.8,
       fontWeight: '700',
-      flex: 1,
+      // paddingLeft: spacing.xl + spacing.sm, // Align with ID after checkbox
     },
     completedTitle: {
       color: colors.textMuted,
@@ -296,12 +297,12 @@ const TaskItem: React.FC<TaskItemProps> = React.memo(({ task }) => {
       opacity: 0.7,
     },
     taskDescription: {
+      ...typography.caption,
       fontFamily: 'JetBrainsMono_400Regular',
-      fontSize: 11 * fontScale,
+      fontSize: typography.caption.fontSize * fontScale,
       color: colors.textSecondary,
       letterSpacing: 0.5,
-      lineHeight: 16 * fontScale,
-      fontWeight: '400',
+      lineHeight: typography.caption.lineHeight * fontScale,
       fontStyle: 'italic',
     },
     completedDescription: {
@@ -319,10 +320,10 @@ const TaskItem: React.FC<TaskItemProps> = React.memo(({ task }) => {
       borderWidth: 2,
       borderColor: colors.border,
       backgroundColor: colors.surface,
-      paddingHorizontal: 12,
-      paddingVertical: 8,
+      paddingHorizontal: spacing.componentGap,
+      paddingVertical: spacing.sm,
       minWidth: 56,
-      minHeight: 36,
+      minHeight: spacing.touchTarget,
       alignItems: 'center',
       justifyContent: 'center',
     },
@@ -331,8 +332,9 @@ const TaskItem: React.FC<TaskItemProps> = React.memo(({ task }) => {
       backgroundColor: colors.surface,
     },
     actionText: {
+      ...typography.caption,
       fontFamily: 'JetBrainsMono_700Bold',
-      fontSize: 11 * fontScale,
+      fontSize: typography.caption.fontSize * fontScale,
       color: colors.textSecondary,
       letterSpacing: 1.5,
       fontWeight: '800',
@@ -475,45 +477,82 @@ const TaskItem: React.FC<TaskItemProps> = React.memo(({ task }) => {
         task.isCompleted && styles.completedCard,
         taskStatus.style === 'future' && styles.futureCard
       ]}>
-        {/* Main task line: checkbox + ID + title + badges */}
-        <TouchableOpacity 
-          style={styles.mainTaskLine}
-          onPress={handleToggleComplete}
-          activeOpacity={0.7}
-        >
-          <View style={styles.leftSection}>
-            <View style={[styles.checkbox, task.isCompleted && styles.checkedBox]}>
-              <RNText style={[styles.checkboxText, task.isCompleted && styles.checkedText]}>
-                {task.isCompleted ? '[X]' : '[ ]'}
+        {/* Main task section with separate rows */}
+        <View style={styles.mainTaskLine}>
+          {/* First row: checkbox + ID + badges */}
+          {task.isRecurring ? (
+            <View style={styles.firstRow}>
+              <View style={styles.leftSection}>
+                <RNText style={styles.taskId}>#{task.id.slice(-4).toUpperCase()}</RNText>
+              </View>
+              
+              <View style={styles.rightSection}>
+                {task.delayCount > 0 && (
+                  <RNText style={[styles.statusBadge, styles.delayBadge]}>
+                    {getDelayMessage(task.delayCount)}
+                  </RNText>
+                )}
+                {task.isRecurring && (
+                  <RNText style={[styles.statusBadge, styles.loopBadge]}>LOOP</RNText>
+                )}
+                {task.isRecurring && (task.completionCount || 0) > 0 && (
+                  <RNText style={[styles.statusBadge, styles.completionBadge]}>
+                    DONE: {task.completionCount}x
+                  </RNText>
+                )}
+                {task.ignoreWorkingHours && (
+                  <RNText style={[styles.statusBadge, styles.alwaysOnBadge]}>24H</RNText>
+                )}
+              </View>
+            </View>
+          ) : (
+            <TouchableOpacity 
+              style={styles.firstRow}
+              onPress={handleToggleComplete}
+              activeOpacity={0.7}
+            >
+              <View style={styles.leftSection}>
+                <View style={[styles.checkbox, task.isCompleted && styles.checkedBox]}>
+                  <RNText style={[styles.checkboxText, task.isCompleted && styles.checkedText]}>
+                    {task.isCompleted ? '[X]' : '[ ]'}
+                  </RNText>
+                </View>
+                
+                <RNText style={styles.taskId}>#{task.id.slice(-4).toUpperCase()}</RNText>
+              </View>
+              
+              <View style={styles.rightSection}>
+                {task.delayCount > 0 && (
+                  <RNText style={[styles.statusBadge, styles.delayBadge]}>
+                    {getDelayMessage(task.delayCount)}
+                  </RNText>
+                )}
+                {task.ignoreWorkingHours && (
+                  <RNText style={[styles.statusBadge, styles.alwaysOnBadge]}>24H</RNText>
+                )}
+              </View>
+            </TouchableOpacity>
+          )}
+          
+          {/* Second row: title */}
+          {task.isRecurring ? (
+            <View style={styles.titleRow}>
+              <RNText style={[styles.taskTitle, task.isCompleted && styles.completedTitle]}>
+                {task.title.toUpperCase()}
               </RNText>
             </View>
-            
-            <RNText style={styles.taskId}>#{task.id.slice(-4).toUpperCase()}</RNText>
-            
-            <RNText style={[styles.taskTitle, task.isCompleted && styles.completedTitle]}>
-              {task.title.toUpperCase()}
-            </RNText>
-          </View>
-          
-          <View style={styles.rightSection}>
-            {task.delayCount > 0 && (
-              <RNText style={[styles.statusBadge, styles.delayBadge]}>
-                {getDelayMessage(task.delayCount)}
+          ) : (
+            <TouchableOpacity 
+              style={styles.titleRow}
+              onPress={handleToggleComplete}
+              activeOpacity={0.7}
+            >
+              <RNText style={[styles.taskTitle, task.isCompleted && styles.completedTitle]}>
+                {task.title.toUpperCase()}
               </RNText>
-            )}
-            {task.isRecurring && (
-              <RNText style={[styles.statusBadge, styles.loopBadge]}>LOOP</RNText>
-            )}
-            {task.isRecurring && (task.completionCount || 0) > 0 && (
-              <RNText style={[styles.statusBadge, styles.completionBadge]}>
-                DONE: {task.completionCount}x
-              </RNText>
-            )}
-            {task.ignoreWorkingHours && (
-              <RNText style={[styles.statusBadge, styles.alwaysOnBadge]}>24H</RNText>
-            )}
-          </View>
-        </TouchableOpacity>
+            </TouchableOpacity>
+          )}
+        </View>
 
         {/* Schedule information */}
         <View style={styles.scheduleSection}>
@@ -608,5 +647,7 @@ const TaskItem: React.FC<TaskItemProps> = React.memo(({ task }) => {
     </Animated.View>
   );
 });
+
+TaskItem.displayName = 'TaskItem';
 
 export default TaskItem;

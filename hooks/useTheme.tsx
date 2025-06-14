@@ -157,7 +157,7 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
           setThemeState(savedTheme as Theme);
         }
       } catch (error) {
-        console.error('Failed to load theme:', error);
+        // Use default theme
       }
     };
     loadTheme();
@@ -185,7 +185,7 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     try {
       await AsyncStorage.setItem('theme', newTheme);
     } catch (error) {
-      console.error('Failed to save theme:', error);
+      // Silently fail theme save
     }
   };
 
@@ -223,11 +223,6 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   useEffect(() => {
     // Colors will automatically update when settings change because
     // we're getting settings directly from the store
-    console.log('🎨 Theme: Settings updated', {
-      fontScale: settings.fontScale,
-      highContrast: settings.highContrast,
-      reducedMotion: settings.reducedMotion
-    });
   }, [settings.fontScale, settings.highContrast, settings.reducedMotion]);
 
   const value: ThemeContextValue = {

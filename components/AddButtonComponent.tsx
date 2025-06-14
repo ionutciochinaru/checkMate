@@ -3,6 +3,7 @@ import { TouchableOpacity, Text, StyleSheet } from 'react-native';
 import { router } from 'expo-router';
 import { useThemedStyles } from '../hooks/useTheme';
 import { FilterType } from '../hooks/useTaskFilter';
+import { spacing, typography } from '../utils/y2k-styles';
 
 interface AddButtonComponentProps {
   tasks: any[];
@@ -22,19 +23,23 @@ export default function AddButtonComponent({
   const styles = useThemedStyles((colors, isDark, fontScale, reducedMotion) => StyleSheet.create({
     addButton: {
       position: 'absolute',
-      bottom: 26,
-      right: 26,
+      bottom: spacing.lg,
+      right: spacing.screenMargin,
       backgroundColor: colors.accent,
       borderWidth: 2,
       borderColor: colors.textSecondary,
-      paddingHorizontal: 12,
-      paddingVertical: 10,
+      paddingHorizontal: spacing.md,
+      paddingVertical: spacing.componentGap,
+      minHeight: spacing.touchTarget,
       color: colors.surface,
       maxWidth: '60%',
+      alignItems: 'center',
+      justifyContent: 'center',
     },
     addButtonText: {
+      ...typography.button,
       fontFamily: 'JetBrainsMono_700Bold',
-      fontSize: 12 * fontScale,
+      fontSize: typography.caption.fontSize * fontScale,
       color: colors.surface,
       letterSpacing: 0.5,
       textAlign: 'center',

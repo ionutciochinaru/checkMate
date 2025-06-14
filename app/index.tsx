@@ -8,6 +8,7 @@ import HeaderComponent from '../components/HeaderComponent';
 import EmptyStateComponent from '../components/EmptyStateComponent';
 import TaskListComponent from '../components/TaskListComponent';
 import AddButtonComponent from '../components/AddButtonComponent';
+import { spacing } from '../utils/y2k-styles';
 
 export default function HomeScreen() {
   const { tasks } = useTaskStore();
@@ -26,7 +27,7 @@ export default function HomeScreen() {
       flex: 1,
     },
     contentContainer: {
-      padding: 12,
+      padding: spacing.screenMargin,
     },
   }));
 

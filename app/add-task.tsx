@@ -124,7 +124,6 @@ export default function AddTaskScreen() {
         router.back();
       }, 100);
     } catch (error) {
-      console.error('Failed to save task:', error);
       showAlert('Error', 'Failed to save task');
     }
   };
@@ -470,7 +469,6 @@ export default function AddTaskScreen() {
           <TouchableOpacity
               style={styles.backButton}
               onPress={() => {
-                console.log('Back button pressed');
                 router.back();
               }}
           >

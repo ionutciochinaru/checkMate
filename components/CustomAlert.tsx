@@ -289,8 +289,6 @@ class AlertManager {
 
   show(title: string, message?: string, buttons?: AlertButton[]) {
     if (!this.alertComponent?.current) {
-      console.warn('CustomAlert component not mounted, falling back to console.log');
-      console.log('Alert:', title, message);
       return;
     }
 

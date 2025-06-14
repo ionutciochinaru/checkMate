@@ -37,11 +37,9 @@ export default function SettingsScreen() {
   // Load settings when page comes into focus
   useFocusEffect(
     React.useCallback(() => {
-      console.log('📱 Settings Page: Focus gained, loading settings...');
       loadSettingsForPage();
       
       return () => {
-        console.log('📱 Settings Page: Focus lost, saving settings...');
         saveAndExit();
       };
     }, [loadSettingsForPage, saveAndExit])
@@ -603,7 +601,6 @@ export default function SettingsScreen() {
                   opened = true;
                   break;
                 } catch (error) {
-                  console.log(`Failed to open ${url}:`, error);
                   continue;
                 }
               }

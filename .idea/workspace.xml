@@ -4,33 +4,22 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="171acf02-a826-4aaf-937f-dcb4d8420b57" name="Changes" comment="UI improvements">
-      <change afterPath="$PROJECT_DIR$/app/settings.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/components/AddButtonComponent.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/components/CustomAlert.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/components/DelayInputComponent.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/components/EmptyStateComponent.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/components/HeaderComponent.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/components/TaskListComponent.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/eslint.config.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/hooks/useSettingsStore.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/hooks/useTaskFilter.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/stores/mainStore.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/stores/settingsStore.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/stores/taskStore.tsx" afterDir="false" />
+    <list default="true" id="171acf02-a826-4aaf-937f-dcb4d8420b57" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app.config.ts" beforeDir="false" afterPath="$PROJECT_DIR$/app.config.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/_layout.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/_layout.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/add-task.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/add-task.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/index.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/index.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/settings.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/settings.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/components/AddButtonComponent.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/components/AddButtonComponent.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/components/CustomAlert.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/components/CustomAlert.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/components/HeaderComponent.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/components/HeaderComponent.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/components/TaskItem.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/components/TaskItem.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/components/WorkingHoursSettings.tsx" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/hooks/useNotifications.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/hooks/useNotifications.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/hooks/useTaskStore.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/hooks/useTaskStore.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/hooks/useTheme.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/hooks/useTheme.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/types/task.ts" beforeDir="false" afterPath="$PROJECT_DIR$/types/task.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/stores/mainStore.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/stores/mainStore.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/stores/settingsStore.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/stores/settingsStore.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/stores/taskStore.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/stores/taskStore.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tailwind.config.js" beforeDir="false" afterPath="$PROJECT_DIR$/tailwind.config.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/utils/y2k-styles.ts" beforeDir="false" afterPath="$PROJECT_DIR$/utils/y2k-styles.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -40,7 +29,7 @@
   <component name="Git.Settings">
     <option name="RECENT_BRANCH_BY_REPOSITORY">
       <map>
-        <entry key="$PROJECT_DIR$" value="prod" />
+        <entry key="$PROJECT_DIR$" value="master" />
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -56,28 +45,28 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;ASKED_ADD_EXTERNAL_FILES&quot;: &quot;true&quot;,
-    &quot;ASKED_SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
-    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;D:/WebDev/checkMate&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.standard&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.standard&quot;: &quot;&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;npm.android.executor&quot;: &quot;Run&quot;,
-    &quot;npm.start.executor&quot;: &quot;Run&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;sshConsole&quot;,
-    &quot;ts.external.directory.path&quot;: &quot;D:\\WebDev\\checkMate\\node_modules\\typescript\\lib&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ASKED_ADD_EXTERNAL_FILES": "true",
+    "ASKED_SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "git-widget-placeholder": "ui-ux-best-practices",
+    "ignore.virus.scanning.warn.message": "true",
+    "last_opened_file_path": "D:/WebDev/checkMate",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.standard": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.standard": "",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "npm.android.executor": "Run",
+    "npm.start.executor": "Run",
+    "settings.editor.selected.configurable": "sshConsole",
+    "ts.external.directory.path": "D:\\WebDev\\checkMate\\node_modules\\typescript\\lib",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="D:\WebDev\checkMate\assets" />
@@ -145,7 +134,7 @@
       <workItem from="1749750659425" duration="920000" />
       <workItem from="1749792455051" duration="19443000" />
       <workItem from="1749883660850" duration="4491000" />
-      <workItem from="1749904789209" duration="2891000" />
+      <workItem from="1749904789209" duration="5312000" />
     </task>
     <task id="LOCAL-00001" summary="first commit">
       <option name="closed" value="true" />
@@ -283,7 +272,15 @@
       <option name="project" value="LOCAL" />
       <updated>1749812504179</updated>
     </task>
-    <option name="localTasksCounter" value="18" />
+    <task id="LOCAL-00018" summary="UI improvements">
+      <option name="closed" value="true" />
+      <created>1749908125049</created>
+      <option name="number" value="00018" />
+      <option name="presentableId" value="LOCAL-00018" />
+      <option name="project" value="LOCAL" />
+      <updated>1749908125049</updated>
+    </task>
+    <option name="localTasksCounter" value="19" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">

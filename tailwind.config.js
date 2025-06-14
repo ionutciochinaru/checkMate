@@ -46,6 +46,24 @@ module.exports = {
       spacing: {
         '18': '4.5rem',
         '22': '5.5rem',
+        // 8pt Grid System (converted to rem)
+        '1': '0.25rem',  // 4px
+        '2': '0.5rem',   // 8px
+        '3': '0.75rem',  // 12px
+        '4': '1rem',     // 16px
+        '6': '1.5rem',   // 24px
+        '8': '2rem',     // 32px
+        '10': '2.5rem',  // 40px
+        '11': '2.75rem', // 44px - Touch target size
+      },
+      fontSize: {
+        // Typography Scale (2025 Best Practices)
+        'hero': ['2.125rem', { lineHeight: '2.5625rem', letterSpacing: '-0.025rem' }], // 34px
+        'section': ['1.375rem', { lineHeight: '1.75rem', letterSpacing: '-0.0125rem' }], // 22px
+        'body': ['1.0625rem', { lineHeight: '1.4375rem' }], // 17px
+        'secondary': ['0.9375rem', { lineHeight: '1.25rem' }], // 15px
+        'caption': ['0.8125rem', { lineHeight: '1.125rem' }], // 13px
+        'button': ['1.0625rem', { lineHeight: '1.375rem' }], // 17px
       }
     }
   },
