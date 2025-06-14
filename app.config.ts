@@ -28,7 +28,8 @@ export default {
           sounds: []
         }
       ],
-      "expo-dev-client"
+      "expo-dev-client",
+      "expo-sqlite"
     ],
     splash: {
       image: "./assets/splash-icon.png",

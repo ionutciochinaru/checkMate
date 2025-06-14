@@ -6,14 +6,14 @@ import {
   StyleSheet, 
   TouchableOpacity, 
   TextInput, 
-  Platform,
-  Alert
+  Platform
 } from 'react-native';
 import { Switch } from 'react-native-paper';
 import { router, useLocalSearchParams } from 'expo-router';
 import DateTimePicker, { DateTimePickerAndroid } from '@react-native-community/datetimepicker';
 import { useTaskStore } from '../hooks/useTaskStore';
 import { useThemedStyles, useTheme } from '../hooks/useTheme';
+import { showAlert } from '../components/CustomAlert';
 import Animated from 'react-native-reanimated';
 
 export default function AddTaskScreen() {
@@ -85,9 +85,9 @@ export default function AddTaskScreen() {
     });
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!title.trim()) {
-      Alert.alert('Error', 'Task name is required');
+      showAlert('Error', 'Task name is required');
       return;
     }
 
@@ -95,7 +95,7 @@ export default function AddTaskScreen() {
     if (!isEditing) {
       const now = new Date();
       if (reminderTime <= now) {
-        Alert.alert(
+        showAlert(
           'Invalid Time', 
           'Cannot schedule tasks in the past. Please select a future date and time.'
         );
@@ -114,13 +114,18 @@ export default function AddTaskScreen() {
 
     try {
       if (isEditing && editingTask) {
-        updateTask(editingTask.id, taskData);
+        await updateTask(editingTask.id, taskData);
       } else {
-        addTask(taskData);
+        await addTask(taskData);
       }
-      router.back();
+      
+      // Small delay to ensure task is saved before navigation
+      setTimeout(() => {
+        router.back();
+      }, 100);
     } catch (error) {
-      Alert.alert('Error', 'Failed to save task');
+      console.error('Failed to save task:', error);
+      showAlert('Error', 'Failed to save task');
     }
   };
 
@@ -143,7 +148,7 @@ export default function AddTaskScreen() {
             if (!isEditing) {
               const now = new Date();
               if (newDateTime <= now) {
-                Alert.alert(
+                showAlert(
                   'Invalid Date', 
                   'Cannot schedule tasks in the past. Please select a future date.'
                 );
@@ -180,7 +185,7 @@ export default function AddTaskScreen() {
             if (!isEditing) {
               const now = new Date();
               if (newDateTime <= now) {
-                Alert.alert(
+                showAlert(
                   'Invalid Time', 
                   'Cannot schedule tasks in the past. Please select a future time.'
                 );
@@ -208,7 +213,7 @@ export default function AddTaskScreen() {
       if (!isEditing) {
         const now = new Date();
         if (newDateTime <= now) {
-          Alert.alert(
+          showAlert(
             'Invalid Date', 
             'Cannot schedule tasks in the past. Please select a future date.'
           );
@@ -235,7 +240,7 @@ export default function AddTaskScreen() {
       if (!isEditing) {
         const now = new Date();
         if (newDateTime <= now) {
-          Alert.alert(
+          showAlert(
             'Invalid Time', 
             'Cannot schedule tasks in the past. Please select a future time.'
           );

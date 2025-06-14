@@ -1,9 +1,10 @@
 import { useEffect } from 'react';
 import * as Notifications from 'expo-notifications';
-import { useTaskStore } from './useTaskStore';
+import { useTaskStore, useMainStore } from './useTaskStore';
 import { useTheme } from './useTheme';
 import { Task } from '../types/task';
 import { Platform } from 'react-native';
+import { showAlert } from '../components/CustomAlert';
 
 // Set up notification handler with theme-aware styling
 const setupNotificationHandler = (colors: any, isDark: boolean) => {
@@ -26,8 +27,11 @@ const setupNotificationHandler = (colors: any, isDark: boolean) => {
 };
 
 export const useNotifications = () => {
-  const { tasks, toggleComplete, delayTask, settings } = useTaskStore();
+  const { tasks, toggleComplete, delayTask } = useTaskStore();
+  const { getSettings } = useMainStore();
   const { colors, isDark } = useTheme();
+  
+  const settings = getSettings();
 
   useEffect(() => {
     setupNotificationHandler(colors, isDark);
@@ -38,7 +42,7 @@ export const useNotifications = () => {
     // Request permissions
     const { status } = await Notifications.requestPermissionsAsync();
     if (status !== 'granted') {
-      alert('Notification permissions required for task reminders!');
+      showAlert('Permissions Required', 'Notification permissions required for task reminders!');
       return;
     }
 
@@ -127,12 +131,24 @@ export const useNotifications = () => {
   };
 
   const scheduleTaskReminder = async (task: Task) => {
-    const { workingHoursEnabled, workingHoursStart, workingHoursEnd } = settings;
+    const { workingHoursEnabled, workingHoursStart, workingHoursEnd, twentyFourHourMode } = settings;
     
     let reminderTime = new Date(task.reminderTime);
     
-    // Check working hours if enabled and task doesn't ignore them
-    if (workingHoursEnabled && !task.ignoreWorkingHours) {
+    // Check if notification should be shown based on working hours and 24h mode
+    const shouldRespectWorkingHours = workingHoursEnabled && !twentyFourHourMode && !task.ignoreWorkingHours;
+    
+    if (shouldRespectWorkingHours) {
+      // Check if reminder time is within working hours
+      const isWithinWorkingHours = checkIfTimeWithinWorkingHours(reminderTime, workingHoursStart, workingHoursEnd);
+      
+      if (!isWithinWorkingHours) {
+        // Don't schedule notification if outside working hours and not in 24h mode
+        console.log(`Task "${task.title}" scheduled outside working hours, notification not scheduled (24h mode disabled)`);
+        return;
+      }
+      
+      // Adjust reminder time if needed (e.g., if it's exactly on the boundary)
       reminderTime = adjustForWorkingHours(reminderTime, workingHoursStart, workingHoursEnd);
     }
 
@@ -202,26 +218,39 @@ export const useNotifications = () => {
     }
   };
 
-  const adjustForWorkingHours = (date: Date, startTime: string, endTime: string): Date => {
+  const checkIfTimeWithinWorkingHours = (date: Date, startTime: string, endTime: string): boolean => {
     const [startHour, startMinute] = startTime.split(':').map(Number);
     const [endHour, endMinute] = endTime.split(':').map(Number);
-    
+
     const hour = date.getHours();
     const minute = date.getMinutes();
-    
+
     const currentTime = hour * 60 + minute;
     const workStart = startHour * 60 + startMinute;
     const workEnd = endHour * 60 + endMinute;
-    
+
+    return currentTime >= workStart && currentTime <= workEnd;
+  };
+
+  const adjustForWorkingHours = (date: Date, startTime: string, endTime: string): Date => {
+    const [startHour, startMinute] = startTime.split(':').map(Number);
+    const [endHour, endMinute] = endTime.split(':').map(Number);
+
+    const hour = date.getHours();
+    const minute = date.getMinutes();
+
+    const currentTime = hour * 60 + minute;
+    const workStart = startHour * 60 + startMinute;
+    const workEnd = endHour * 60 + endMinute;
+
     if (currentTime < workStart) {
       // Before work hours - move to start of work
       date.setHours(startHour, startMinute, 0, 0);
     } else if (currentTime > workEnd) {
-      // After work hours - move to next day start
+      // After work hours - move to start of next day's work
       date.setDate(date.getDate() + 1);
       date.setHours(startHour, startMinute, 0, 0);
     }
-    
     return date;
   };
 

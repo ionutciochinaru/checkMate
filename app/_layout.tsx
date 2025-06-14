@@ -3,9 +3,10 @@ import { Stack } from 'expo-router';
 import { PaperProvider } from 'react-native-paper';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect, useState } from 'react';
-import { useTaskStore } from '../hooks/useTaskStore';
+import { useTaskStore, useMainStore } from '../hooks/useTaskStore';
 import { ThemeProvider, useTheme } from '../hooks/useTheme';
 import { useNotifications } from '../hooks/useNotifications';
+import { AlertProvider } from '../components/CustomAlert';
 import * as Font from 'expo-font';
 import {
   JetBrainsMono_400Regular,
@@ -84,6 +85,12 @@ const ThemedLayout = () => {
             headerShown: false
           }} 
         />
+        <Stack.Screen 
+          name="settings" 
+          options={{ 
+            headerShown: false
+          }} 
+        />
       </Stack>
       <StatusBar style={isDark ? 'light' : 'dark'} backgroundColor={colors.background} />
     </PaperProvider>
@@ -91,21 +98,27 @@ const ThemedLayout = () => {
 };
 
 export default function RootLayout() {
-  const loadData = useTaskStore(state => state.loadData);
+  const initializeMain = useMainStore(state => state.initialize);
+  const loadTasks = useTaskStore(state => state.loadTasks);
   const [fontsLoaded, setFontsLoaded] = useState(false);
 
   useEffect(() => {
-    async function loadFonts() {
+    async function setup() {
       await Font.loadAsync({
         JetBrainsMono_400Regular,
         JetBrainsMono_500Medium,
         JetBrainsMono_700Bold,
       });
       setFontsLoaded(true);
+      
+      // Initialize main store first (database & settings)
+      await initializeMain();
+      
+      // Then load tasks
+      await loadTasks();
     }
     
-    loadFonts();
-    loadData();
+    setup();
   }, []);
 
   if (!fontsLoaded) {
@@ -114,7 +127,9 @@ export default function RootLayout() {
 
   return (
     <ThemeProvider>
-      <ThemedLayout />
+      <AlertProvider>
+        <ThemedLayout />
+      </AlertProvider>
     </ThemeProvider>
   );
 }

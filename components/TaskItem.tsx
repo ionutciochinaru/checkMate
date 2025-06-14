@@ -1,13 +1,22 @@
 import React from 'react';
-import { View, Text as RNText, StyleSheet, TouchableOpacity, Alert } from 'react-native';
+import { View, Text as RNText, StyleSheet, TouchableOpacity } from 'react-native';
 import { Text } from 'react-native-paper';
-import Animated, { FadeInUp, FadeOutRight } from 'react-native-reanimated';
+import Animated, { 
+  FadeInUp, 
+  FadeOutRight, 
+  useSharedValue, 
+  useAnimatedStyle, 
+  withSpring,
+  withTiming,
+  runOnJS
+} from 'react-native-reanimated';
 import { useTheme } from '../hooks/useTheme';
 import { router } from 'expo-router';
-import { useTaskStore } from '../hooks/useTaskStore';
+import { useTaskStore, useMainStore } from '../hooks/useTaskStore';
 import { Task } from '../types/task';
 import { y2kStyles, y2kColors } from '../utils/y2k-styles';
 import { useThemedStyles } from '../hooks/useTheme';
+import { showAlert } from './CustomAlert';
 
 interface TaskItemProps {
   task: Task;
@@ -15,7 +24,70 @@ interface TaskItemProps {
 
 const TaskItem: React.FC<TaskItemProps> = React.memo(({ task }) => {
   const { toggleComplete, delayTask, deleteTask } = useTaskStore();
-  const { reducedMotion } = useTheme();
+  const { getSettings } = useMainStore();
+  const { colors, reducedMotion } = useTheme();
+  
+  // Get delay time from settings
+  const settings = getSettings();
+  const delayTime = settings.defaultDelay || '30m';
+  
+  // Animation values
+  const cardScale = useSharedValue(1);
+  const buttonPulse = useSharedValue(1);
+
+  const getTaskStatus = () => {
+    const now = new Date();
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const tomorrow = new Date(today.getTime() + 24 * 60 * 60 * 1000);
+    
+    // Ensure reminderTime is a proper Date object
+    const reminderDate = task.reminderTime instanceof Date ? task.reminderTime : new Date(task.reminderTime);
+    if (isNaN(reminderDate.getTime())) {
+      return { icon: '[ERR]', text: 'Invalid date', style: 'overdue' };
+    }
+    
+    const taskDate = new Date(reminderDate.getFullYear(), reminderDate.getMonth(), reminderDate.getDate());
+    
+    // Loop tasks are never "completed" - they just keep cycling
+    if (task.isCompleted && !task.isRecurring) {
+      return { icon: '[OK]', text: 'Completed', style: 'completed' };
+    }
+    
+    if (task.delayCount > 0) {
+      if (taskDate.getTime() === today.getTime()) {
+        return { icon: '[DLY]', text: 'Delayed to today', style: 'delayed' };
+      } else if (taskDate.getTime() === tomorrow.getTime()) {
+        return { icon: '[DLY]', text: 'Delayed to tomorrow', style: 'delayed' };
+      } else if (taskDate.getTime() > tomorrow.getTime()) {
+        return { icon: '[DLY]', text: 'Delayed to future', style: 'delayed' };
+      }
+    }
+    
+    if (taskDate.getTime() === today.getTime()) {
+      return { icon: '[NOW]', text: task.isRecurring ? 'Next due today' : 'Scheduled for today', style: 'today' };
+    } else if (taskDate.getTime() === tomorrow.getTime()) {
+      return { icon: '[TMR]', text: task.isRecurring ? 'Next due tomorrow' : 'Scheduled for tomorrow', style: 'tomorrow' };
+    } else if (taskDate.getTime() > tomorrow.getTime()) {
+      return { icon: '[FUT]', text: task.isRecurring ? 'Next due later' : 'Scheduled for later', style: 'future' };
+    } else {
+      return { icon: '[OVR]', text: 'Overdue', style: 'overdue' };
+    }
+  };
+
+  const taskStatus = getTaskStatus();
+
+  // Get card border color based on task status
+  const getCardBorderColor = () => {
+    if (task.isCompleted) return y2kColors.limeGreen;
+    
+    switch (taskStatus.style) {
+      case 'today': return colors.accent;
+      case 'tomorrow': return y2kColors.electricCyan;
+      case 'delayed': return y2kColors.bubblegumPink;
+      case 'overdue': return colors.danger;
+      default: return colors.border;
+    }
+  };
 
   const styles = useThemedStyles((colors, isDark, fontScale, reducedMotion) => StyleSheet.create({
     container: {
@@ -23,34 +95,54 @@ const TaskItem: React.FC<TaskItemProps> = React.memo(({ task }) => {
     },
     taskCard: {
       backgroundColor: colors.surface,
-      borderWidth: 1,
-      borderColor: colors.border,
+      borderWidth: 2,
+      borderColor: getCardBorderColor(),
       borderRadius: 0,
-      padding: 16,
+      padding: 12,
+      shadowColor: isDark ? getCardBorderColor() : 'transparent',
+      shadowOffset: { width: 0, height: 0 },
+      shadowOpacity: isDark ? 0.3 : 0,
+      shadowRadius: isDark ? 4 : 0,
+      elevation: isDark ? 4 : 0,
     },
     completedCard: {
       backgroundColor: colors.surfaceVariant,
-      borderColor: isDark ? '#3a3a3a' : '#c0c0b8',
+      borderColor: y2kColors.limeGreen,
     },
     futureCard: {
-      opacity: 0.7,
+      opacity: 0.8,
       borderStyle: 'dashed',
     },
-    header: {
-      marginBottom: 12,
-    },
-    statusRow: {
+    mainTaskLine: {
       flexDirection: 'row',
       justifyContent: 'space-between',
       alignItems: 'center',
-      marginBottom: 4,
+      marginBottom: 8,
+    },
+    leftSection: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      flex: 1,
+      gap: 8,
+    },
+    rightSection: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 4,
+    },
+    scheduleSection: {
+      marginBottom: 8,
+    },
+    descriptionSection: {
+      marginBottom: 8,
     },
     taskId: {
       fontFamily: 'JetBrainsMono_700Bold',
       fontSize: 12 * fontScale,
-      color: colors.textMuted,
-      letterSpacing: 1.2,
+      color: colors.textSecondary,
+      letterSpacing: 1.0,
       fontWeight: '700',
+      minWidth: 50,
     },
     statusIndicators: {
       flexDirection: 'row',
@@ -60,35 +152,37 @@ const TaskItem: React.FC<TaskItemProps> = React.memo(({ task }) => {
       fontFamily: 'JetBrainsMono_700Bold',
       fontSize: 10 * fontScale,
       color: colors.textSecondary,
-      backgroundColor: colors.surfaceVariant,
-      paddingHorizontal: 8,
-      paddingVertical: 4,
+      backgroundColor: 'transparent',
+      paddingHorizontal: 4,
+      paddingVertical: 2,
       borderWidth: 1,
-      borderColor: colors.border,
-      letterSpacing: 0.8,
+      borderColor: colors.textSecondary,
+      letterSpacing: 0.5,
       fontWeight: '700',
     },
     delayBadge: {
-      color: colors.danger,
-      borderColor: colors.danger,
-      backgroundColor: 'transparent',
+      color: isDark ? y2kColors.bubblegumPink : colors.danger,
+      borderColor: isDark ? y2kColors.bubblegumPink : colors.danger,
     },
     loopBadge: {
       color: y2kColors.electricCyan,
       borderColor: y2kColors.electricCyan,
-      backgroundColor: isDark ? 'rgba(0, 255, 255, 0.2)' : 'rgba(0, 255, 255, 0.1)',
     },
     alwaysOnBadge: {
       color: y2kColors.limeGreen,
       borderColor: y2kColors.limeGreen,
-      backgroundColor: isDark ? 'rgba(50, 205, 50, 0.2)' : 'rgba(50, 205, 50, 0.1)',
+    },
+    completionBadge: {
+      color: y2kColors.digitalPurple,
+      borderColor: y2kColors.digitalPurple,
     },
     timestamp: {
       fontFamily: 'JetBrainsMono_500Medium',
       fontSize: 11 * fontScale,
-      color: colors.textMuted,
+      color: colors.textSecondary,
       letterSpacing: 0.8,
-      fontWeight: '600',
+      fontWeight: '500',
+      marginBottom: 2,
     },
     originalTimestamp: {
       fontFamily: 'JetBrainsMono_500Medium',
@@ -96,41 +190,60 @@ const TaskItem: React.FC<TaskItemProps> = React.memo(({ task }) => {
       color: colors.textMuted,
       letterSpacing: 0.8,
       textDecorationLine: 'line-through',
-      opacity: 0.7,
       fontWeight: '500',
+      marginBottom: 2,
+      opacity: 0.7,
     },
     newTimestamp: {
-      fontFamily: 'JetBrainsMono_700Bold',
+      fontFamily: 'JetBrainsMono_500Medium',
       fontSize: 11 * fontScale,
-      color: colors.y2kPink,
+      color: isDark ? y2kColors.bubblegumPink : colors.danger,
       letterSpacing: 0.8,
-      marginTop: 2,
-      fontWeight: '700',
+      fontWeight: '600',
+      marginBottom: 2,
+      textShadowColor: isDark ? y2kColors.bubblegumPink : 'transparent',
+      textShadowOffset: { width: 0, height: 0 },
+      textShadowRadius: isDark ? 3 : 0,
     },
     statusIndicator: {
-      fontFamily: 'JetBrainsMono_700Bold',
+      fontFamily: 'JetBrainsMono_500Medium',
       fontSize: 11 * fontScale,
       letterSpacing: 0.8,
-      marginTop: 4,
-      fontWeight: '700',
+      fontWeight: '600',
+      marginBottom: 2,
     },
     status_completed: {
       color: y2kColors.limeGreen,
+      textShadowColor: isDark ? y2kColors.limeGreen : 'transparent',
+      textShadowOffset: { width: 0, height: 0 },
+      textShadowRadius: isDark ? 3 : 0,
     },
     status_today: {
       color: colors.accent,
+      textShadowColor: isDark ? colors.accent : 'transparent',
+      textShadowOffset: { width: 0, height: 0 },
+      textShadowRadius: isDark ? 3 : 0,
     },
     status_tomorrow: {
       color: y2kColors.electricCyan,
+      textShadowColor: isDark ? y2kColors.electricCyan : 'transparent',
+      textShadowOffset: { width: 0, height: 0 },
+      textShadowRadius: isDark ? 3 : 0,
     },
     status_future: {
       color: colors.textSecondary,
     },
     status_delayed: {
       color: y2kColors.bubblegumPink,
+      textShadowColor: isDark ? y2kColors.bubblegumPink : 'transparent',
+      textShadowOffset: { width: 0, height: 0 },
+      textShadowRadius: isDark ? 3 : 0,
     },
     status_overdue: {
       color: colors.danger,
+      textShadowColor: isDark ? colors.danger : 'transparent',
+      textShadowOffset: { width: 0, height: 0 },
+      textShadowRadius: isDark ? 3 : 0,
     },
     content: {
       marginBottom: 12,
@@ -144,9 +257,10 @@ const TaskItem: React.FC<TaskItemProps> = React.memo(({ task }) => {
       marginTop: 2,
     },
     checkbox: {
-      width: 28,
+      width: 24,
       height: 16,
-      borderWidth: 0,
+      borderWidth: 1,
+      borderColor: colors.border,
       backgroundColor: 'transparent',
       alignItems: 'center',
       justifyContent: 'center',
@@ -159,38 +273,40 @@ const TaskItem: React.FC<TaskItemProps> = React.memo(({ task }) => {
       fontFamily: 'JetBrainsMono_700Bold',
       fontSize: 12 * fontScale,
       color: colors.textSecondary,
-      letterSpacing: 0.8,
-      fontWeight: '800',
+      letterSpacing: 0.5,
+      fontWeight: '700',
     },
     checkedText: {
-      color: colors.success,
+      color: isDark ? colors.background : '#ffffff',
     },
     textContainer: {
       flex: 1,
     },
     taskTitle: {
       fontFamily: 'JetBrainsMono_700Bold',
-      fontSize: 16 * fontScale,
+      fontSize: 14 * fontScale,
       color: colors.text,
       letterSpacing: 0.8,
-      lineHeight: 24 * fontScale,
       fontWeight: '700',
+      flex: 1,
     },
     completedTitle: {
       color: colors.textMuted,
       textDecorationLine: 'line-through',
+      opacity: 0.7,
     },
     taskDescription: {
       fontFamily: 'JetBrainsMono_400Regular',
-      fontSize: 13 * fontScale,
+      fontSize: 11 * fontScale,
       color: colors.textSecondary,
-      marginTop: 6,
       letterSpacing: 0.5,
-      lineHeight: 18 * fontScale,
+      lineHeight: 16 * fontScale,
       fontWeight: '400',
+      fontStyle: 'italic',
     },
     completedDescription: {
       color: colors.textMuted,
+      opacity: 0.7,
     },
     actions: {
       flexDirection: 'row',
@@ -257,8 +373,51 @@ const TaskItem: React.FC<TaskItemProps> = React.memo(({ task }) => {
     },
   }));
 
+  // Animation styles
+  const animatedCardStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: cardScale.value }]
+  }));
+
+  const animatedButtonStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: buttonPulse.value }]
+  }));
+
+  // Animate card when task updates
+  const animateCardUpdate = () => {
+    if (reducedMotion) return;
+    
+    cardScale.value = withSpring(1.02, { damping: 15, stiffness: 300 }, () => {
+      cardScale.value = withSpring(1, { damping: 15, stiffness: 300 });
+    });
+  };
+
+  // Animate button when pressed
+  const animateButtonPress = () => {
+    if (reducedMotion) return;
+    
+    buttonPulse.value = withSpring(0.95, { damping: 20, stiffness: 400 }, () => {
+      buttonPulse.value = withSpring(1, { damping: 20, stiffness: 400 });
+    });
+  };
+
+  const handleDelayTask = async () => {
+    animateButtonPress();
+    setTimeout(() => {
+      delayTask(task.id, delayTime);
+      animateCardUpdate();
+    }, 100);
+  };
+
+  const handleToggleComplete = async () => {
+    animateButtonPress();
+    setTimeout(() => {
+      toggleComplete(task.id);
+      animateCardUpdate();
+    }, 100);
+  };
+
   const showDeleteConfirmation = () => {
-    Alert.alert(
+    showAlert(
       'Delete Task',
       `Are you sure you want to delete "${task.title}"?`,
       [
@@ -266,7 +425,10 @@ const TaskItem: React.FC<TaskItemProps> = React.memo(({ task }) => {
         { 
           text: 'Delete', 
           style: 'destructive',
-          onPress: () => deleteTask(task.id)
+          onPress: () => {
+            deleteTask(task.id);
+            animateCardUpdate();
+          }
         }
       ]
     );
@@ -302,76 +464,59 @@ const TaskItem: React.FC<TaskItemProps> = React.memo(({ task }) => {
     }).replace(/\//g, '.');
   };
 
-  const getTaskStatus = () => {
-    const now = new Date();
-    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-    const tomorrow = new Date(today.getTime() + 24 * 60 * 60 * 1000);
-    
-    // Ensure reminderTime is a proper Date object
-    const reminderDate = task.reminderTime instanceof Date ? task.reminderTime : new Date(task.reminderTime);
-    if (isNaN(reminderDate.getTime())) {
-      return { icon: '[ERR]', text: 'Invalid date', style: 'overdue' };
-    }
-    
-    const taskDate = new Date(reminderDate.getFullYear(), reminderDate.getMonth(), reminderDate.getDate());
-    
-    if (task.isCompleted) {
-      return { icon: '[OK]', text: 'Completed', style: 'completed' };
-    }
-    
-    if (task.delayCount > 0) {
-      if (taskDate.getTime() === today.getTime()) {
-        return { icon: '[DLY]', text: 'Delayed to today', style: 'delayed' };
-      } else if (taskDate.getTime() === tomorrow.getTime()) {
-        return { icon: '[DLY]', text: 'Delayed to tomorrow', style: 'delayed' };
-      } else if (taskDate.getTime() > tomorrow.getTime()) {
-        return { icon: '[DLY]', text: 'Delayed to future', style: 'delayed' };
-      }
-    }
-    
-    if (taskDate.getTime() === today.getTime()) {
-      return { icon: '[NOW]', text: 'Scheduled for today', style: 'today' };
-    } else if (taskDate.getTime() === tomorrow.getTime()) {
-      return { icon: '[TMR]', text: 'Scheduled for tomorrow', style: 'tomorrow' };
-    } else if (taskDate.getTime() > tomorrow.getTime()) {
-      return { icon: '[FUT]', text: 'Scheduled for later', style: 'future' };
-    } else {
-      return { icon: '[OVR]', text: 'Overdue', style: 'overdue' };
-    }
-  };
-
-  const taskStatus = getTaskStatus();
-
   return (
     <Animated.View 
       entering={reducedMotion ? undefined : FadeInUp} 
       exiting={reducedMotion ? undefined : FadeOutRight} 
-      style={styles.container}
+      style={[styles.container, animatedCardStyle]}
     >
-      <View style={[
+      <Animated.View style={[
         styles.taskCard, 
         task.isCompleted && styles.completedCard,
         taskStatus.style === 'future' && styles.futureCard
       ]}>
-        {/* Header with status indicators */}
-        <View style={styles.header}>
-          <View style={styles.statusRow}>
-            <RNText style={styles.taskId}>#{task.id.slice(-4).toUpperCase()}</RNText>
-            <View style={styles.statusIndicators}>
-              {task.isRecurring && (
-                <RNText style={[styles.statusBadge, styles.loopBadge]}>LOOP</RNText>
-              )}
-              {task.delayCount > 0 && (
-                <RNText style={[styles.statusBadge, styles.delayBadge]}>
-                  {getDelayMessage(task.delayCount)}
-                </RNText>
-              )}
-              {task.ignoreWorkingHours && (
-                <RNText style={[styles.statusBadge, styles.alwaysOnBadge]}>24H</RNText>
-              )}
+        {/* Main task line: checkbox + ID + title + badges */}
+        <TouchableOpacity 
+          style={styles.mainTaskLine}
+          onPress={handleToggleComplete}
+          activeOpacity={0.7}
+        >
+          <View style={styles.leftSection}>
+            <View style={[styles.checkbox, task.isCompleted && styles.checkedBox]}>
+              <RNText style={[styles.checkboxText, task.isCompleted && styles.checkedText]}>
+                {task.isCompleted ? '[X]' : '[ ]'}
+              </RNText>
             </View>
+            
+            <RNText style={styles.taskId}>#{task.id.slice(-4).toUpperCase()}</RNText>
+            
+            <RNText style={[styles.taskTitle, task.isCompleted && styles.completedTitle]}>
+              {task.title.toUpperCase()}
+            </RNText>
           </View>
-          {/* Show original and new schedule if task has been delayed */}
+          
+          <View style={styles.rightSection}>
+            {task.delayCount > 0 && (
+              <RNText style={[styles.statusBadge, styles.delayBadge]}>
+                {getDelayMessage(task.delayCount)}
+              </RNText>
+            )}
+            {task.isRecurring && (
+              <RNText style={[styles.statusBadge, styles.loopBadge]}>LOOP</RNText>
+            )}
+            {task.isRecurring && (task.completionCount || 0) > 0 && (
+              <RNText style={[styles.statusBadge, styles.completionBadge]}>
+                DONE: {task.completionCount}x
+              </RNText>
+            )}
+            {task.ignoreWorkingHours && (
+              <RNText style={[styles.statusBadge, styles.alwaysOnBadge]}>24H</RNText>
+            )}
+          </View>
+        </TouchableOpacity>
+
+        {/* Schedule information */}
+        <View style={styles.scheduleSection}>
           {task.delayCount > 0 && task.originalReminderTime ? (
             <>
               <RNText style={styles.originalTimestamp}>
@@ -383,90 +528,83 @@ const TaskItem: React.FC<TaskItemProps> = React.memo(({ task }) => {
             </>
           ) : (
             <RNText style={styles.timestamp}>
-              SCHED: {formatDate(task.reminderTime)} {formatTime(task.reminderTime)}
+              {task.isRecurring ? 'NEXT:' : 'SCHED:'} {formatDate(task.reminderTime)} {formatTime(task.reminderTime)}
             </RNText>
           )}
           
-          {/* Status indicator */}
           <RNText style={[styles.statusIndicator, (styles as any)[`status_${taskStatus.style}`]]}>
             STATUS: {taskStatus.icon} {taskStatus.text}
           </RNText>
         </View>
 
-        {/* Task content */}
-        <View style={styles.content}>
-          <TouchableOpacity 
-            style={styles.taskContent}
-            onPress={() => toggleComplete(task.id)}
-            activeOpacity={0.7}
-          >
-            <View style={styles.checkboxContainer}>
-              <View style={[styles.checkbox, task.isCompleted && styles.checkedBox]}>
-                <RNText style={[styles.checkboxText, task.isCompleted && styles.checkedText]}>
-                  {task.isCompleted ? '[X]' : '[ ]'}
-                </RNText>
-              </View>
-            </View>
-            
-            <View style={styles.textContainer}>
-              <RNText style={[styles.taskTitle, task.isCompleted && styles.completedTitle]}>
-                {task.title.toUpperCase()}
-              </RNText>
-              
-              {task.description && (
-                <RNText style={[styles.taskDescription, task.isCompleted && styles.completedDescription]}>
-                  // {task.description}
-                </RNText>
-              )}
-            </View>
-          </TouchableOpacity>
-        </View>
+        {/* Description if exists */}
+        {task.description && (
+          <View style={styles.descriptionSection}>
+            <RNText style={[styles.taskDescription, task.isCompleted && styles.completedDescription]}>
+              // {task.description}
+            </RNText>
+          </View>
+        )}
 
         {/* Action buttons */}
         <View style={styles.actions}>
           {!task.isCompleted && (
-            <TouchableOpacity 
-              style={[styles.actionButton, styles.delayButton]}
-              onPress={() => delayTask(task.id)}
-              activeOpacity={0.7}
-            >
-              <RNText style={[styles.actionText, styles.delayButtonText]}>[DLY]</RNText>
-            </TouchableOpacity>
+            <Animated.View style={animatedButtonStyle}>
+              <TouchableOpacity 
+                style={[styles.actionButton, styles.delayButton]}
+                onPress={handleDelayTask}
+                activeOpacity={0.7}
+              >
+                <RNText style={[styles.actionText, styles.delayButtonText]}>[DLY {delayTime.toUpperCase()}]</RNText>
+              </TouchableOpacity>
+            </Animated.View>
           )}
           
-          <TouchableOpacity 
-            style={[
-              styles.actionButton, 
-              task.isCompleted ? styles.completedButton : styles.doneButton
-            ]}
-            onPress={() => toggleComplete(task.id)}
-            activeOpacity={0.7}
-          >
-            <RNText style={[
-              styles.actionText, 
-              task.isCompleted ? styles.completedActionText : styles.doneButtonText
-            ]}>
-              {task.isCompleted ? '[UDO]' : '[OK]'}
-            </RNText>
-          </TouchableOpacity>
+          <Animated.View style={animatedButtonStyle}>
+            <TouchableOpacity 
+              style={[
+                styles.actionButton, 
+                task.isCompleted ? styles.completedButton : styles.doneButton
+              ]}
+              onPress={handleToggleComplete}
+              activeOpacity={0.7}
+            >
+              <RNText style={[
+                styles.actionText, 
+                task.isCompleted ? styles.completedActionText : styles.doneButtonText
+              ]}>
+                {task.isCompleted ? '[UDO]' : (task.isRecurring ? '[+1]' : '[DON]')}
+              </RNText>
+            </TouchableOpacity>
+          </Animated.View>
 
-          <TouchableOpacity 
-            style={[styles.actionButton, styles.editButton]}
-            onPress={() => router.push(`/add-task?edit=${task.id}`)}
-            activeOpacity={0.7}
-          >
-            <RNText style={[styles.actionText, styles.editButtonText]}>[EDT]</RNText>
-          </TouchableOpacity>
+          <Animated.View style={animatedButtonStyle}>
+            <TouchableOpacity 
+              style={[styles.actionButton, styles.editButton]}
+              onPress={() => {
+                animateButtonPress();
+                router.push(`/add-task?edit=${task.id}`);
+              }}
+              activeOpacity={0.7}
+            >
+              <RNText style={[styles.actionText, styles.editButtonText]}>[EDT]</RNText>
+            </TouchableOpacity>
+          </Animated.View>
 
-          <TouchableOpacity 
-            style={[styles.actionButton, styles.deleteButton]}
-            onPress={showDeleteConfirmation}
-            activeOpacity={0.7}
-          >
-            <RNText style={[styles.actionText, styles.deleteButtonText]}>[DEL]</RNText>
-          </TouchableOpacity>
+          <Animated.View style={animatedButtonStyle}>
+            <TouchableOpacity 
+              style={[styles.actionButton, styles.deleteButton]}
+              onPress={() => {
+                animateButtonPress();
+                showDeleteConfirmation();
+              }}
+              activeOpacity={0.7}
+            >
+              <RNText style={[styles.actionText, styles.deleteButtonText]}>[DEL]</RNText>
+            </TouchableOpacity>
+          </Animated.View>
         </View>
-      </View>
+      </Animated.View>
     </Animated.View>
   );
 });

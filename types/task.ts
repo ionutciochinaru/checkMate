@@ -10,6 +10,9 @@ export interface Task {
   delayCount: number;
   createdAt: Date;
   ignoreWorkingHours: boolean;
+  // Loop mode tracking
+  completionCount?: number; // How many times this loop task has been completed
+  lastCompletedAt?: Date; // When it was last marked as done
 }
 
 export interface AppSettings {
@@ -17,6 +20,7 @@ export interface AppSettings {
   workingHoursStart: string; // "09:00"
   workingHoursEnd: string;   // "17:00"
   defaultDelay: string; // "30m"
+  twentyFourHourMode: boolean; // If true, ignore working hours for all notifications
   // Accessibility settings
   fontScale: number; // 1.0 = normal, 1.2 = large, 1.5 = extra large
   highContrast: boolean;

@@ -7,6 +7,7 @@ import {
   withTiming, 
   interpolateColor 
 } from 'react-native-reanimated';
+import { useMainStore } from './useTaskStore';
 
 type Theme = 'light' | 'dark' | 'auto';
 
@@ -123,11 +124,14 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const [systemColorScheme, setSystemColorScheme] = useState<ColorSchemeName>(
     Appearance.getColorScheme()
   );
-  const [accessibilitySettings, setAccessibilitySettings] = useState({
+  
+  // Get settings directly from main store and subscribe to changes
+  const mainStore = useMainStore();
+  const settings = mainStore.isInitialized ? mainStore.settings : {
     fontScale: 1.0,
     highContrast: false,
     reducedMotion: false
-  });
+  };
 
   // Animated values for smooth transitions
   const backgroundProgress = useSharedValue(0);
@@ -138,38 +142,25 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   
   // Apply high contrast theme if enabled
   let colors: ThemeColors;
-  if (accessibilitySettings.highContrast) {
+  if (settings.highContrast) {
     colors = isDark ? darkHighContrastTheme : lightHighContrastTheme;
   } else {
     colors = isDark ? darkTheme : lightTheme;
   }
 
-  // Load saved theme and accessibility settings on mount
+  // Load saved theme on mount
   useEffect(() => {
-    const loadSettings = async () => {
+    const loadTheme = async () => {
       try {
-        const [savedTheme, savedSettings] = await Promise.all([
-          AsyncStorage.getItem('theme'),
-          AsyncStorage.getItem('settings')
-        ]);
-        
+        const savedTheme = await AsyncStorage.getItem('theme');
         if (savedTheme && ['light', 'dark', 'auto'].includes(savedTheme)) {
           setThemeState(savedTheme as Theme);
         }
-        
-        if (savedSettings) {
-          const settings = JSON.parse(savedSettings);
-          setAccessibilitySettings({
-            fontScale: settings.fontScale || 1.0,
-            highContrast: settings.highContrast || false,
-            reducedMotion: settings.reducedMotion || false
-          });
-        }
       } catch (error) {
-        console.error('Failed to load settings:', error);
+        console.error('Failed to load theme:', error);
       }
     };
-    loadSettings();
+    loadTheme();
   }, []);
 
   // Listen to system color scheme changes
@@ -183,11 +174,11 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   // Animate theme transitions (respect reduced motion setting)
   useEffect(() => {
     const targetValue = isDark ? 1 : 0;
-    const duration = accessibilitySettings.reducedMotion ? 0 : 300;
+    const duration = settings.reducedMotion ? 0 : 300;
     backgroundProgress.value = withTiming(targetValue, { duration });
     surfaceProgress.value = withTiming(targetValue, { duration });
     textProgress.value = withTiming(targetValue, { duration });
-  }, [isDark, accessibilitySettings.reducedMotion, backgroundProgress, surfaceProgress, textProgress]);
+  }, [isDark, settings.reducedMotion, backgroundProgress, surfaceProgress, textProgress]);
 
   const setTheme = async (newTheme: Theme) => {
     setThemeState(newTheme);
@@ -228,28 +219,16 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     ),
   }));
 
-  // Listen for settings changes from AsyncStorage
+  // React to settings changes from main store
   useEffect(() => {
-    const checkForSettingsUpdates = async () => {
-      try {
-        const savedSettings = await AsyncStorage.getItem('settings');
-        if (savedSettings) {
-          const settings = JSON.parse(savedSettings);
-          setAccessibilitySettings({
-            fontScale: settings.fontScale || 1.0,
-            highContrast: settings.highContrast || false,
-            reducedMotion: settings.reducedMotion || false
-          });
-        }
-      } catch (error) {
-        console.error('Failed to load updated settings:', error);
-      }
-    };
-    
-    // Check for updates every second (simple polling)
-    const interval = setInterval(checkForSettingsUpdates, 1000);
-    return () => clearInterval(interval);
-  }, []);
+    // Colors will automatically update when settings change because
+    // we're getting settings directly from the store
+    console.log('🎨 Theme: Settings updated', {
+      fontScale: settings.fontScale,
+      highContrast: settings.highContrast,
+      reducedMotion: settings.reducedMotion
+    });
+  }, [settings.fontScale, settings.highContrast, settings.reducedMotion]);
 
   const value: ThemeContextValue = {
     theme,
@@ -259,9 +238,9 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     animatedBackgroundStyle,
     animatedSurfaceStyle,
     animatedTextStyle,
-    fontScale: accessibilitySettings.fontScale,
-    highContrast: accessibilitySettings.highContrast,
-    reducedMotion: accessibilitySettings.reducedMotion,
+    fontScale: settings.fontScale,
+    highContrast: settings.highContrast,
+    reducedMotion: settings.reducedMotion,
   };
 
   return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>;
