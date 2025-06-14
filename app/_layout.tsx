@@ -13,6 +13,7 @@ import {
   JetBrainsMono_500Medium,
   JetBrainsMono_700Bold,
 } from '@expo-google-fonts/jetbrains-mono';
+import {SafeAreaProvider} from "react-native-safe-area-context";
 
 const createPaperTheme = (isDark: boolean) => ({
   colors: {
@@ -126,10 +127,12 @@ export default function RootLayout() {
   }
 
   return (
-    <ThemeProvider>
-      <AlertProvider>
-        <ThemedLayout />
-      </AlertProvider>
-    </ThemeProvider>
+      <SafeAreaProvider>
+        <ThemeProvider>
+          <AlertProvider>
+            <ThemedLayout />
+          </AlertProvider>
+        </ThemeProvider>
+      </SafeAreaProvider>
   );
 }

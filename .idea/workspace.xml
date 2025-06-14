@@ -5,15 +5,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="171acf02-a826-4aaf-937f-dcb4d8420b57" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/utils/dateFormatters.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/add-task.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/add-task.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/settings.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/settings.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/components/HeaderComponent.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/components/HeaderComponent.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/components/TaskItem.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/components/TaskItem.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/stores/mainStore.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/stores/mainStore.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/types/task.ts" beforeDir="false" afterPath="$PROJECT_DIR$/types/task.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/utils/y2k-styles.ts" beforeDir="false" afterPath="$PROJECT_DIR$/utils/y2k-styles.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app.config.ts" beforeDir="false" afterPath="$PROJECT_DIR$/app.config.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/_layout.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/_layout.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -39,28 +35,28 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;ASKED_ADD_EXTERNAL_FILES&quot;: &quot;true&quot;,
-    &quot;ASKED_SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
-    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;D:/WebDev/checkMate&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.standard&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.standard&quot;: &quot;&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;npm.android.executor&quot;: &quot;Run&quot;,
-    &quot;npm.start.executor&quot;: &quot;Run&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;sshConsole&quot;,
-    &quot;ts.external.directory.path&quot;: &quot;D:\\WebDev\\checkMate\\node_modules\\typescript\\lib&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ASKED_ADD_EXTERNAL_FILES": "true",
+    "ASKED_SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "git-widget-placeholder": "master",
+    "ignore.virus.scanning.warn.message": "true",
+    "last_opened_file_path": "D:/WebDev/checkMate",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.standard": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.standard": "",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "npm.android.executor": "Run",
+    "npm.start.executor": "Run",
+    "settings.editor.selected.configurable": "sshConsole",
+    "ts.external.directory.path": "D:\\WebDev\\checkMate\\node_modules\\typescript\\lib",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="D:\WebDev\checkMate\assets" />
@@ -275,7 +271,15 @@
       <option name="project" value="LOCAL" />
       <updated>1749908125049</updated>
     </task>
-    <option name="localTasksCounter" value="19" />
+    <task id="LOCAL-00019" summary="UI improvements">
+      <option name="closed" value="true" />
+      <created>1749918578226</created>
+      <option name="number" value="00019" />
+      <option name="presentableId" value="LOCAL-00019" />
+      <option name="project" value="LOCAL" />
+      <updated>1749918578226</updated>
+    </task>
+    <option name="localTasksCounter" value="20" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
