@@ -12,6 +12,7 @@ import { router } from 'expo-router';
 import { useTaskStore, useMainStore } from '../hooks/useTaskStore';
 import { Task } from '../types/task';
 import { y2kColors, typography, spacing } from '../utils/y2k-styles';
+import { formatDateWithPreference, formatTime } from '../utils/dateFormatters';
 
 import { showAlert } from './CustomAlert';
 
@@ -150,31 +151,32 @@ const TaskItem: React.FC<TaskItemProps> = React.memo(({ task }) => {
     },
     statusBadge: {
       fontFamily: 'JetBrainsMono_700Bold',
-      fontSize: 10 * fontScale,
-      color: colors.textSecondary,
-      backgroundColor: 'transparent',
-      paddingHorizontal: 4,
-      paddingVertical: 2,
-      borderWidth: 1,
-      borderColor: colors.textSecondary,
-      letterSpacing: 0.5,
+      fontSize: 9 * fontScale,
+      color: colors.textMuted,
+      backgroundColor: colors.surfaceVariant,
+      paddingHorizontal: 6,
+      paddingVertical: 3,
+      borderWidth: 0,
+      letterSpacing: 0.3,
       fontWeight: '700',
+      borderRadius: 2,
+      overflow: 'hidden',
     },
     delayBadge: {
       color: isDark ? y2kColors.bubblegumPink : colors.danger,
-      borderColor: isDark ? y2kColors.bubblegumPink : colors.danger,
+      backgroundColor: isDark ? `${y2kColors.bubblegumPink}15` : `${colors.danger}15`,
     },
     loopBadge: {
-      color: y2kColors.electricCyan,
-      borderColor: y2kColors.electricCyan,
+      color: isDark ? y2kColors.electricCyan : colors.accent,
+      backgroundColor: isDark ? `${y2kColors.electricCyan}15` : `${colors.accent}15`,
     },
     alwaysOnBadge: {
       color: y2kColors.limeGreen,
-      borderColor: y2kColors.limeGreen,
+      backgroundColor: isDark ? `${y2kColors.limeGreen}15` : `${y2kColors.limeGreen}20`,
     },
     completionBadge: {
       color: y2kColors.digitalPurple,
-      borderColor: y2kColors.digitalPurple,
+      backgroundColor: isDark ? `${y2kColors.digitalPurple}15` : `${y2kColors.digitalPurple}20`,
     },
     timestamp: {
       fontFamily: 'JetBrainsMono_500Medium',
@@ -258,7 +260,7 @@ const TaskItem: React.FC<TaskItemProps> = React.memo(({ task }) => {
     },
     checkbox: {
       width: 24,
-      height: 16,
+      height: 24,
       borderWidth: 1,
       borderColor: colors.border,
       backgroundColor: 'transparent',
@@ -266,8 +268,8 @@ const TaskItem: React.FC<TaskItemProps> = React.memo(({ task }) => {
       justifyContent: 'center',
     },
     checkedBox: {
-      backgroundColor: colors.accent,
-      borderColor: colors.accent,
+      backgroundColor: colors.y2kLime,
+      borderColor: colors.y2kLime,
     },
     checkboxText: {
       fontFamily: 'JetBrainsMono_700Bold',
@@ -317,13 +319,13 @@ const TaskItem: React.FC<TaskItemProps> = React.memo(({ task }) => {
       marginTop: 4,
     },
     actionButton: {
-      borderWidth: 2,
+      borderWidth: 1,
       borderColor: colors.border,
       backgroundColor: colors.surface,
-      paddingHorizontal: spacing.componentGap,
-      paddingVertical: spacing.sm,
+      paddingHorizontal: spacing.sm,
+      paddingVertical: spacing.xs,
       minWidth: 56,
-      minHeight: spacing.touchTarget,
+      minHeight: spacing.md,
       alignItems: 'center',
       justifyContent: 'center',
     },
@@ -442,16 +444,26 @@ const TaskItem: React.FC<TaskItemProps> = React.memo(({ task }) => {
     return `DELAY_${count.toString().padStart(2, '0')}`;
   };
 
-  const formatTime = (date: Date | string) => {
+  const getLoopIntervalLabel = (hours: number) => {
+    if (hours === 1) return '1H';
+    if (hours === 4) return '4H';
+    if (hours === 8) return '8H';
+    if (hours === 12) return '12H';
+    if (hours === 24) return '24H';
+    if (hours === 72) return '3D';
+    if (hours === 168) return '1W';
+    // Fallback for custom intervals
+    if (hours < 24) return `${hours}H`;
+    if (hours % 24 === 0) return `${hours / 24}D`;
+    return `${hours}H`;
+  };
+
+  const formatTimeWithPreference = (date: Date | string) => {
     const dateObj = date instanceof Date ? date : new Date(date);
     if (isNaN(dateObj.getTime())) {
       return 'Invalid Time';
     }
-    return dateObj.toLocaleTimeString('en-US', { 
-      hour12: false, 
-      hour: '2-digit', 
-      minute: '2-digit' 
-    });
+    return formatTime(dateObj, settings.timeFormat);
   };
 
   const formatDate = (date: Date | string) => {
@@ -459,11 +471,12 @@ const TaskItem: React.FC<TaskItemProps> = React.memo(({ task }) => {
     if (isNaN(dateObj.getTime())) {
       return 'Invalid Date';
     }
-    return dateObj.toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: '2-digit',
-      day: '2-digit'
-    }).replace(/\//g, '.');
+    return formatDateWithPreference(
+      dateObj, 
+      settings.dateFormat, 
+      settings.dateUseMonthNames, 
+      settings.dateSeparator
+    );
   };
 
   return (
@@ -493,7 +506,9 @@ const TaskItem: React.FC<TaskItemProps> = React.memo(({ task }) => {
                   </RNText>
                 )}
                 {task.isRecurring && (
-                  <RNText style={[styles.statusBadge, styles.loopBadge]}>LOOP</RNText>
+                  <RNText style={[styles.statusBadge, styles.loopBadge]}>
+                    LOOP:{getLoopIntervalLabel(task.recurringInterval || 24)}
+                  </RNText>
                 )}
                 {task.isRecurring && (task.completionCount || 0) > 0 && (
                   <RNText style={[styles.statusBadge, styles.completionBadge]}>
@@ -559,15 +574,15 @@ const TaskItem: React.FC<TaskItemProps> = React.memo(({ task }) => {
           {task.delayCount > 0 && task.originalReminderTime ? (
             <>
               <RNText style={styles.originalTimestamp}>
-                SCHED_ORIG: {formatDate(task.originalReminderTime)} {formatTime(task.originalReminderTime)}
+                SCHED_ORIG: {formatDate(task.originalReminderTime)} {formatTimeWithPreference(task.originalReminderTime)}
               </RNText>
               <RNText style={styles.newTimestamp}>
-                SCHED_NEW: {formatDate(task.reminderTime)} {formatTime(task.reminderTime)}
+                SCHED_NEW: {formatDate(task.reminderTime)} {formatTimeWithPreference(task.reminderTime)}
               </RNText>
             </>
           ) : (
             <RNText style={styles.timestamp}>
-              {task.isRecurring ? 'NEXT:' : 'SCHED:'} {formatDate(task.reminderTime)} {formatTime(task.reminderTime)}
+              {task.isRecurring ? 'NEXT:' : 'SCHED:'} {formatDate(task.reminderTime)} {formatTimeWithPreference(task.reminderTime)}
             </RNText>
           )}
           

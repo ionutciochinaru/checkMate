@@ -4,7 +4,7 @@ import { StyleSheet } from 'react-native';
 export const typography = StyleSheet.create({
   // Large titles (32-34pt) - App/Screen titles
   heroTitle: {
-    fontSize: 34,
+    fontSize: 30,
     fontWeight: '700' as const, // Bold
     lineHeight: 41, // 120% of font size
     letterSpacing: -0.4,
@@ -28,7 +28,7 @@ export const typography = StyleSheet.create({
   
   // Secondary text (14-15pt) - Supporting info
   secondary: {
-    fontSize: 15,
+    fontSize: 16,
     fontWeight: '400' as const, // Regular
     lineHeight: 20, // 133% of font size
     letterSpacing: 0,
@@ -36,7 +36,7 @@ export const typography = StyleSheet.create({
   
   // Caption text (12-13pt) - Minimal, tertiary info
   caption: {
-    fontSize: 13,
+    fontSize: 12,
     fontWeight: '400' as const, // Regular
     lineHeight: 18, // 138% of font size
     letterSpacing: 0,

@@ -5,8 +5,15 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="171acf02-a826-4aaf-937f-dcb4d8420b57" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/utils/dateFormatters.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/eas.json" beforeDir="false" afterPath="$PROJECT_DIR$/eas.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/add-task.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/add-task.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/settings.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/settings.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/components/HeaderComponent.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/components/HeaderComponent.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/components/TaskItem.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/components/TaskItem.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/stores/mainStore.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/stores/mainStore.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/types/task.ts" beforeDir="false" afterPath="$PROJECT_DIR$/types/task.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/utils/y2k-styles.ts" beforeDir="false" afterPath="$PROJECT_DIR$/utils/y2k-styles.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -16,7 +23,7 @@
   <component name="Git.Settings">
     <option name="RECENT_BRANCH_BY_REPOSITORY">
       <map>
-        <entry key="$PROJECT_DIR$" value="master" />
+        <entry key="$PROJECT_DIR$" value="prod" />
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />

@@ -11,7 +11,11 @@ export const defaultSettings: AppSettings = {
   twentyFourHourMode: false,
   fontScale: 1.0,
   highContrast: false,
-  reducedMotion: false
+  reducedMotion: false,
+  dateFormat: 'DD-MM-YYYY',
+  dateUseMonthNames: false,
+  dateSeparator: '-',
+  timeFormat: '24H'
 };
 
 // Global database instance

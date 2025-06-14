@@ -15,6 +15,10 @@ export interface Task {
   lastCompletedAt?: Date; // When it was last marked as done
 }
 
+export type DateFormat = 'DD-MM-YYYY' | 'MM-DD-YYYY' | 'YYYY-MM-DD';
+export type DateSeparator = '-' | '/';
+export type TimeFormat = '24H' | '12H';
+
 export interface AppSettings {
   workingHoursEnabled: boolean;
   workingHoursStart: string; // "09:00"
@@ -25,4 +29,10 @@ export interface AppSettings {
   fontScale: number; // 1.0 = normal, 1.2 = large, 1.5 = extra large
   highContrast: boolean;
   reducedMotion: boolean;
+  // Date format preferences
+  dateFormat: DateFormat; // Date order preference
+  dateUseMonthNames: boolean; // Use month names instead of numbers
+  dateSeparator: DateSeparator; // Separator between date parts
+  // Time format preferences
+  timeFormat: TimeFormat; // 24H or 12H format
 }

@@ -11,15 +11,19 @@ import {
 import { Switch } from 'react-native-paper';
 import { router, useLocalSearchParams } from 'expo-router';
 import DateTimePicker, { DateTimePickerAndroid } from '@react-native-community/datetimepicker';
-import { useTaskStore } from '../hooks/useTaskStore';
+import { useTaskStore, useMainStore } from '../hooks/useTaskStore';
 import { useThemedStyles, useTheme } from '../hooks/useTheme';
 import { showAlert } from '../components/CustomAlert';
+import { formatDateWithPreference, formatTime } from '../utils/dateFormatters';
 import Animated from 'react-native-reanimated';
 
 export default function AddTaskScreen() {
   const { addTask, tasks, updateTask } = useTaskStore();
+  const { getSettings } = useMainStore();
   const { colors, animatedBackgroundStyle } = useTheme();
   const { edit } = useLocalSearchParams();
+  
+  const settings = getSettings();
   
   const isEditing = !!edit;
   const editingTask = isEditing ? tasks.find(t => t.id === edit) : null;
@@ -66,23 +70,20 @@ export default function AddTaskScreen() {
     if (isNaN(dateObj.getTime())) {
       return 'Invalid Date';
     }
-    return dateObj.toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: '2-digit',
-      day: '2-digit'
-    }).replace(/\//g, '.');
+    return formatDateWithPreference(
+      dateObj, 
+      settings.dateFormat, 
+      settings.dateUseMonthNames, 
+      settings.dateSeparator
+    );
   };
 
-  const formatTime = (date: Date | string) => {
+  const formatTimeWithPreference = (date: Date | string) => {
     const dateObj = date instanceof Date ? date : new Date(date);
     if (isNaN(dateObj.getTime())) {
       return 'Invalid Time';
     }
-    return dateObj.toLocaleTimeString('en-US', {
-      hour: '2-digit',
-      minute: '2-digit',
-      hour12: false
-    });
+    return formatTime(dateObj, settings.timeFormat);
   };
 
   const handleSubmit = async () => {
@@ -573,7 +574,7 @@ export default function AddTaskScreen() {
             activeOpacity={0.7}
           >
             <Text style={styles.dateTimeText}>
-              {formatTime(reminderTime)}
+              {formatTimeWithPreference(reminderTime)}
             </Text>
           </TouchableOpacity>
           

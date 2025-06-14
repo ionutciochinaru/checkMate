@@ -17,6 +17,8 @@ import { useSettingsStore } from '../hooks/useSettingsStore';
 import { useThemedStyles, useTheme } from '../hooks/useTheme';
 import DelayInputComponent from '../components/DelayInputComponent';
 import { showAlert } from '../components/CustomAlert';
+import { availableDateFormats, availableSeparators, availableTimeFormats, getDateFormatDisplayName, getTimeFormatDisplayName } from '../utils/dateFormatters';
+import { DateFormat, DateSeparator, TimeFormat } from '../types/task';
 import Animated from 'react-native-reanimated';
 
 export default function SettingsScreen() {
@@ -211,6 +213,7 @@ export default function SettingsScreen() {
       letterSpacing: 1,
       fontWeight: '700',
       flex: 1,
+      paddingTop: 16,
     },
     settingSubtext: {
       fontFamily: 'JetBrainsMono_400Regular',
@@ -289,6 +292,87 @@ export default function SettingsScreen() {
     },
     fontScaleTextActive: {
       color: colors.background,
+    },
+    dateFormatContainer: {
+      marginTop: 8,
+      marginBottom: 8,
+      gap: 8,
+    },
+    dateFormatButton: {
+      backgroundColor: colors.surface,
+      borderWidth: 1,
+      borderColor: colors.border,
+      paddingHorizontal: 12,
+      paddingVertical: 8,
+      alignItems: 'flex-start',
+    },
+    dateFormatButtonActive: {
+      backgroundColor: colors.accent,
+      borderColor: colors.accent,
+    },
+    dateFormatText: {
+      fontFamily: 'JetBrainsMono_500Medium',
+      fontSize: 11 * fontScale,
+      color: colors.textSecondary,
+      letterSpacing: 0.5,
+    },
+    dateFormatTextActive: {
+      color: colors.background,
+      fontWeight: '600',
+    },
+    separatorContainer: {
+      flexDirection: 'row',
+      gap: 8,
+    },
+    separatorButton: {
+      backgroundColor: colors.surface,
+      borderWidth: 1,
+      borderColor: colors.border,
+      paddingHorizontal: 16,
+      paddingVertical: 8,
+      minWidth: 48,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    separatorButtonActive: {
+      backgroundColor: colors.accent,
+      borderColor: colors.accent,
+    },
+    separatorText: {
+      fontFamily: 'JetBrainsMono_700Bold',
+      fontSize: 12 * fontScale,
+      color: colors.textSecondary,
+      letterSpacing: 0.5,
+      fontWeight: '700',
+    },
+    separatorTextActive: {
+      color: colors.background,
+    },
+    timeFormatContainer: {
+      marginTop: 8,
+      gap: 8,
+    },
+    timeFormatButton: {
+      backgroundColor: colors.surface,
+      borderWidth: 1,
+      borderColor: colors.border,
+      paddingHorizontal: 12,
+      paddingVertical: 8,
+      alignItems: 'flex-start',
+    },
+    timeFormatButtonActive: {
+      backgroundColor: colors.accent,
+      borderColor: colors.accent,
+    },
+    timeFormatText: {
+      fontFamily: 'JetBrainsMono_500Medium',
+      fontSize: 11 * fontScale,
+      color: colors.textSecondary,
+      letterSpacing: 0.5,
+    },
+    timeFormatTextActive: {
+      color: colors.background,
+      fontWeight: '600',
     },
     disabledText: {
       color: colors.textMuted,
@@ -571,6 +655,112 @@ export default function SettingsScreen() {
               trackColor={{ false: colors.border, true: colors.textSecondary }}
               thumbColor={settings.reducedMotion ? colors.accent : colors.textMuted}
             />
+          </View>
+
+          {/* Date Format Order */}
+          <View style={styles.settingRow}>
+            <View style={{ flex: 1 }}>
+              <Text style={styles.settingLabel}>DATE_ORDER</Text>
+              <Text style={styles.settingSubtext}>
+                // Choose the order of day, month, and year
+              </Text>
+            </View>
+          </View>
+          <View style={styles.dateFormatContainer}>
+            {availableDateFormats.map(format => (
+              <TouchableOpacity
+                key={format}
+                style={[
+                  styles.dateFormatButton,
+                  settings.dateFormat === format && styles.dateFormatButtonActive
+                ]}
+                onPress={() => handleUpdateSetting('dateFormat', format)}
+                activeOpacity={0.7}
+              >
+                <Text style={[
+                  styles.dateFormatText,
+                  settings.dateFormat === format && styles.dateFormatTextActive
+                ]}>
+                  {getDateFormatDisplayName(format, settings.dateUseMonthNames, settings.dateSeparator)}
+                </Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+
+          {/* Month Names Toggle */}
+          <View style={styles.settingRow}>
+            <View style={{ flex: 1 }}>
+              <Text style={styles.settingLabel}>MONTH_NAMES</Text>
+              <Text style={styles.settingSubtext}>
+                // Use month names (Jan, Feb) instead of numbers (01, 02)
+              </Text>
+            </View>
+            <Switch
+              value={settings.dateUseMonthNames}
+              onValueChange={(value) => handleUpdateSetting('dateUseMonthNames', value)}
+              trackColor={{ false: colors.border, true: colors.textSecondary }}
+              thumbColor={settings.dateUseMonthNames ? colors.accent : colors.textMuted}
+            />
+          </View>
+
+          {/* Date Separator Toggle */}
+          <View style={styles.settingRow}>
+            <View style={{ flex: 1 }}>
+              <Text style={styles.settingLabel}>DATE_SEPARATOR</Text>
+              <Text style={styles.settingSubtext}>
+                // Choose separator between date parts
+              </Text>
+            </View>
+            <View style={styles.separatorContainer}>
+              {availableSeparators.map(separator => (
+                <TouchableOpacity
+                  key={separator}
+                  style={[
+                    styles.separatorButton,
+                    settings.dateSeparator === separator && styles.separatorButtonActive
+                  ]}
+                  onPress={() => handleUpdateSetting('dateSeparator', separator)}
+                  activeOpacity={0.7}
+                >
+                  <Text style={[
+                    styles.separatorText,
+                    settings.dateSeparator === separator && styles.separatorTextActive
+                  ]}>
+                    [{separator}]
+                  </Text>
+                </TouchableOpacity>
+              ))}
+            </View>
+          </View>
+
+          {/* Time Format Toggle */}
+          <View style={styles.settingRow}>
+            <View style={{ flex: 1 }}>
+              <Text style={styles.settingLabel}>TIME_FORMAT</Text>
+              <Text style={styles.settingSubtext}>
+                // Choose between 24-hour and 12-hour (AM/PM) format
+              </Text>
+            </View>
+            <View style={styles.timeFormatContainer}>
+              {availableTimeFormats.map(format => (
+                <TouchableOpacity
+                  key={format}
+                  style={[
+                    styles.timeFormatButton,
+                    settings.timeFormat === format && styles.timeFormatButtonActive
+                  ]}
+                  onPress={() => handleUpdateSetting('timeFormat', format)}
+                  activeOpacity={0.7}
+                >
+                  <Text style={[
+                    styles.timeFormatText,
+                    settings.timeFormat === format && styles.timeFormatTextActive
+                  ]}>
+                    {getTimeFormatDisplayName(format)}
+                  </Text>
+                </TouchableOpacity>
+              ))}
+            </View>
           </View>
         </View>
 

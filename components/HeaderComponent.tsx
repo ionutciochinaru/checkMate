@@ -2,8 +2,10 @@ import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { router } from 'expo-router';
 import { useThemedStyles, useTheme } from '../hooks/useTheme';
+import { useMainStore } from '../hooks/useTaskStore';
 import { FilterType } from '../hooks/useTaskFilter';
 import { typography, spacing } from '../utils/y2k-styles';
+import { formatDateWithPreference } from '../utils/dateFormatters';
 
 interface HeaderComponentProps {
   tasks: any[];
@@ -25,14 +27,17 @@ export default function HeaderComponent({
   setShowFilterDropdown
 }: HeaderComponentProps) {
   const { colors, isDark, theme, setTheme } = useTheme();
+  const { getSettings } = useMainStore();
+  
+  const settings = getSettings();
 
-  // Removed time display for cleaner layout
-
-  const currentDate = new Date().toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: '2-digit',
-    day: '2-digit'
-  }).replace(/\//g, '.');
+  // Format current date using user preferences
+  const currentDate = formatDateWithPreference(
+    new Date(), 
+    settings.dateFormat, 
+    settings.dateUseMonthNames, 
+    settings.dateSeparator
+  );
 
   const styles = useThemedStyles((colors, isDark, fontScale, reducedMotion) => StyleSheet.create({
     header: {
@@ -80,7 +85,7 @@ export default function HeaderComponent({
     },
     themeToggleText: {
       fontFamily: 'JetBrainsMono_700Bold',
-      fontSize: 10 * fontScale,
+      fontSize: 12 * fontScale,
       color: colors.accent,
       letterSpacing: 0.3,
       fontWeight: '800',
@@ -111,7 +116,7 @@ export default function HeaderComponent({
     },
     settingsIcon: {
       fontFamily: 'JetBrainsMono_700Bold',
-      fontSize: 10 * fontScale,
+      fontSize: 12 * fontScale,
       color: colors.accent,
       letterSpacing: 0.3,
       fontWeight: '800',
@@ -265,14 +270,14 @@ export default function HeaderComponent({
             }}
           >
             <Text style={styles.themeToggleText}>
-              {theme === 'light' ? 'LGT' : theme === 'dark' ? 'TRM' : 'AUTO'}
+              {theme === 'light' ? '[LGT]' : theme === 'dark' ? '[TRM]' : '[AUTO]'}
             </Text>
           </TouchableOpacity>
           <TouchableOpacity
               style={styles.settingsButton}
               onPress={() => router.push('/settings')}
           >
-            <Text style={styles.settingsIcon}>CFG</Text>
+            <Text style={styles.settingsIcon}>[CFG]</Text>
           </TouchableOpacity>
         </View>
       </View>
