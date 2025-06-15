@@ -769,7 +769,7 @@ export default function SettingsScreen() {
         <View style={styles.supportSection}>
           <Text style={styles.supportTitle}>SUPPORT THE DEVELOPER</Text>
           <Text style={styles.supportSubtext}>
-            // If you enjoy using checkMate and find it helpful,
+            // If you enjoy using Taskloopd and find it helpful,
             // consider buying me a coffee! Your support helps
             // keep this app free and motivates continued development.
           </Text>
@@ -813,7 +813,7 @@ export default function SettingsScreen() {
           </TouchableOpacity>
           
           <Text style={styles.gratitudeText}>
-            // Thank you for using checkMate! Every bit of support
+            // Thank you for using Taskloopd! Every bit of support
             // means the world to an independent developer.
           </Text>
         </View>

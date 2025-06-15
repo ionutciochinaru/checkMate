@@ -2,8 +2,8 @@
 
 export default {
   expo: {
-    name: "CheckMate",
-    slug: "checkmate-tasks",
+    name: "Taskloopd",
+    slug: "taskloopd",
     extra: {
       eas: {
         projectId: "b8e37823-81ef-47df-af55-69a2609d4380"
@@ -14,7 +14,7 @@ export default {
     orientation: "portrait",
     icon: "./assets/icon.png",
     userInterfaceStyle: "automatic",
-    scheme: "checkmate",
+    scheme: "taskloopd",
     platforms: ["ios", "android"],
     newArchEnabled: true,
     plugins: [
@@ -37,12 +37,12 @@ export default {
       backgroundColor: "#f5f5f0"
     },
     ios: {
-      bundleIdentifier: "com.yourname.checkmate",
+      bundleIdentifier: "com.yourname.taskloopd",
       supportsTablet: true,
       jsEngine: "jsc"
     },
     android: {
-      package: "com.yourname.checkmate",
+      package: "com.yourname.taskloopd",
       adaptiveIcon: {
         foregroundImage: "./assets/icon.png",
         backgroundColor: "#ffffff"

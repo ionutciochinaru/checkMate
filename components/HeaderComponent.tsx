@@ -260,7 +260,7 @@ export default function HeaderComponent({
   return (
     <View style={styles.header}>
       <View style={styles.terminalBar}>
-        <Text style={styles.terminalTitle}>CHECKMATE.EXE</Text>
+        <Text style={styles.terminalTitle}>TASKLOOPD.EXE</Text>
         <View style={styles.topRightControls}>
           <TouchableOpacity
             style={styles.themeToggle}
