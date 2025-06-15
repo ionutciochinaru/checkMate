@@ -46,7 +46,10 @@ export const initializeDatabase = async (): Promise<SQLite.SQLiteDatabase> => {
         originalReminderTime TEXT,
         ignoreWorkingHours INTEGER DEFAULT 0,
         completionCount INTEGER DEFAULT 0,
-        lastCompletedAt TEXT
+        lastCompletedAt TEXT,
+        enableSequentialNotification INTEGER DEFAULT 0,
+        sequentialInterval INTEGER DEFAULT 300,
+        followUpNotificationId TEXT
       );
 
       CREATE TABLE IF NOT EXISTS settings (
@@ -54,6 +57,31 @@ export const initializeDatabase = async (): Promise<SQLite.SQLiteDatabase> => {
         value TEXT NOT NULL
       );
     `);
+
+    // Migration for existing databases - add new columns if they don't exist
+    try {
+      await db.execAsync(`
+        ALTER TABLE tasks ADD COLUMN enableSequentialNotification INTEGER DEFAULT 0;
+      `);
+    } catch (error) {
+      // Column already exists, ignore
+    }
+    
+    try {
+      await db.execAsync(`
+        ALTER TABLE tasks ADD COLUMN sequentialInterval INTEGER DEFAULT 300;
+      `);
+    } catch (error) {
+      // Column already exists, ignore
+    }
+    
+    try {
+      await db.execAsync(`
+        ALTER TABLE tasks ADD COLUMN followUpNotificationId TEXT;
+      `);
+    } catch (error) {
+      // Column already exists, ignore
+    }
     
     return db;
   } catch (error) {

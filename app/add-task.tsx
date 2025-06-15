@@ -40,6 +40,8 @@ export default function AddTaskScreen() {
   const [isRecurring, setIsRecurring] = useState(false);
   const [recurringInterval, setRecurringInterval] = useState(24);
   const [ignoreWorkingHours, setIgnoreWorkingHours] = useState(false);
+  const [enableSequentialNotification, setEnableSequentialNotification] = useState(false);
+  const [sequentialInterval, setSequentialInterval] = useState(300); // Default to 5 minutes
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [showTimePicker, setShowTimePicker] = useState(false);
 
@@ -52,6 +54,8 @@ export default function AddTaskScreen() {
       setIsRecurring(editingTask.isRecurring);
       setRecurringInterval(editingTask.recurringInterval || 24);
       setIgnoreWorkingHours(editingTask.ignoreWorkingHours);
+      setEnableSequentialNotification(editingTask.enableSequentialNotification || false);
+      setSequentialInterval(editingTask.sequentialInterval || 300);
     }
   }, [editingTask]);
 
@@ -63,6 +67,12 @@ export default function AddTaskScreen() {
     { label: '24H', value: 24 },
     { label: '3D', value: 72 },
     { label: '1W', value: 168 }
+  ];
+
+  const sequentialIntervalOptions = [
+    { label: '30s', value: 30 },
+    { label: '5min', value: 300 },
+    { label: '10min', value: 600 }
   ];
 
   const formatDate = (date: Date | string) => {
@@ -110,7 +120,9 @@ export default function AddTaskScreen() {
       isRecurring,
       recurringInterval,
       ignoreWorkingHours,
-      reminderTime
+      reminderTime,
+      enableSequentialNotification,
+      sequentialInterval
     };
 
     try {
@@ -650,6 +662,54 @@ export default function AddTaskScreen() {
               thumbColor={ignoreWorkingHours ? colors.accent : colors.textMuted}
             />
           </View>
+        </View>
+
+        {/* Sequential Notifications */}
+        <View style={styles.toggleCard}>
+          <View style={styles.toggleRow}>
+            <View style={{ flex: 1 }}>
+              <Text style={styles.toggleLabel}>SEQUENTIAL_NOTIFY</Text>
+              <Text style={styles.toggleSubtext}>// Send follow-up reminder if first notification is ignored</Text>
+              <Text style={styles.toggleSubtext}>// Notification A at time T, then B at T + interval</Text>
+            </View>
+            <Switch
+              value={enableSequentialNotification}
+              onValueChange={setEnableSequentialNotification}
+              trackColor={{ false: colors.border, true: colors.textSecondary }}
+              thumbColor={enableSequentialNotification ? colors.accent : colors.textMuted}
+            />
+          </View>
+          
+          {enableSequentialNotification && (
+            <View style={styles.intervalSection}>
+              <Text style={styles.intervalLabel}>FOLLOW_UP_INTERVAL</Text>
+              <Text style={styles.helpText}>
+                Time delay before sending follow-up notification (if first is ignored)
+              </Text>
+              <View style={styles.chipContainer}>
+                {sequentialIntervalOptions.map(option => (
+                  <TouchableOpacity
+                    key={option.value}
+                    style={[
+                      styles.chip,
+                      sequentialInterval === option.value && styles.selectedChip
+                    ]}
+                    onPress={() => {
+                      setSequentialInterval(option.value);
+                    }}
+                    activeOpacity={0.7}
+                  >
+                    <Text style={[
+                      styles.chipText,
+                      sequentialInterval === option.value && styles.selectedChipText
+                    ]}>
+                      {option.label}
+                    </Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
+            </View>
+          )}
         </View>
 
         {/* Action Buttons */}

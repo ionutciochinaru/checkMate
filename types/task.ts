@@ -13,6 +13,10 @@ export interface Task {
   // Loop mode tracking
   completionCount?: number; // How many times this loop task has been completed
   lastCompletedAt?: Date; // When it was last marked as done
+  // Sequential notification settings
+  enableSequentialNotification?: boolean; // Whether to use A -> B notification pattern
+  sequentialInterval?: number; // Interval in seconds (30, 300, 600 for 30s, 5min, 10min)
+  followUpNotificationId?: string; // ID of the scheduled follow-up notification
 }
 
 export type DateFormat = 'DD-MM-YYYY' | 'MM-DD-YYYY' | 'YYYY-MM-DD';
