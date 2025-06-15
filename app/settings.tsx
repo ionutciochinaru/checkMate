@@ -455,6 +455,13 @@ export default function SettingsScreen() {
       textAlign: 'center',
       fontStyle: 'italic',
     },
+    arrowIcon: {
+      fontFamily: 'JetBrainsMono_700Bold',
+      fontSize: 12 * fontScale,
+      color: colors.textSecondary,
+      letterSpacing: 0.5,
+      fontWeight: '700',
+    },
   }));
 
   return (
@@ -590,6 +597,26 @@ export default function SettingsScreen() {
               thumbColor={settings.twentyFourHourMode ? colors.accent : colors.textMuted}
             />
           </View>
+        </View>
+
+        {/* Theme Settings */}
+        <View style={styles.sectionCard}>
+          <Text style={styles.sectionTitle}>THEMES</Text>
+          
+          {/* Theme Selector */}
+          <TouchableOpacity
+            style={styles.settingRow}
+            onPress={() => router.push('/theme-selector')}
+            activeOpacity={0.7}
+          >
+            <View style={{ flex: 1 }}>
+              <Text style={styles.settingLabel}>THEME_SELECTOR</Text>
+              <Text style={styles.settingSubtext}>
+                // Choose between Terminal, Y2K, and Material Design themes
+              </Text>
+            </View>
+            <Text style={styles.arrowIcon}>{'[>]'}</Text>
+          </TouchableOpacity>
         </View>
 
         {/* Accessibility Settings */}
@@ -769,7 +796,7 @@ export default function SettingsScreen() {
         <View style={styles.supportSection}>
           <Text style={styles.supportTitle}>SUPPORT THE DEVELOPER</Text>
           <Text style={styles.supportSubtext}>
-            // If you enjoy using Taskloopd and find it helpful,
+            // If you enjoy using checkMate and find it helpful,
             // consider buying me a coffee! Your support helps
             // keep this app free and motivates continued development.
           </Text>
@@ -813,7 +840,7 @@ export default function SettingsScreen() {
           </TouchableOpacity>
           
           <Text style={styles.gratitudeText}>
-            // Thank you for using Taskloopd! Every bit of support
+            // Thank you for using checkMate! Every bit of support
             // means the world to an independent developer.
           </Text>
         </View>

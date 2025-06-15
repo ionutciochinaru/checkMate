@@ -26,7 +26,7 @@ export const initializeDatabase = async (): Promise<SQLite.SQLiteDatabase> => {
   if (db) return db;
   
   try {
-    db = await SQLite.openDatabaseAsync('taskloopd.db');
+    db = await SQLite.openDatabaseAsync('checkmate.db');
     
     // Enable WAL mode for better performance
     await db.execAsync('PRAGMA journal_mode = WAL;');

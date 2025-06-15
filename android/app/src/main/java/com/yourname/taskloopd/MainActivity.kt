@@ -1,4 +1,4 @@
-package com.yourname.taskloopd
+package com.yourname.checkmate
 
 import android.os.Build
 import android.os.Bundle

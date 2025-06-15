@@ -26,7 +26,7 @@ export default function HeaderComponent({
   setSelectedFilter,
   setShowFilterDropdown
 }: HeaderComponentProps) {
-  const { colors, isDark, theme, setTheme } = useTheme();
+  const { colors, isDark, theme, themeStyle, setTheme, setThemeStyle } = useTheme();
   const { getSettings } = useMainStore();
   
   const settings = getSettings();
@@ -260,17 +260,17 @@ export default function HeaderComponent({
   return (
     <View style={styles.header}>
       <View style={styles.terminalBar}>
-        <Text style={styles.terminalTitle}>TASKLOOPD.EXE</Text>
+        <Text style={styles.terminalTitle}>CHECKMATE.EXE</Text>
         <View style={styles.topRightControls}>
           <TouchableOpacity
             style={styles.themeToggle}
             onPress={() => {
-              const nextTheme = theme === 'light' ? 'dark' : theme === 'dark' ? 'auto' : 'light';
-              setTheme(nextTheme);
+              const nextThemeStyle = themeStyle === 'terminal' ? 'y2k' : themeStyle === 'y2k' ? 'material' : 'terminal';
+              setThemeStyle(nextThemeStyle);
             }}
           >
             <Text style={styles.themeToggleText}>
-              {theme === 'light' ? '[LGT]' : theme === 'dark' ? '[TRM]' : '[AUTO]'}
+              {themeStyle === 'terminal' ? '[TRM]' : themeStyle === 'y2k' ? '[Y2K]' : '[MAT]'}
             </Text>
           </TouchableOpacity>
           <TouchableOpacity

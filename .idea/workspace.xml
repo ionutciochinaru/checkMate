@@ -5,12 +5,18 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="171acf02-a826-4aaf-937f-dcb4d8420b57" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/app/theme-selector.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/utils/theme-fonts.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/add-task.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/add-task.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/hooks/useNotifications.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/hooks/useNotifications.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/app/src/main/java/com/yourname/taskloopd/MainActivity.kt" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/src/main/java/com/yourname/taskloopd/MainActivity.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/app/src/main/java/com/yourname/taskloopd/MainApplication.kt" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/src/main/java/com/yourname/taskloopd/MainApplication.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app.config.ts" beforeDir="false" afterPath="$PROJECT_DIR$/app.config.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/settings.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/settings.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/components/HeaderComponent.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/components/HeaderComponent.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/eas.json" beforeDir="false" afterPath="$PROJECT_DIR$/eas.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/hooks/useTheme.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/hooks/useTheme.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/stores/mainStore.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/stores/mainStore.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/stores/taskStore.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/stores/taskStore.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/types/task.ts" beforeDir="false" afterPath="$PROJECT_DIR$/types/task.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -128,7 +134,7 @@
       <workItem from="1749904789209" duration="5312000" />
       <workItem from="1749913458711" duration="414000" />
       <workItem from="1749991878637" duration="1364000" />
-      <workItem from="1749994529132" duration="924000" />
+      <workItem from="1749994529132" duration="3865000" />
     </task>
     <task id="LOCAL-00001" summary="first commit">
       <option name="closed" value="true" />
@@ -306,7 +312,15 @@
       <option name="project" value="LOCAL" />
       <updated>1749994433678</updated>
     </task>
-    <option name="localTasksCounter" value="23" />
+    <task id="LOCAL-00023" summary="notifications">
+      <option name="closed" value="true" />
+      <created>1749996047633</created>
+      <option name="number" value="00023" />
+      <option name="presentableId" value="LOCAL-00023" />
+      <option name="project" value="LOCAL" />
+      <updated>1749996047633</updated>
+    </task>
+    <option name="localTasksCounter" value="24" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -317,10 +331,10 @@
     <MESSAGE value="first commit" />
     <MESSAGE value="icons" />
     <MESSAGE value="improvements" />
-    <MESSAGE value="notifications" />
     <MESSAGE value="UI improvements" />
     <MESSAGE value="fix" />
     <MESSAGE value="rename" />
-    <option name="LAST_COMMIT_MESSAGE" value="rename" />
+    <MESSAGE value="notifications" />
+    <option name="LAST_COMMIT_MESSAGE" value="notifications" />
   </component>
 </project>
