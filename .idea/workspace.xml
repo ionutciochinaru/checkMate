@@ -4,7 +4,29 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="171acf02-a826-4aaf-937f-dcb4d8420b57" name="Changes" comment="" />
+    <list default="true" id="171acf02-a826-4aaf-937f-dcb4d8420b57" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/app/theme-selector.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/insp/Screenshot 2025-06-16 001911.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app.config.ts" beforeDir="false" afterPath="$PROJECT_DIR$/app.config.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/add-task.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/add-task.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/index.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/index.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/settings.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/settings.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/components/AddButtonComponent.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/components/AddButtonComponent.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/components/EmptyStateComponent.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/components/EmptyStateComponent.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/components/HeaderComponent.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/components/HeaderComponent.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/components/TaskItem.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/components/TaskItem.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/components/TaskListComponent.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/components/TaskListComponent.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/hooks/useNotifications.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/hooks/useNotifications.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/hooks/useTheme.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/hooks/useTheme.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/stores/mainStore.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/stores/mainStore.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/stores/taskStore.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/stores/taskStore.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tailwind.config.js" beforeDir="false" afterPath="$PROJECT_DIR$/tailwind.config.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/types/task.ts" beforeDir="false" afterPath="$PROJECT_DIR$/types/task.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/utils/y2k-styles.ts" beforeDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -18,6 +40,18 @@
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
+  <component name="GitHubPullRequestSearchHistory"><![CDATA[{
+  "lastFilter": {
+    "state": "OPEN",
+    "assignee": "ionutciochinaru"
+  }
+}]]></component>
+  <component name="GithubPullRequestsUISettings"><![CDATA[{
+  "selectedUrlAndAccountId": {
+    "url": "https://github.com/ionutciochinaru/checkMate.git",
+    "accountId": "e5ed54bd-4101-4252-9bb6-b7cc93166c9e"
+  }
+}]]></component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 5
 }</component>
@@ -34,6 +68,7 @@
     "ASKED_ADD_EXTERNAL_FILES": "true",
     "ASKED_SHARE_PROJECT_CONFIGURATION_FILES": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
     "git-widget-placeholder": "master",
     "ignore.virus.scanning.warn.message": "true",
     "last_opened_file_path": "D:/WebDev/checkMate",
@@ -47,7 +82,7 @@
     "npm.android.executor": "Run",
     "npm.start.executor": "Run",
     "settings.editor.selected.configurable": "sshConsole",
-    "ts.external.directory.path": "D:\\WebDev\\checkMate\\node_modules\\typescript\\lib",
+    "ts.external.directory.path": "D:\\WebDev\\checkmate\\node_modules\\typescript\\lib",
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
@@ -56,6 +91,7 @@
       <recent name="D:\WebDev\checkMate\assets" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="D:\WebDev\taskloopd\insp" />
       <recent name="D:\WebDev\checkMate" />
       <recent name="D:\WebDev\checkMate\assets" />
     </key>
@@ -94,7 +130,7 @@
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
-        <option value="bundled-js-predefined-1d06a55b98c1-91d5c284f522-JavaScript-WS-241.15989.105" />
+        <option value="bundled-js-predefined-d6986cc7102b-b26f3e71634d-JavaScript-WS-251.26094.131" />
       </set>
     </attachedChunks>
   </component>
@@ -120,6 +156,12 @@
       <workItem from="1749883660850" duration="4491000" />
       <workItem from="1749904789209" duration="5312000" />
       <workItem from="1749913458711" duration="414000" />
+      <workItem from="1750015108392" duration="399000" />
+      <workItem from="1750019230132" duration="36000" />
+      <workItem from="1750019439505" duration="3992000" />
+      <workItem from="1750058860782" duration="37000" />
+      <workItem from="1750058914603" duration="46000" />
+      <workItem from="1750180352537" duration="2284000" />
     </task>
     <task id="LOCAL-00001" summary="first commit">
       <option name="closed" value="true" />

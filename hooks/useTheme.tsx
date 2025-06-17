@@ -10,6 +10,7 @@ import {
 import { useMainStore } from './useTaskStore';
 
 type Theme = 'light' | 'dark' | 'auto';
+type ThemeStyle = 'terminal';
 
 interface ThemeColors {
   background: string;
@@ -23,92 +24,114 @@ interface ThemeColors {
   danger: string;
   success: string;
   warning: string;
-  // Y2K accent colors remain the same
-  y2kPink: string;
-  y2kCyan: string;
-  y2kLime: string;
-  y2kPurple: string;
 }
 
-const lightTheme: ThemeColors = {
-  background: '#f8f8f6',
-  surface: '#ffffff', 
-  surfaceVariant: '#f0f0ee',
-  border: '#c0c0c0',
-  text: '#000000',
-  textSecondary: '#333333',
-  textMuted: '#666666',
-  accent: '#000000',
-  danger: '#800000',
-  success: '#006400',
-  warning: '#ff6600',
-  // Minimal Y2K accents for e-ink aesthetic
-  y2kPink: '#cc3366',
-  y2kCyan: '#006666', 
-  y2kLime: '#009900',
-  y2kPurple: '#663399',
+interface ThemeConfig {
+  colors: ThemeColors;
+  borderRadius: number;
+  fontFamily: {
+    regular: string;
+    medium: string;
+    bold: string;
+  };
+  letterSpacing: number;
+  elevation: {
+    low: number;
+    medium: number;
+    high: number;
+  };
+}
+
+// Terminal Theme Configurations
+const terminalLight: ThemeConfig = {
+  colors: {
+    background: '#f8f8f6',
+    surface: '#ffffff', 
+    surfaceVariant: '#f0f0ee',
+    border: '#c0c0c0',
+    text: '#000000',
+    textSecondary: '#333333',
+    textMuted: '#666666',
+    accent: '#000000',
+    danger: '#800000',
+    success: '#006400',
+    warning: '#ff6600',
+  },
+  borderRadius: 0,
+  fontFamily: {
+    regular: 'JetBrainsMono_400Regular',
+    medium: 'JetBrainsMono_500Medium',
+    bold: 'JetBrainsMono_700Bold',
+  },
+  letterSpacing: 1.2,
+  elevation: { low: 0, medium: 0, high: 0 },
 };
 
-const darkTheme: ThemeColors = {
-  background: '#000000',
-  surface: '#111111',
-  surfaceVariant: '#1a1a1a',
-  border: '#333333',
-  text: '#00ff00',
-  textSecondary: '#00cc00',
-  textMuted: '#008800',
-  accent: '#00ff00',
-  danger: '#ff0000',
-  success: '#00ff00',
-  warning: '#ffff00',
-  // Terminal-style Y2K accents
-  y2kPink: '#ff00ff',
-  y2kCyan: '#00ffff',
-  y2kLime: '#00ff00', 
-  y2kPurple: '#8000ff',
+const terminalDark: ThemeConfig = {
+  colors: {
+    background: '#000000',
+    surface: '#111111',
+    surfaceVariant: '#1a1a1a',
+    border: '#333333',
+    text: '#ff4444',
+    textSecondary: '#cc3333',
+    textMuted: '#882222',
+    accent: '#ff4444',
+    danger: '#ff6666',
+    success: '#ff4444',
+    warning: '#ffaa44',
+  },
+  borderRadius: 0,
+  fontFamily: {
+    regular: 'JetBrainsMono_400Regular',
+    medium: 'JetBrainsMono_500Medium',
+    bold: 'JetBrainsMono_700Bold',
+  },
+  letterSpacing: 1.2,
+  elevation: { low: 0, medium: 0, high: 0 },
 };
 
-const darkHighContrastTheme: ThemeColors = {
-  background: '#000000',
-  surface: '#000000',
-  surfaceVariant: '#000000',
-  border: '#ffffff',
-  text: '#ffffff',
-  textSecondary: '#ffffff',
-  textMuted: '#cccccc',
-  accent: '#ffffff',
-  danger: '#ff0000',
-  success: '#00ff00',
-  warning: '#ffff00',
-  y2kPink: '#ff00ff',
-  y2kCyan: '#00ffff',
-  y2kLime: '#00ff00',
-  y2kPurple: '#8000ff',
+
+// High Contrast Variants
+const terminalLightHighContrast: ThemeConfig = {
+  ...terminalLight,
+  colors: {
+    ...terminalLight.colors,
+    background: '#ffffff',
+    surface: '#ffffff',
+    surfaceVariant: '#ffffff',
+    border: '#000000',
+    text: '#000000',
+    textSecondary: '#000000',
+    textMuted: '#333333',
+    accent: '#000000',
+  },
 };
 
-const lightHighContrastTheme: ThemeColors = {
-  background: '#ffffff',
-  surface: '#ffffff',
-  surfaceVariant: '#ffffff',
-  border: '#000000',
-  text: '#000000',
-  textSecondary: '#000000',
-  textMuted: '#333333',
-  accent: '#000000',
-  danger: '#cc0000',
-  success: '#006600',
-  warning: '#cc6600',
-  y2kPink: '#cc0066',
-  y2kCyan: '#006666',
-  y2kLime: '#009900',
-  y2kPurple: '#663399',
+const terminalDarkHighContrast: ThemeConfig = {
+  ...terminalDark,
+  colors: {
+    ...terminalDark.colors,
+    background: '#000000',
+    surface: '#000000',
+    surfaceVariant: '#000000',
+    border: '#ff4444',
+    text: '#ff4444',
+    textSecondary: '#ff4444',
+    textMuted: '#cc3333',
+    accent: '#ff4444',
+  },
 };
+
 
 interface ThemeContextValue {
   theme: Theme;
+  themeStyle: ThemeStyle;
   colors: ThemeColors;
+  config: ThemeConfig;
   isDark: boolean;
   setTheme: (theme: Theme) => void;
+  setThemeStyle: (themeStyle: ThemeStyle) => void;
   animatedBackgroundStyle: any;
   animatedSurfaceStyle: any;
   animatedTextStyle: any;
@@ -121,6 +144,7 @@ const ThemeContext = createContext<ThemeContextValue | undefined>(undefined);
 
 export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [theme, setThemeState] = useState<Theme>('auto');
+  const [themeStyle, setThemeStyleState] = useState<ThemeStyle>('terminal');
   const [systemColorScheme, setSystemColorScheme] = useState<ColorSchemeName>(
     Appearance.getColorScheme()
   );
@@ -140,21 +164,31 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
   const isDark = theme === 'dark' || (theme === 'auto' && systemColorScheme === 'dark');
   
-  // Apply high contrast theme if enabled
-  let colors: ThemeColors;
-  if (settings.highContrast) {
-    colors = isDark ? darkHighContrastTheme : lightHighContrastTheme;
-  } else {
-    colors = isDark ? darkTheme : lightTheme;
-  }
+  // Get theme configuration based on style and mode
+  const getThemeConfig = (): ThemeConfig => {
+    if (settings.highContrast) {
+      return isDark ? terminalDarkHighContrast : terminalLightHighContrast;
+    }
 
-  // Load saved theme on mount
+    return isDark ? terminalDark : terminalLight;
+  };
+
+  const config = getThemeConfig();
+  const colors = config.colors;
+
+  // Load saved theme and style on mount
   useEffect(() => {
     const loadTheme = async () => {
       try {
         const savedTheme = await AsyncStorage.getItem('theme');
+        const savedThemeStyle = await AsyncStorage.getItem('themeStyle');
+        
         if (savedTheme && ['light', 'dark', 'auto'].includes(savedTheme)) {
           setThemeState(savedTheme as Theme);
+        }
+        
+        if (savedThemeStyle && savedThemeStyle === 'terminal') {
+          setThemeStyleState(savedThemeStyle as ThemeStyle);
         }
       } catch (error) {
         // Use default theme
@@ -189,34 +223,27 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     }
   };
 
+  const setThemeStyle = async (newThemeStyle: ThemeStyle) => {
+    setThemeStyleState(newThemeStyle);
+    try {
+      await AsyncStorage.setItem('themeStyle', newThemeStyle);
+    } catch (error) {
+      // Silently fail theme style save
+    }
+  };
+
   // Animated styles for smooth transitions
   const animatedBackgroundStyle = useAnimatedStyle(() => ({
-    backgroundColor: interpolateColor(
-      backgroundProgress.value,
-      [0, 1],
-      [lightTheme.background, darkTheme.background]
-    ),
+    backgroundColor: colors.background,
   }));
 
   const animatedSurfaceStyle = useAnimatedStyle(() => ({
-    backgroundColor: interpolateColor(
-      surfaceProgress.value,
-      [0, 1],
-      [lightTheme.surface, darkTheme.surface]
-    ),
-    borderColor: interpolateColor(
-      surfaceProgress.value,
-      [0, 1],
-      [lightTheme.border, darkTheme.border]
-    ),
+    backgroundColor: colors.surface,
+    borderColor: colors.border,
   }));
 
   const animatedTextStyle = useAnimatedStyle(() => ({
-    color: interpolateColor(
-      textProgress.value,
-      [0, 1],
-      [lightTheme.text, darkTheme.text]
-    ),
+    color: colors.text,
   }));
 
   // React to settings changes from main store
@@ -227,9 +254,12 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
   const value: ThemeContextValue = {
     theme,
+    themeStyle,
     colors,
+    config,
     isDark,
     setTheme,
+    setThemeStyle,
     animatedBackgroundStyle,
     animatedSurfaceStyle,
     animatedTextStyle,
@@ -251,8 +281,8 @@ export const useTheme = (): ThemeContextValue => {
 
 // Theme-aware hook for creating dynamic styles with accessibility support
 export const useThemedStyles = <T extends Record<string, any>>(
-  styleFactory: (colors: ThemeColors, isDark: boolean, fontScale: number, reducedMotion: boolean) => T
+  styleFactory: (colors: ThemeColors, isDark: boolean, fontScale: number, reducedMotion: boolean, config: ThemeConfig) => T
 ): T => {
-  const { colors, isDark, fontScale, reducedMotion } = useTheme();
-  return styleFactory(colors, isDark, fontScale, reducedMotion);
+  const { colors, isDark, fontScale, reducedMotion, config } = useTheme();
+  return styleFactory(colors, isDark, fontScale, reducedMotion, config);
 };

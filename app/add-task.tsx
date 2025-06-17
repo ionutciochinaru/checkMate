@@ -15,12 +15,11 @@ import { useTaskStore, useMainStore } from '../hooks/useTaskStore';
 import { useThemedStyles, useTheme } from '../hooks/useTheme';
 import { showAlert } from '../components/CustomAlert';
 import { formatDateWithPreference, formatTime } from '../utils/dateFormatters';
-import Animated from 'react-native-reanimated';
 
 export default function AddTaskScreen() {
   const { addTask, tasks, updateTask } = useTaskStore();
   const { getSettings } = useMainStore();
-  const { colors, animatedBackgroundStyle } = useTheme();
+  const { colors, config } = useTheme();
   const { edit } = useLocalSearchParams();
   
   const settings = getSettings();
@@ -40,6 +39,8 @@ export default function AddTaskScreen() {
   const [isRecurring, setIsRecurring] = useState(false);
   const [recurringInterval, setRecurringInterval] = useState(24);
   const [ignoreWorkingHours, setIgnoreWorkingHours] = useState(false);
+  const [enableSequentialNotification, setEnableSequentialNotification] = useState(false);
+  const [sequentialInterval, setSequentialInterval] = useState(300); // Default to 5 minutes
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [showTimePicker, setShowTimePicker] = useState(false);
 
@@ -52,6 +53,8 @@ export default function AddTaskScreen() {
       setIsRecurring(editingTask.isRecurring);
       setRecurringInterval(editingTask.recurringInterval || 24);
       setIgnoreWorkingHours(editingTask.ignoreWorkingHours);
+      setEnableSequentialNotification(editingTask.enableSequentialNotification || false);
+      setSequentialInterval(editingTask.sequentialInterval || 300);
     }
   }, [editingTask]);
 
@@ -63,6 +66,12 @@ export default function AddTaskScreen() {
     { label: '24H', value: 24 },
     { label: '3D', value: 72 },
     { label: '1W', value: 168 }
+  ];
+
+  const sequentialIntervalOptions = [
+    { label: '30s', value: 30 },
+    { label: '5min', value: 300 },
+    { label: '10min', value: 600 }
   ];
 
   const formatDate = (date: Date | string) => {
@@ -110,7 +119,9 @@ export default function AddTaskScreen() {
       isRecurring,
       recurringInterval,
       ignoreWorkingHours,
-      reminderTime
+      reminderTime,
+      enableSequentialNotification,
+      sequentialInterval
     };
 
     try {
@@ -254,18 +265,27 @@ export default function AddTaskScreen() {
     setShowTimePicker(false);
   };
 
-  const styles = useThemedStyles((colors, isDark, fontScale, reducedMotion) => StyleSheet.create({
+  const isTerminalTheme = true;
+  
+  const styles = useThemedStyles((colors, isDark, fontScale, reducedMotion, config) => StyleSheet.create({
     container: {
       flex: 1,
       backgroundColor: colors.background,
     },
     header: {
       backgroundColor: colors.surface,
-      borderBottomWidth: 2,
+      borderBottomWidth: isTerminalTheme ? 2 : 0,
       borderBottomColor: colors.border,
-      paddingTop: 50,
-      paddingBottom: 16,
-      paddingHorizontal: 16,
+      paddingTop: isTerminalTheme ? 50 : 60,
+      paddingBottom: isTerminalTheme ? 16 : 24,
+      paddingHorizontal: isTerminalTheme ? 16 : 24,
+      ...(isTerminalTheme ? {} : {
+        shadowColor: '#000000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 4,
+        elevation: config.elevation.low,
+      }),
     },
     terminalBar: {
       flexDirection: 'row',
@@ -273,32 +293,32 @@ export default function AddTaskScreen() {
       alignItems: 'center',
     },
     terminalTitle: {
-      fontFamily: 'JetBrainsMono_700Bold',
+      fontFamily: config.fontFamily.bold,
       fontSize: 20 * fontScale,
       color: colors.text,
-      letterSpacing: 1.2,
+      letterSpacing: config.letterSpacing,
       fontWeight: '800',
     },
     backButton: {
       padding: 0,
     },
     backButtonText: {
-      fontFamily: 'JetBrainsMono_700Bold',
+      fontFamily: config.fontFamily.bold,
       fontSize: 14 * fontScale,
       color: colors.textSecondary,
-      letterSpacing: 1,
+      letterSpacing: config.letterSpacing * 0.8,
       fontWeight: '700',
     },
     helpText: {
-      fontFamily: 'JetBrainsMono_400Regular',
+      fontFamily: config.fontFamily.regular,
       fontSize: 10 * fontScale,
       color: colors.textMuted,
-      letterSpacing: 0.5,
+      letterSpacing: config.letterSpacing * 0.4,
       marginBottom: 8,
       lineHeight: 12 * fontScale,
     },
     instructionText: {
-      fontFamily: 'JetBrainsMono_500Medium',
+      fontFamily: config.fontFamily.medium,
       fontSize: 12,
       color: colors.textSecondary,
       letterSpacing: 0.5,
@@ -320,22 +340,23 @@ export default function AddTaskScreen() {
       marginBottom: 20,
     },
     label: {
-      fontFamily: 'JetBrainsMono_700Bold',
+      fontFamily: config.fontFamily.bold,
       fontSize: 14 * fontScale,
       color: colors.text,
-      letterSpacing: 1.2,
+      letterSpacing: config.letterSpacing,
       marginBottom: 8,
       fontWeight: '800',
     },
     textInput: {
-      fontFamily: 'JetBrainsMono_500Medium',
+      fontFamily: config.fontFamily.medium,
       fontSize: 12 * fontScale,
       color: colors.text,
       backgroundColor: colors.surface,
       borderWidth: 2,
       borderColor: colors.border,
+      borderRadius: config.borderRadius,
       padding: 14,
-      letterSpacing: 0.5,
+      letterSpacing: config.letterSpacing * 0.5,
       fontWeight: '500',
     },
     multilineInput: {
@@ -346,21 +367,31 @@ export default function AddTaskScreen() {
       backgroundColor: colors.surfaceVariant,
       borderWidth: 1,
       borderColor: colors.border,
+      borderRadius: config.borderRadius,
       padding: 12,
     },
     dateTimeText: {
-      fontFamily: 'JetBrainsMono_700Bold',
+      fontFamily: config.fontFamily.bold,
       fontSize: 14 * fontScale,
       color: colors.text,
-      letterSpacing: 0.8,
+      letterSpacing: config.letterSpacing * 0.8,
       fontWeight: '700',
     },
     toggleCard: {
-      backgroundColor: colors.surfaceVariant,
-      borderWidth: 1,
+      backgroundColor: isTerminalTheme ? colors.surfaceVariant : colors.surface,
+      borderWidth: isTerminalTheme ? 1 : 0,
       borderColor: colors.border,
-      padding: 12,
+      borderRadius: isTerminalTheme ? config.borderRadius : 20,
+      padding: isTerminalTheme ? 12 : 20,
       marginBottom: 20,
+      marginHorizontal: isTerminalTheme ? 0 : 4,
+      ...(isTerminalTheme ? {} : {
+        shadowColor: '#000000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.05,
+        shadowRadius: 4,
+        elevation: 2,
+      }),
     },
     toggleRow: {
       flexDirection: 'row',
@@ -368,18 +399,18 @@ export default function AddTaskScreen() {
       alignItems: 'center',
     },
     toggleLabel: {
-      fontFamily: 'JetBrainsMono_700Bold',
+      fontFamily: config.fontFamily.bold,
       fontSize: 14 * fontScale,
       color: colors.text,
-      letterSpacing: 1.2,
+      letterSpacing: config.letterSpacing,
       fontWeight: '800',
     },
     toggleSubtext: {
-      fontFamily: 'JetBrainsMono_400Regular',
+      fontFamily: config.fontFamily.regular,
       fontSize: 11,
       color: colors.textMuted,
       marginTop: 4,
-      letterSpacing: 0.5,
+      letterSpacing: config.letterSpacing * 0.4,
       lineHeight: 16,
     },
     intervalSection: {
@@ -389,10 +420,10 @@ export default function AddTaskScreen() {
       borderTopColor: colors.border,
     },
     intervalLabel: {
-      fontFamily: 'JetBrainsMono_500Medium',
+      fontFamily: config.fontFamily.medium,
       fontSize: 10,
       color: colors.textSecondary,
-      letterSpacing: 0.5,
+      letterSpacing: config.letterSpacing * 0.4,
       marginBottom: 8,
     },
     chipContainer: {
@@ -404,6 +435,7 @@ export default function AddTaskScreen() {
       backgroundColor: colors.surfaceVariant,
       borderWidth: 1,
       borderColor: colors.border,
+      borderRadius: config.borderRadius,
       paddingHorizontal: 12,
       paddingVertical: 8,
       minHeight: 40,
@@ -415,10 +447,10 @@ export default function AddTaskScreen() {
       borderColor: colors.accent,
     },
     chipText: {
-      fontFamily: 'JetBrainsMono_500Medium',
+      fontFamily: config.fontFamily.medium,
       fontSize: 10,
       color: colors.textSecondary,
-      letterSpacing: 0.5,
+      letterSpacing: config.letterSpacing * 0.4,
     },
     selectedChipText: {
       color: colors.background,
@@ -430,31 +462,47 @@ export default function AddTaskScreen() {
     },
     cancelButton: {
       flex: 1,
-      backgroundColor: 'transparent',
-      borderWidth: 1,
+      backgroundColor: isTerminalTheme ? 'transparent' : colors.surfaceVariant,
+      borderWidth: isTerminalTheme ? 1 : 0,
       borderColor: colors.textMuted,
-      paddingVertical: 16,
+      borderRadius: isTerminalTheme ? config.borderRadius : 28,
+      paddingVertical: isTerminalTheme ? 16 : 20,
       alignItems: 'center',
+      ...(isTerminalTheme ? {} : {
+        shadowColor: '#000000',
+        shadowOffset: { width: 0, height: 1 },
+        shadowOpacity: 0.1,
+        shadowRadius: 3,
+        elevation: 2,
+      }),
     },
     cancelButtonText: {
-      fontFamily: 'JetBrainsMono_700Bold',
+      fontFamily: config.fontFamily.bold,
       fontSize: 11,
       color: colors.textMuted,
-      letterSpacing: 1,
+      letterSpacing: config.letterSpacing * 0.8,
     },
     submitButton: {
       flex: 1,
       backgroundColor: colors.accent,
-      borderWidth: 1,
+      borderWidth: isTerminalTheme ? 1 : 0,
       borderColor: colors.accent,
-      paddingVertical: 16,
+      borderRadius: isTerminalTheme ? config.borderRadius : 28,
+      paddingVertical: isTerminalTheme ? 16 : 20,
       alignItems: 'center',
+      ...(isTerminalTheme ? {} : {
+        shadowColor: '#000000',
+        shadowOffset: { width: 0, height: 3 },
+        shadowOpacity: 0.15,
+        shadowRadius: 6,
+        elevation: 4,
+      }),
     },
     submitButtonText: {
-      fontFamily: 'JetBrainsMono_700Bold',
+      fontFamily: config.fontFamily.bold,
       fontSize: 14 * fontScale,
       color: colors.background,
-      letterSpacing: 1.2,
+      letterSpacing: config.letterSpacing,
       fontWeight: '800',
     },
     bottomPadding: {
@@ -463,7 +511,7 @@ export default function AddTaskScreen() {
   }));
 
   return (
-    <Animated.View style={[styles.container, animatedBackgroundStyle]}>
+    <View style={styles.container}>
       {/* Header - Same pattern as index.tsx */}
       <View style={styles.header}>
         <View style={styles.terminalBar}>
@@ -652,6 +700,54 @@ export default function AddTaskScreen() {
           </View>
         </View>
 
+        {/* Sequential Notifications */}
+        <View style={styles.toggleCard}>
+          <View style={styles.toggleRow}>
+            <View style={{ flex: 1 }}>
+              <Text style={styles.toggleLabel}>SEQUENTIAL_NOTIFY</Text>
+              <Text style={styles.toggleSubtext}>// Send follow-up reminder if first notification is ignored</Text>
+              <Text style={styles.toggleSubtext}>// Notification A at time T, then B at T + interval</Text>
+            </View>
+            <Switch
+              value={enableSequentialNotification}
+              onValueChange={setEnableSequentialNotification}
+              trackColor={{ false: colors.border, true: colors.textSecondary }}
+              thumbColor={enableSequentialNotification ? colors.accent : colors.textMuted}
+            />
+          </View>
+          
+          {enableSequentialNotification && (
+            <View style={styles.intervalSection}>
+              <Text style={styles.intervalLabel}>FOLLOW_UP_INTERVAL</Text>
+              <Text style={styles.helpText}>
+                Time delay before sending follow-up notification (if first is ignored)
+              </Text>
+              <View style={styles.chipContainer}>
+                {sequentialIntervalOptions.map(option => (
+                  <TouchableOpacity
+                    key={option.value}
+                    style={[
+                      styles.chip,
+                      sequentialInterval === option.value && styles.selectedChip
+                    ]}
+                    onPress={() => {
+                      setSequentialInterval(option.value);
+                    }}
+                    activeOpacity={0.7}
+                  >
+                    <Text style={[
+                      styles.chipText,
+                      sequentialInterval === option.value && styles.selectedChipText
+                    ]}>
+                      {option.label}
+                    </Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
+            </View>
+          )}
+        </View>
+
         {/* Action Buttons */}
         <View style={styles.actionContainer}>
           <TouchableOpacity
@@ -679,6 +775,6 @@ export default function AddTaskScreen() {
 
         <View style={styles.bottomPadding} />
       </ScrollView>
-    </Animated.View>
+    </View>
   );
 }

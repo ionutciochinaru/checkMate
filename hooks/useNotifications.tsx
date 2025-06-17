@@ -76,18 +76,49 @@ export const useNotifications = () => {
       async (response: any) => {
         const taskId = response.notification.request.content.data?.taskId || response.notification.request.identifier;
         const { actionIdentifier } = response;
+        const notificationData = response.notification.request.content.data;
+        
+        // Cancel follow-up notification if user interacts with primary notification
+        if (notificationData?.isSequential && notificationData?.isPrimary) {
+          const followUpId = `${taskId}_followup`;
+          try {
+            await Notifications.cancelScheduledNotificationAsync(followUpId);
+          } catch (error) {
+            // Silently handle cancellation errors
+          }
+        }
         
         if (actionIdentifier === 'done_action') {
           // Mark task as done and cancel all notifications for this task
           toggleComplete(taskId);
           await Notifications.cancelScheduledNotificationAsync(taskId);
+          // Also cancel follow-up notification if it exists
+          try {
+            await Notifications.cancelScheduledNotificationAsync(`${taskId}_followup`);
+          } catch (error) {
+            // Silently handle cancellation errors
+          }
           await Notifications.dismissNotificationAsync(response.notification.request.identifier);
         } else if (actionIdentifier === 'delay_action') {
           // Delay task and dismiss current notification
           delayTask(taskId);
+          // Also cancel follow-up notification if it exists
+          try {
+            await Notifications.cancelScheduledNotificationAsync(`${taskId}_followup`);
+          } catch (error) {
+            // Silently handle cancellation errors
+          }
           await Notifications.dismissNotificationAsync(response.notification.request.identifier);
         } else if (actionIdentifier === Notifications.DEFAULT_ACTION_IDENTIFIER) {
           // User tapped the notification body - open app
+          // Cancel follow-up if this was a tap on primary notification
+          if (notificationData?.isSequential && notificationData?.isPrimary) {
+            try {
+              await Notifications.cancelScheduledNotificationAsync(`${taskId}_followup`);
+            } catch (error) {
+              // Silently handle cancellation errors
+            }
+          }
         }
       }
     );
@@ -184,13 +215,18 @@ export const useNotifications = () => {
     }
 
     try {
+      // Schedule the primary notification (A)
       await Notifications.scheduleNotificationAsync({
         identifier: task.id,
         content: {
           title,
           body,
           categoryIdentifier: 'task_reminder',
-          data: { taskId: task.id },
+          data: { 
+            taskId: task.id,
+            isSequential: task.enableSequentialNotification,
+            isPrimary: true
+          },
           // Theme-aware styling (Android)
           ...(Platform.OS === 'android' && {
             color: colors.accent,
@@ -204,6 +240,38 @@ export const useNotifications = () => {
           date: reminderTime
         } as any
       });
+
+      // Schedule follow-up notification (B) if sequential notifications are enabled
+      if (task.enableSequentialNotification && task.sequentialInterval) {
+        const followUpTime = new Date(reminderTime.getTime() + (task.sequentialInterval * 1000));
+        const followUpId = `${task.id}_followup`;
+        
+        await Notifications.scheduleNotificationAsync({
+          identifier: followUpId,
+          content: {
+            title: `⚠️ ${title}`,
+            body: `Follow-up reminder: ${body}`,
+            categoryIdentifier: 'task_reminder',
+            data: { 
+              taskId: task.id,
+              isSequential: true,
+              isPrimary: false,
+              primaryNotificationId: task.id
+            },
+            // Theme-aware styling (Android)
+            ...(Platform.OS === 'android' && {
+              color: colors.accent,
+              priority: Notifications.AndroidNotificationPriority.HIGH,
+              vibrate: [0, 250, 250, 250],
+              sound: 'default'
+            })
+          },
+          trigger: {
+            type: 'date',
+            date: followUpTime
+          } as any
+        });
+      }
     } catch (error) {
       // Silently handle notification scheduling errors
     }

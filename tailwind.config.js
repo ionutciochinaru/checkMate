@@ -24,7 +24,7 @@ module.exports = {
           'pink': '#FF69B4',       // Bubblegum Pink
           'chrome': '#C8C8C8',     // Chrome Silver
           'electric': '#00FFFF',   // Electric Cyan
-          'lime': '#32CD32',       // Lime Flash Green
+          'lime': '#ffaa44',       // Orange (red-shift compatible)
           'purple': '#9932CC',     // Digital Purple
           'orange': '#FF6347',     // Neon Orange
         },

@@ -19,7 +19,6 @@ import DelayInputComponent from '../components/DelayInputComponent';
 import { showAlert } from '../components/CustomAlert';
 import { availableDateFormats, availableSeparators, availableTimeFormats, getDateFormatDisplayName, getTimeFormatDisplayName } from '../utils/dateFormatters';
 import { DateFormat, DateSeparator, TimeFormat } from '../types/task';
-import Animated from 'react-native-reanimated';
 
 export default function SettingsScreen() {
   const { 
@@ -31,7 +30,7 @@ export default function SettingsScreen() {
     updateSetting,
     updateMultipleSettings 
   } = useSettingsStore();
-  const { colors, animatedBackgroundStyle } = useTheme();
+  const { colors, config } = useTheme();
 
   const [showStartPicker, setShowStartPicker] = useState(false);
   const [showEndPicker, setShowEndPicker] = useState(false);
@@ -127,7 +126,7 @@ export default function SettingsScreen() {
     router.back();
   };
 
-  const styles = useThemedStyles((colors, isDark, fontScale) => StyleSheet.create({
+  const styles = useThemedStyles((colors, isDark, fontScale, reducedMotion, config) => StyleSheet.create({
     container: {
       flex: 1,
       backgroundColor: colors.background,
@@ -146,20 +145,20 @@ export default function SettingsScreen() {
       alignItems: 'center',
     },
     terminalTitle: {
-      fontFamily: 'JetBrainsMono_700Bold',
+      fontFamily: config.fontFamily.bold,
       fontSize: 20 * fontScale,
       color: colors.text,
-      letterSpacing: 1.2,
+      letterSpacing: config.letterSpacing,
       fontWeight: '800',
     },
     backButton: {
       padding: 0,
     },
     backButtonText: {
-      fontFamily: 'JetBrainsMono_700Bold',
+      fontFamily: config.fontFamily.bold,
       fontSize: 14 * fontScale,
       color: colors.textSecondary,
-      letterSpacing: 1,
+      letterSpacing: config.letterSpacing * 0.8,
       fontWeight: '700',
     },
     content: {
@@ -169,16 +168,17 @@ export default function SettingsScreen() {
       padding: 16,
     },
     instructionText: {
-      fontFamily: 'JetBrainsMono_500Medium',
+      fontFamily: config.fontFamily.medium,
       fontSize: 12,
       color: colors.textSecondary,
-      letterSpacing: 0.5,
+      letterSpacing: config.letterSpacing * 0.4,
       marginBottom: 16,
       paddingHorizontal: 12,
       paddingVertical: 10,
       backgroundColor: colors.surfaceVariant,
       borderLeftWidth: 4,
-      borderLeftColor: colors.textMuted,
+      borderLeftColor: colors.accent,
+      borderRadius: config.borderRadius,
       fontWeight: '600',
     },
     section: {
@@ -188,14 +188,15 @@ export default function SettingsScreen() {
       backgroundColor: colors.surfaceVariant,
       borderWidth: 1,
       borderColor: colors.border,
+      borderRadius: config.borderRadius,
       padding: 16,
       marginBottom: 20,
     },
     sectionTitle: {
-      fontFamily: 'JetBrainsMono_700Bold',
+      fontFamily: config.fontFamily.bold,
       fontSize: 16 * fontScale,
       color: colors.text,
-      letterSpacing: 1.2,
+      letterSpacing: config.letterSpacing,
       marginBottom: 16,
       fontWeight: '800',
     },
@@ -417,19 +418,20 @@ export default function SettingsScreen() {
       lineHeight: 16,
     },
     coffeeButton: {
-      backgroundColor: colors.y2kCyan || '#00FFFF',
+      backgroundColor: colors.accent,
       borderWidth: 2,
-      borderColor: colors.y2kCyan || '#00FFFF',
+      borderColor: colors.accent,
+      borderRadius: config.borderRadius,
       paddingHorizontal: 16,
       paddingVertical: 12,
       alignItems: 'center',
       justifyContent: 'center',
       marginBottom: 16,
-      shadowColor: colors.y2kCyan || '#00FFFF',
+      shadowColor: colors.accent,
       shadowOffset: { width: 0, height: 2 },
       shadowOpacity: 0.3,
       shadowRadius: 4,
-      elevation: 4,
+      elevation: config.elevation.medium,
     },
     coffeeButtonText: {
       fontFamily: 'JetBrainsMono_700Bold',
@@ -458,7 +460,7 @@ export default function SettingsScreen() {
   }));
 
   return (
-    <Animated.View style={[styles.container, animatedBackgroundStyle]}>
+    <View style={styles.container}>
       {/* Header */}
       <View style={styles.header}>
         <View style={styles.terminalBar}>
@@ -591,6 +593,7 @@ export default function SettingsScreen() {
             />
           </View>
         </View>
+
 
         {/* Accessibility Settings */}
         <View style={styles.sectionCard}>
@@ -769,7 +772,7 @@ export default function SettingsScreen() {
         <View style={styles.supportSection}>
           <Text style={styles.supportTitle}>SUPPORT THE DEVELOPER</Text>
           <Text style={styles.supportSubtext}>
-            // If you enjoy using checkMate and find it helpful,
+            // If you enjoy using CheckMate and find it helpful,
             // consider buying me a coffee! Your support helps
             // keep this app free and motivates continued development.
           </Text>
@@ -820,6 +823,6 @@ export default function SettingsScreen() {
         </>
         )}
       </ScrollView>
-    </Animated.View>
+    </View>
   );
 }

@@ -11,7 +11,6 @@ import { useTheme , useThemedStyles } from '../hooks/useTheme';
 import { router } from 'expo-router';
 import { useTaskStore, useMainStore } from '../hooks/useTaskStore';
 import { Task } from '../types/task';
-import { y2kColors, typography, spacing } from '../utils/y2k-styles';
 import { formatDateWithPreference, formatTime } from '../utils/dateFormatters';
 
 import { showAlert } from './CustomAlert';
@@ -19,6 +18,13 @@ import { showAlert } from './CustomAlert';
 interface TaskItemProps {
   task: Task;
 }
+
+const y2kColors = {
+  limeGreen: '#ffaa44', // Changed from green to orange to work with red shift
+  electricCyan: '#00FFFF',
+  bubblegumPink: '#FF69B4',
+  digitalPurple: '#9932CC',
+};
 
 const TaskItem: React.FC<TaskItemProps> = React.memo(({ task }) => {
   const { toggleComplete, delayTask, deleteTask } = useTaskStore();
@@ -84,14 +90,14 @@ const TaskItem: React.FC<TaskItemProps> = React.memo(({ task }) => {
 
   const styles = useThemedStyles((colors, isDark, fontScale, reducedMotion) => StyleSheet.create({
     container: {
-      marginBottom: spacing.componentGap,
+      marginBottom: 16,
     },
     taskCard: {
       backgroundColor: colors.surface,
       borderWidth: 2,
       borderColor: getCardBorderColor(),
       borderRadius: 0,
-      padding: spacing.cardPadding,
+      padding: 16,
       shadowColor: isDark ? getCardBorderColor() : 'transparent',
       shadowOffset: { width: 0, height: 0 },
       shadowOpacity: isDark ? 0.3 : 0,
@@ -107,24 +113,24 @@ const TaskItem: React.FC<TaskItemProps> = React.memo(({ task }) => {
       borderStyle: 'dashed',
     },
     mainTaskLine: {
-      marginBottom: spacing.sm,
-      minHeight: spacing.touchTarget,
+      marginBottom: 12,
+      minHeight: 44,
     },
     
     firstRow: {
       flexDirection: 'row',
       justifyContent: 'space-between',
       alignItems: 'center',
-      marginBottom: spacing.xs,
+      marginBottom: 8,
     },
     
     titleRow: {
-      marginBottom: spacing.xs,
+      marginBottom: 8,
     },
     leftSection: {
       flexDirection: 'row',
       alignItems: 'center',
-      gap: spacing.sm,
+      gap: 12,
     },
     rightSection: {
       flexDirection: 'row',
@@ -268,8 +274,8 @@ const TaskItem: React.FC<TaskItemProps> = React.memo(({ task }) => {
       justifyContent: 'center',
     },
     checkedBox: {
-      backgroundColor: colors.y2kLime,
-      borderColor: colors.y2kLime,
+      backgroundColor: y2kColors.limeGreen,
+      borderColor: y2kColors.limeGreen,
     },
     checkboxText: {
       fontFamily: 'JetBrainsMono_700Bold',
@@ -285,13 +291,12 @@ const TaskItem: React.FC<TaskItemProps> = React.memo(({ task }) => {
       flex: 1,
     },
     taskTitle: {
-      ...typography.secondary,
       fontFamily: 'JetBrainsMono_700Bold',
-      fontSize: typography.secondary.fontSize * fontScale,
+      fontSize: 15 * fontScale,
       color: colors.text,
       letterSpacing: 0.8,
       fontWeight: '700',
-      // paddingLeft: spacing.xl + spacing.sm, // Align with ID after checkbox
+      // paddingLeft: spacing.xl + 12, // Align with ID after checkbox
     },
     completedTitle: {
       color: colors.textMuted,
@@ -299,12 +304,11 @@ const TaskItem: React.FC<TaskItemProps> = React.memo(({ task }) => {
       opacity: 0.7,
     },
     taskDescription: {
-      ...typography.caption,
       fontFamily: 'JetBrainsMono_400Regular',
-      fontSize: typography.caption.fontSize * fontScale,
+      fontSize: 13 * fontScale,
       color: colors.textSecondary,
       letterSpacing: 0.5,
-      lineHeight: typography.caption.lineHeight * fontScale,
+      lineHeight: 18 * fontScale,
       fontStyle: 'italic',
     },
     completedDescription: {
@@ -322,10 +326,10 @@ const TaskItem: React.FC<TaskItemProps> = React.memo(({ task }) => {
       borderWidth: 1,
       borderColor: colors.border,
       backgroundColor: colors.surface,
-      paddingHorizontal: spacing.sm,
-      paddingVertical: spacing.xs,
+      paddingHorizontal: 12,
+      paddingVertical: 8,
       minWidth: 56,
-      minHeight: spacing.md,
+      minHeight: 16,
       alignItems: 'center',
       justifyContent: 'center',
     },
@@ -334,9 +338,8 @@ const TaskItem: React.FC<TaskItemProps> = React.memo(({ task }) => {
       backgroundColor: colors.surface,
     },
     actionText: {
-      ...typography.caption,
       fontFamily: 'JetBrainsMono_700Bold',
-      fontSize: typography.caption.fontSize * fontScale,
+      fontSize: 13 * fontScale,
       color: colors.textSecondary,
       letterSpacing: 1.5,
       fontWeight: '800',
@@ -346,10 +349,10 @@ const TaskItem: React.FC<TaskItemProps> = React.memo(({ task }) => {
     },
     delayButton: {
       backgroundColor: colors.surfaceVariant,
-      borderColor: colors.y2kPink,
+      borderColor: y2kColors.bubblegumPink,
     },
     delayButtonText: {
-      color: colors.y2kPink,
+      color: y2kColors.bubblegumPink,
     },
     doneButton: {
       backgroundColor: colors.success,
@@ -369,10 +372,10 @@ const TaskItem: React.FC<TaskItemProps> = React.memo(({ task }) => {
     },
     editButton: {
       backgroundColor: colors.surfaceVariant,
-      borderColor: colors.y2kCyan,
+      borderColor: y2kColors.electricCyan,
     },
     editButtonText: {
-      color: colors.y2kCyan,
+      color: y2kColors.electricCyan,
       fontFamily: 'JetBrainsMono_700Bold',
     },
   }));

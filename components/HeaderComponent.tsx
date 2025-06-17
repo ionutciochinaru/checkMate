@@ -4,7 +4,6 @@ import { router } from 'expo-router';
 import { useThemedStyles, useTheme } from '../hooks/useTheme';
 import { useMainStore } from '../hooks/useTaskStore';
 import { FilterType } from '../hooks/useTaskFilter';
-import { typography, spacing } from '../utils/y2k-styles';
 import { formatDateWithPreference } from '../utils/dateFormatters';
 
 interface HeaderComponentProps {
@@ -26,10 +25,11 @@ export default function HeaderComponent({
   setSelectedFilter,
   setShowFilterDropdown
 }: HeaderComponentProps) {
-  const { colors, isDark, theme, setTheme } = useTheme();
+  const { colors, isDark, theme, setTheme, config } = useTheme();
   const { getSettings } = useMainStore();
   
   const settings = getSettings();
+
 
   // Format current date using user preferences
   const currentDate = formatDateWithPreference(
@@ -39,94 +39,118 @@ export default function HeaderComponent({
     settings.dateSeparator
   );
 
-  const styles = useThemedStyles((colors, isDark, fontScale, reducedMotion) => StyleSheet.create({
+  const isTerminalTheme = true;
+  
+  const styles = useThemedStyles((colors, isDark, fontScale, reducedMotion, config) => StyleSheet.create({
     header: {
       backgroundColor: colors.surface,
-      borderBottomWidth: 2,
+      borderBottomWidth: isTerminalTheme ? 2 : 0,
       borderBottomColor: colors.border,
-      paddingTop: 50,
-      paddingBottom: spacing.md,
-      paddingHorizontal: spacing.screenMargin,
+      paddingTop: isTerminalTheme ? 50 : 60,
+      paddingBottom: 16,
+      paddingHorizontal: 16,
+      ...(isTerminalTheme ? {} : {
+        shadowColor: '#000000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 4,
+        elevation: config.elevation.low,
+      }),
     },
     terminalBar: {
       flexDirection: 'row',
       justifyContent: 'space-between',
       alignItems: 'center',
-      marginBottom: spacing.xs,
+      marginBottom: 8,
       flexWrap: 'wrap',
-      minHeight: spacing.xl,
+      minHeight: 40,
     },
     terminalTitle: {
-      ...typography.sectionHeader,
-      fontFamily: 'JetBrainsMono_700Bold',
-      fontSize: typography.sectionHeader.fontSize * fontScale,
+      fontFamily: config.fontFamily.bold,
+      fontSize: isTerminalTheme ? 20 * fontScale : 28 * fontScale,
       color: colors.text,
-      letterSpacing: 1,
+      letterSpacing: config.letterSpacing,
+      fontWeight: isTerminalTheme ? '800' : '600',
       flexShrink: 1,
     },
     // Removed terminal time styles
     topRightControls: {
       flexDirection: 'row',
       alignItems: 'center',
-      gap: spacing.xs,
+      gap: 8,
       flexShrink: 0,
     },
     themeToggle: {
-      paddingHorizontal: spacing.xs,
-      paddingVertical: spacing.xs,
-      backgroundColor: colors.surfaceVariant,
-      borderWidth: 1,
+      paddingHorizontal: 8,
+      paddingVertical: 8,
+      backgroundColor: isTerminalTheme ? colors.surfaceVariant : colors.accent,
+      borderWidth: isTerminalTheme ? 1 : 0,
       borderColor: colors.accent,
-      borderRadius: 2,
-      minWidth: 36,
-      minHeight: 28,
+      borderRadius: isTerminalTheme ? 2 : 20,
+      minWidth: isTerminalTheme ? 44 : 56,
+      minHeight: isTerminalTheme ? 28 : 40,
       alignItems: 'center',
       justifyContent: 'center',
+      ...(isTerminalTheme ? {} : {
+        shadowColor: '#000000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 3,
+        elevation: 2,
+      }),
     },
     themeToggleText: {
-      fontFamily: 'JetBrainsMono_700Bold',
-      fontSize: 12 * fontScale,
-      color: colors.accent,
-      letterSpacing: 0.3,
-      fontWeight: '800',
+      fontFamily: config.fontFamily.bold,
+      fontSize: isTerminalTheme ? 11 * fontScale : 14 * fontScale,
+      color: isTerminalTheme ? colors.accent : colors.surface,
+      letterSpacing: config.letterSpacing * 0.6,
+      fontWeight: isTerminalTheme ? '800' : '600',
     },
     statusLine: {
-      backgroundColor: colors.surfaceVariant,
-      borderWidth: 1,
+      backgroundColor: isTerminalTheme ? colors.surfaceVariant : colors.surface,
+      borderWidth: isTerminalTheme ? 1 : 0,
       borderColor: colors.border,
-      padding: spacing.sm,
-      marginBottom: spacing.componentGap,
+      borderRadius: isTerminalTheme ? 0 : 12,
+      padding: 12,
+      marginBottom: 16,
+      marginHorizontal: isTerminalTheme ? 0 : 16,
       flexDirection: 'row',
       justifyContent: 'space-between',
       alignItems: 'center',
       flexWrap: 'wrap',
-      minHeight: spacing.touchTarget - 8,
+      minHeight: 36,
+      ...(isTerminalTheme ? {} : {
+        shadowColor: '#000000',
+        shadowOffset: { width: 0, height: 1 },
+        shadowOpacity: 0.05,
+        shadowRadius: 2,
+        elevation: 1,
+      }),
     },
     settingsButton: {
-      paddingHorizontal: spacing.xs,
-      paddingVertical: spacing.xs,
-      backgroundColor: colors.surfaceVariant,
-      borderWidth: 1,
+      paddingHorizontal: 8,
+      paddingVertical: 8,
+      backgroundColor: isTerminalTheme ? colors.surfaceVariant : 'transparent',
+      borderWidth: isTerminalTheme ? 1 : 0,
       borderColor: colors.accent,
-      borderRadius: 2,
-      minWidth: 36,
-      minHeight: 28,
+      borderRadius: isTerminalTheme ? 2 : 20,
+      minWidth: isTerminalTheme ? 36 : 48,
+      minHeight: isTerminalTheme ? 28 : 40,
       alignItems: 'center',
       justifyContent: 'center',
     },
     settingsIcon: {
-      fontFamily: 'JetBrainsMono_700Bold',
+      fontFamily: config.fontFamily.bold,
       fontSize: 12 * fontScale,
       color: colors.accent,
-      letterSpacing: 0.3,
+      letterSpacing: config.letterSpacing * 0.3,
       fontWeight: '800',
     },
     statusText: {
-      ...typography.caption,
-      fontFamily: 'JetBrainsMono_500Medium',
-      fontSize: typography.caption.fontSize * fontScale,
+      fontFamily: config.fontFamily.medium,
+      fontSize: 12 * fontScale,
       color: colors.textSecondary,
-      letterSpacing: 0.3,
+      letterSpacing: config.letterSpacing * 0.3,
       flexShrink: 1,
     },
     filterContainer: {
@@ -147,10 +171,10 @@ export default function HeaderComponent({
       minWidth: 100,
     },
     filterText: {
-      fontFamily: 'JetBrainsMono_700Bold',
+      fontFamily: config.fontFamily.bold,
       fontSize: 12 * fontScale,
       color: colors.text,
-      letterSpacing: 0.5,
+      letterSpacing: config.letterSpacing * 0.5,
       fontWeight: '700',
       flexShrink: 1,
     },
@@ -184,16 +208,16 @@ export default function HeaderComponent({
       backgroundColor: colors.accent,
     },
     filterOptionText: {
-      fontFamily: 'JetBrainsMono_500Medium',
+      fontFamily: config.fontFamily.medium,
       fontSize: 12 * fontScale,
       color: colors.text,
-      letterSpacing: 0.5,
+      letterSpacing: config.letterSpacing * 0.5,
       fontWeight: '600',
       flexShrink: 1,
     },
     selectedFilterOptionText: {
       color: colors.background,
-      fontFamily: 'JetBrainsMono_700Bold',
+      fontFamily: config.fontFamily.bold,
     },
     filterRow: {
       flexDirection: 'row',
@@ -237,10 +261,10 @@ export default function HeaderComponent({
       borderColor: colors.accent,
     },
     quickFilterText: {
-      fontFamily: 'JetBrainsMono_700Bold',
+      fontFamily: config.fontFamily.bold,
       fontSize: 12 * fontScale,
       color: colors.textSecondary,
-      letterSpacing: 0.3,
+      letterSpacing: config.letterSpacing * 0.3,
     },
     quickFilterTextActive: {
       color: colors.background,
@@ -248,8 +272,8 @@ export default function HeaderComponent({
     filterCheckmark: {
       fontSize: 12 * fontScale,
       color: colors.textSecondary,
-      fontFamily: 'JetBrainsMono_700Bold',
-      letterSpacing: 0.3,
+      fontFamily: config.fontFamily.bold,
+      letterSpacing: config.letterSpacing * 0.3,
       flexShrink: 0,
     },
     lastFilterOption: {
@@ -265,12 +289,12 @@ export default function HeaderComponent({
           <TouchableOpacity
             style={styles.themeToggle}
             onPress={() => {
-              const nextTheme = theme === 'light' ? 'dark' : theme === 'dark' ? 'auto' : 'light';
+              const nextTheme = theme === 'dark' ? 'light' : 'dark';
               setTheme(nextTheme);
             }}
           >
             <Text style={styles.themeToggleText}>
-              {theme === 'light' ? '[LGT]' : theme === 'dark' ? '[TRM]' : '[AUTO]'}
+              {theme === 'dark' ? '[DRK]' : '[LGT]'}
             </Text>
           </TouchableOpacity>
           <TouchableOpacity

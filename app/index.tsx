@@ -8,7 +8,6 @@ import HeaderComponent from '../components/HeaderComponent';
 import EmptyStateComponent from '../components/EmptyStateComponent';
 import TaskListComponent from '../components/TaskListComponent';
 import AddButtonComponent from '../components/AddButtonComponent';
-import { spacing } from '../utils/y2k-styles';
 
 export default function HomeScreen() {
   const { tasks } = useTaskStore();
@@ -18,16 +17,15 @@ export default function HomeScreen() {
 
   const { filteredTasks, pendingTasks, completedTasks } = useTaskFilter(tasks, selectedFilter);
 
-  const styles = useThemedStyles((colors, isDark, fontScale, reducedMotion) => StyleSheet.create({
+  const styles = useThemedStyles((colors, isDark, fontScale, reducedMotion, config) => StyleSheet.create({
     container: {
       flex: 1,
-      backgroundColor: colors.background,
     },
     content: {
       flex: 1,
     },
     contentContainer: {
-      padding: spacing.screenMargin,
+      padding: 16,
     },
   }));
 

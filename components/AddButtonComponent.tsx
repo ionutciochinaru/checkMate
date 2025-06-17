@@ -1,9 +1,8 @@
 import React from 'react';
 import { TouchableOpacity, Text, StyleSheet } from 'react-native';
 import { router } from 'expo-router';
-import { useThemedStyles } from '../hooks/useTheme';
+import { useThemedStyles, useTheme } from '../hooks/useTheme';
 import { FilterType } from '../hooks/useTaskFilter';
-import { spacing, typography } from '../utils/y2k-styles';
 
 interface AddButtonComponentProps {
   tasks: any[];
@@ -20,29 +19,31 @@ export default function AddButtonComponent({
   showFilterDropdown,
   setShowFilterDropdown
 }: AddButtonComponentProps) {
+  
   const styles = useThemedStyles((colors, isDark, fontScale, reducedMotion) => StyleSheet.create({
     addButton: {
       position: 'absolute',
-      bottom: spacing.lg,
-      right: spacing.screenMargin,
+      bottom: 32,
+      right: 24,
       backgroundColor: colors.accent,
       borderWidth: 2,
       borderColor: colors.textSecondary,
-      paddingHorizontal: spacing.md,
-      paddingVertical: spacing.componentGap,
-      minHeight: spacing.touchTarget,
+      paddingHorizontal: 16,
+      paddingVertical: 12,
+      minHeight: 44,
+      borderRadius: 0,
       color: colors.surface,
       maxWidth: '60%',
       alignItems: 'center',
       justifyContent: 'center',
     },
     addButtonText: {
-      ...typography.button,
       fontFamily: 'JetBrainsMono_700Bold',
-      fontSize: typography.caption.fontSize * fontScale,
+      fontSize: 13 * fontScale,
       color: colors.surface,
       letterSpacing: 0.5,
       textAlign: 'center',
+      fontWeight: 'bold',
     },
   }));
 

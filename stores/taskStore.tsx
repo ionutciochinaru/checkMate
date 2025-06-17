@@ -47,7 +47,10 @@ export const loadTasks = async (): Promise<Task[]> => {
       originalReminderTime: row.originalReminderTime ? new Date(row.originalReminderTime) : undefined,
       ignoreWorkingHours: Boolean(row.ignoreWorkingHours),
       completionCount: row.completionCount || 0,
-      lastCompletedAt: row.lastCompletedAt ? new Date(row.lastCompletedAt) : undefined
+      lastCompletedAt: row.lastCompletedAt ? new Date(row.lastCompletedAt) : undefined,
+      enableSequentialNotification: Boolean(row.enableSequentialNotification),
+      sequentialInterval: row.sequentialInterval || 300,
+      followUpNotificationId: row.followUpNotificationId
     }));
   } catch (error) {
     return [];
@@ -66,8 +69,8 @@ export const saveTask = async (task: Task): Promise<void> => {
       INSERT OR REPLACE INTO tasks (
         id, title, description, isRecurring, recurringInterval, reminderTime, 
         createdAt, delayCount, isCompleted, originalReminderTime, ignoreWorkingHours,
-        completionCount, lastCompletedAt
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        completionCount, lastCompletedAt, enableSequentialNotification, sequentialInterval, followUpNotificationId
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       task.id,
       task.title,
       task.description || null,
@@ -80,7 +83,10 @@ export const saveTask = async (task: Task): Promise<void> => {
       task.originalReminderTime?.toISOString() || null,
       task.ignoreWorkingHours ? 1 : 0,
       task.completionCount || 0,
-      task.lastCompletedAt?.toISOString() || null
+      task.lastCompletedAt?.toISOString() || null,
+      task.enableSequentialNotification ? 1 : 0,
+      task.sequentialInterval || 300,
+      task.followUpNotificationId || null
     );
   } catch (error) {
     throw error;
@@ -233,6 +239,12 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
       if (updatedTask.isCompleted) {
         // Only cancel notifications for regular completed tasks
         await Notifications.cancelScheduledNotificationAsync(id);
+        // Also cancel follow-up notification if it exists
+        try {
+          await Notifications.cancelScheduledNotificationAsync(`${id}_followup`);
+        } catch (error) {
+          // Silently handle cancellation errors
+        }
         await Notifications.dismissAllNotificationsAsync();
       } else {
         // Schedule notification for active tasks (including rescheduled loop tasks)
@@ -258,6 +270,12 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
     try {
       // Cancel current notification first
       await Notifications.cancelScheduledNotificationAsync(id);
+      // Also cancel follow-up notification if it exists
+      try {
+        await Notifications.cancelScheduledNotificationAsync(`${id}_followup`);
+      } catch (error) {
+        // Silently handle cancellation errors
+      }
 
       const updatedTask = {
         ...task,
@@ -284,6 +302,12 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
     try {
       // Cancel notification before deleting task
       await Notifications.cancelScheduledNotificationAsync(id);
+      // Also cancel follow-up notification if it exists
+      try {
+        await Notifications.cancelScheduledNotificationAsync(`${id}_followup`);
+      } catch (error) {
+        // Silently handle cancellation errors
+      }
       await deleteTaskFromDb(id);
       
       set(state => ({
@@ -300,8 +324,13 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
     }
 
     try {
-      // Cancel existing notification first
+      // Cancel existing notifications first
       await Notifications.cancelScheduledNotificationAsync(task.id);
+      try {
+        await Notifications.cancelScheduledNotificationAsync(`${task.id}_followup`);
+      } catch (error) {
+        // Silently handle cancellation errors
+      }
 
       // Create notification content
       const title = task.title.length > 30 ? `${task.title.substring(0, 27)}...` : task.title;
@@ -321,13 +350,18 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
         body = 'Task reminder - tap for details';
       }
 
+      // Schedule primary notification
       await Notifications.scheduleNotificationAsync({
         identifier: task.id,
         content: {
           title,
           body,
           categoryIdentifier: 'task_reminder',
-          data: { taskId: task.id },
+          data: { 
+            taskId: task.id,
+            isSequential: task.enableSequentialNotification,
+            isPrimary: true
+          },
           sound: 'default'
         },
         trigger: {
@@ -335,6 +369,32 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
           date: task.reminderTime
         } as any
       });
+
+      // Schedule follow-up notification if enabled
+      if (task.enableSequentialNotification && task.sequentialInterval) {
+        const followUpTime = new Date(task.reminderTime.getTime() + (task.sequentialInterval * 1000));
+        const followUpId = `${task.id}_followup`;
+        
+        await Notifications.scheduleNotificationAsync({
+          identifier: followUpId,
+          content: {
+            title: `⚠️ ${title}`,
+            body: `Follow-up reminder: ${body}`,
+            categoryIdentifier: 'task_reminder',
+            data: { 
+              taskId: task.id,
+              isSequential: true,
+              isPrimary: false,
+              primaryNotificationId: task.id
+            },
+            sound: 'default'
+          },
+          trigger: {
+            type: 'date',
+            date: followUpTime
+          } as any
+        });
+      }
     } catch (error) {
       // Silently fail notification scheduling
     }
