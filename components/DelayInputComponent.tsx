@@ -21,7 +21,7 @@ export default function DelayInputComponent({ value, onValueChange }: DelayInput
     onValueChange(presetValue);
   };
 
-  const styles = useThemedStyles((colors, isDark, fontScale, reducedMotion) => StyleSheet.create({
+  const styles = useThemedStyles((colors, isDark, fontScale, reducedMotion, config) => StyleSheet.create({
     container: {
       flex: 1,
     },
@@ -39,6 +39,7 @@ export default function DelayInputComponent({ value, onValueChange }: DelayInput
       minWidth: 48,
       alignItems: 'center',
       justifyContent: 'center',
+      borderRadius: config.borderRadius,
     },
     presetButtonActive: {
       backgroundColor: colors.accent,

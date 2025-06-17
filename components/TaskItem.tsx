@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text as RNText, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, Text as RNText, StyleSheet, TouchableOpacity } from 'react-native';
 import Animated, { 
   FadeInUp, 
   FadeOutRight, 
@@ -12,6 +12,7 @@ import { router } from 'expo-router';
 import { useTaskStore, useMainStore } from '../hooks/useTaskStore';
 import { Task } from '../types/task';
 import { formatDateWithPreference, formatTime } from '../utils/dateFormatters';
+import { Ionicons } from '@expo/vector-icons';
 
 import { showAlert } from './CustomAlert';
 
@@ -19,19 +20,21 @@ interface TaskItemProps {
   task: Task;
 }
 
-const y2kColors = {
-  limeGreen: '#ffaa44', // Changed from green to orange to work with red shift
-  electricCyan: '#00FFFF',
-  bubblegumPink: '#FF69B4',
-  digitalPurple: '#9932CC',
-};
+// Theme-appropriate colors that work with both light and dark themes
+const getStatusColors = (colors: any, isDark: boolean) => ({
+  success: colors.success, // Use theme success color
+  info: isDark ? colors.textSecondary : colors.accent, // Use theme colors for info/edit
+  delayed: colors.warning, // Use theme warning color for delayed
+  completion: isDark ? colors.textSecondary : colors.textMuted, // Use theme colors for completion count
+});
 
 const TaskItem: React.FC<TaskItemProps> = React.memo(({ task }) => {
   const { toggleComplete, delayTask, deleteTask } = useTaskStore();
   const { getSettings } = useMainStore();
-  const { colors, reducedMotion } = useTheme();
+  const { colors, reducedMotion, isDark } = useTheme();
   
   const settings = getSettings();
+  const statusColors = getStatusColors(colors, isDark);
   const delayTime = settings.defaultDelay || '30m';
   
   const cardScale = useSharedValue(1);
@@ -77,18 +80,18 @@ const TaskItem: React.FC<TaskItemProps> = React.memo(({ task }) => {
   const taskStatus = getTaskStatus();
 
   const getCardBorderColor = () => {
-    if (task.isCompleted) return y2kColors.limeGreen;
+    if (task.isCompleted) return statusColors.success;
     
     switch (taskStatus.style) {
       case 'today': return colors.accent;
-      case 'tomorrow': return y2kColors.electricCyan;
-      case 'delayed': return y2kColors.bubblegumPink;
+      case 'tomorrow': return statusColors.info;
+      case 'delayed': return statusColors.delayed;
       case 'overdue': return colors.danger;
       default: return colors.border;
     }
   };
 
-  const styles = useThemedStyles((colors, isDark, fontScale, reducedMotion) => StyleSheet.create({
+  const styles = useThemedStyles((colors, isDark, fontScale, reducedMotion, config) => StyleSheet.create({
     container: {
       marginBottom: 16,
     },
@@ -96,7 +99,7 @@ const TaskItem: React.FC<TaskItemProps> = React.memo(({ task }) => {
       backgroundColor: colors.surface,
       borderWidth: 2,
       borderColor: getCardBorderColor(),
-      borderRadius: 0,
+      borderRadius: config.borderRadius,
       padding: 16,
       shadowColor: isDark ? getCardBorderColor() : 'transparent',
       shadowOffset: { width: 0, height: 0 },
@@ -106,7 +109,7 @@ const TaskItem: React.FC<TaskItemProps> = React.memo(({ task }) => {
     },
     completedCard: {
       backgroundColor: colors.surfaceVariant,
-      borderColor: y2kColors.limeGreen,
+      borderColor: statusColors.success,
     },
     futureCard: {
       opacity: 0.8,
@@ -165,24 +168,24 @@ const TaskItem: React.FC<TaskItemProps> = React.memo(({ task }) => {
       borderWidth: 0,
       letterSpacing: 0.3,
       fontWeight: '700',
-      borderRadius: 2,
+      borderRadius: config.borderRadius,
       overflow: 'hidden',
     },
     delayBadge: {
-      color: isDark ? y2kColors.bubblegumPink : colors.danger,
-      backgroundColor: isDark ? `${y2kColors.bubblegumPink}15` : `${colors.danger}15`,
+      color: statusColors.delayed,
+      backgroundColor: `${statusColors.delayed}15`,
     },
     loopBadge: {
-      color: isDark ? y2kColors.electricCyan : colors.accent,
-      backgroundColor: isDark ? `${y2kColors.electricCyan}15` : `${colors.accent}15`,
+      color: statusColors.info,
+      backgroundColor: `${statusColors.info}15`,
     },
     alwaysOnBadge: {
-      color: y2kColors.limeGreen,
-      backgroundColor: isDark ? `${y2kColors.limeGreen}15` : `${y2kColors.limeGreen}20`,
+      color: statusColors.success,
+      backgroundColor: `${statusColors.success}15`,
     },
     completionBadge: {
-      color: y2kColors.digitalPurple,
-      backgroundColor: isDark ? `${y2kColors.digitalPurple}15` : `${y2kColors.digitalPurple}20`,
+      color: statusColors.completion,
+      backgroundColor: `${statusColors.completion}15`,
     },
     timestamp: {
       fontFamily: 'JetBrainsMono_500Medium',
@@ -205,11 +208,11 @@ const TaskItem: React.FC<TaskItemProps> = React.memo(({ task }) => {
     newTimestamp: {
       fontFamily: 'JetBrainsMono_500Medium',
       fontSize: 11 * fontScale,
-      color: isDark ? y2kColors.bubblegumPink : colors.danger,
+      color: statusColors.delayed,
       letterSpacing: 0.8,
       fontWeight: '600',
       marginBottom: 2,
-      textShadowColor: isDark ? y2kColors.bubblegumPink : 'transparent',
+      textShadowColor: isDark ? statusColors.delayed : 'transparent',
       textShadowOffset: { width: 0, height: 0 },
       textShadowRadius: isDark ? 3 : 0,
     },
@@ -221,8 +224,8 @@ const TaskItem: React.FC<TaskItemProps> = React.memo(({ task }) => {
       marginBottom: 2,
     },
     status_completed: {
-      color: y2kColors.limeGreen,
-      textShadowColor: isDark ? y2kColors.limeGreen : 'transparent',
+      color: statusColors.success,
+      textShadowColor: isDark ? statusColors.success : 'transparent',
       textShadowOffset: { width: 0, height: 0 },
       textShadowRadius: isDark ? 3 : 0,
     },
@@ -233,8 +236,8 @@ const TaskItem: React.FC<TaskItemProps> = React.memo(({ task }) => {
       textShadowRadius: isDark ? 3 : 0,
     },
     status_tomorrow: {
-      color: y2kColors.electricCyan,
-      textShadowColor: isDark ? y2kColors.electricCyan : 'transparent',
+      color: statusColors.info,
+      textShadowColor: isDark ? statusColors.info : 'transparent',
       textShadowOffset: { width: 0, height: 0 },
       textShadowRadius: isDark ? 3 : 0,
     },
@@ -242,8 +245,8 @@ const TaskItem: React.FC<TaskItemProps> = React.memo(({ task }) => {
       color: colors.textSecondary,
     },
     status_delayed: {
-      color: y2kColors.bubblegumPink,
-      textShadowColor: isDark ? y2kColors.bubblegumPink : 'transparent',
+      color: statusColors.delayed,
+      textShadowColor: isDark ? statusColors.delayed : 'transparent',
       textShadowOffset: { width: 0, height: 0 },
       textShadowRadius: isDark ? 3 : 0,
     },
@@ -274,8 +277,8 @@ const TaskItem: React.FC<TaskItemProps> = React.memo(({ task }) => {
       justifyContent: 'center',
     },
     checkedBox: {
-      backgroundColor: y2kColors.limeGreen,
-      borderColor: y2kColors.limeGreen,
+      backgroundColor: statusColors.success,
+      borderColor: statusColors.success,
     },
     checkboxText: {
       fontFamily: 'JetBrainsMono_700Bold',
@@ -328,6 +331,7 @@ const TaskItem: React.FC<TaskItemProps> = React.memo(({ task }) => {
       backgroundColor: colors.surface,
       paddingHorizontal: 12,
       paddingVertical: 8,
+      borderRadius: 8,
       minWidth: 56,
       minHeight: 16,
       alignItems: 'center',
@@ -349,10 +353,10 @@ const TaskItem: React.FC<TaskItemProps> = React.memo(({ task }) => {
     },
     delayButton: {
       backgroundColor: colors.surfaceVariant,
-      borderColor: y2kColors.bubblegumPink,
+      borderColor: statusColors.delayed,
     },
     delayButtonText: {
-      color: y2kColors.bubblegumPink,
+      color: statusColors.delayed,
     },
     doneButton: {
       backgroundColor: colors.success,
@@ -372,10 +376,10 @@ const TaskItem: React.FC<TaskItemProps> = React.memo(({ task }) => {
     },
     editButton: {
       backgroundColor: colors.surfaceVariant,
-      borderColor: y2kColors.electricCyan,
+      borderColor: statusColors.info,
     },
     editButtonText: {
-      color: y2kColors.electricCyan,
+      color: statusColors.info,
       fontFamily: 'JetBrainsMono_700Bold',
     },
   }));
@@ -443,8 +447,8 @@ const TaskItem: React.FC<TaskItemProps> = React.memo(({ task }) => {
 
   const getDelayMessage = (count: number) => {
     if (count === 0) return '';
-    if (count === 1) return 'DELAY_01';
-    return `DELAY_${count.toString().padStart(2, '0')}`;
+    if (count === 1) return 'Delayed';
+    return `Delayed ${count}x`;
   };
 
   const getLoopIntervalLabel = (hours: number) => {
@@ -510,12 +514,12 @@ const TaskItem: React.FC<TaskItemProps> = React.memo(({ task }) => {
                 )}
                 {task.isRecurring && (
                   <RNText style={[styles.statusBadge, styles.loopBadge]}>
-                    LOOP:{getLoopIntervalLabel(task.recurringInterval || 24)}
+Loop {getLoopIntervalLabel(task.recurringInterval || 24)}
                   </RNText>
                 )}
                 {task.isRecurring && (task.completionCount || 0) > 0 && (
                   <RNText style={[styles.statusBadge, styles.completionBadge]}>
-                    DONE: {task.completionCount}x
+Done {task.completionCount}x
                   </RNText>
                 )}
                 {task.ignoreWorkingHours && (
@@ -577,20 +581,20 @@ const TaskItem: React.FC<TaskItemProps> = React.memo(({ task }) => {
           {task.delayCount > 0 && task.originalReminderTime ? (
             <>
               <RNText style={styles.originalTimestamp}>
-                SCHED_ORIG: {formatDate(task.originalReminderTime)} {formatTimeWithPreference(task.originalReminderTime)}
+                Originally: {formatDate(task.originalReminderTime)} {formatTimeWithPreference(task.originalReminderTime)}
               </RNText>
               <RNText style={styles.newTimestamp}>
-                SCHED_NEW: {formatDate(task.reminderTime)} {formatTimeWithPreference(task.reminderTime)}
+                Delayed to: {formatDate(task.reminderTime)} {formatTimeWithPreference(task.reminderTime)}
               </RNText>
             </>
           ) : (
             <RNText style={styles.timestamp}>
-              {task.isRecurring ? 'NEXT:' : 'SCHED:'} {formatDate(task.reminderTime)} {formatTimeWithPreference(task.reminderTime)}
+{task.isRecurring ? 'Next:' : 'Due:'} {formatDate(task.reminderTime)} {formatTimeWithPreference(task.reminderTime)}
             </RNText>
           )}
           
           <RNText style={[styles.statusIndicator, (styles as any)[`status_${taskStatus.style}`]]}>
-            STATUS: {taskStatus.icon} {taskStatus.text}
+Status: {taskStatus.text}
           </RNText>
         </View>
 
@@ -612,7 +616,16 @@ const TaskItem: React.FC<TaskItemProps> = React.memo(({ task }) => {
                 onPress={handleDelayTask}
                 activeOpacity={0.7}
               >
-                <RNText style={[styles.actionText, styles.delayButtonText]}>[DLY {delayTime.toUpperCase()}]</RNText>
+                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
+                  <Ionicons 
+                    name="time-outline" 
+                    size={12} 
+                    color={statusColors.delayed} 
+                  />
+                  <Text style={[styles.actionText, styles.delayButtonText]}>
+                    {delayTime}
+                  </Text>
+                </View>
               </TouchableOpacity>
             </Animated.View>
           )}
@@ -626,12 +639,16 @@ const TaskItem: React.FC<TaskItemProps> = React.memo(({ task }) => {
               onPress={handleToggleComplete}
               activeOpacity={0.7}
             >
-              <RNText style={[
-                styles.actionText, 
-                task.isCompleted ? styles.completedActionText : styles.doneButtonText
-              ]}>
-                {task.isCompleted ? '[UDO]' : (task.isRecurring ? '[+1]' : '[DON]')}
-              </RNText>
+              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
+                <Ionicons 
+                  name={task.isCompleted ? 'refresh-outline' : (task.isRecurring ? 'add' : 'checkmark')} 
+                  size={12} 
+                  color={task.isCompleted ? colors.textMuted : (isDark ? colors.background : '#ffffff')} 
+                />
+                <Text style={[styles.actionText, task.isCompleted ? styles.completedActionText : styles.doneButtonText]}>
+                  {task.isCompleted ? 'UNDO' : (task.isRecurring ? 'NEXT' : 'DONE')}
+                </Text>
+              </View>
             </TouchableOpacity>
           </Animated.View>
 
@@ -644,7 +661,16 @@ const TaskItem: React.FC<TaskItemProps> = React.memo(({ task }) => {
               }}
               activeOpacity={0.7}
             >
-              <RNText style={[styles.actionText, styles.editButtonText]}>[EDT]</RNText>
+              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
+                <Ionicons 
+                  name="create-outline" 
+                  size={12} 
+                  color={statusColors.info} 
+                />
+                <Text style={[styles.actionText, styles.editButtonText]}>
+                  EDIT
+                </Text>
+              </View>
             </TouchableOpacity>
           </Animated.View>
 
@@ -657,7 +683,16 @@ const TaskItem: React.FC<TaskItemProps> = React.memo(({ task }) => {
               }}
               activeOpacity={0.7}
             >
-              <RNText style={[styles.actionText, styles.deleteButtonText]}>[DEL]</RNText>
+              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
+                <Ionicons 
+                  name="trash-outline" 
+                  size={12} 
+                  color={colors.danger} 
+                />
+                <Text style={[styles.actionText, styles.deleteButtonText]}>
+                  DEL
+                </Text>
+              </View>
             </TouchableOpacity>
           </Animated.View>
         </View>

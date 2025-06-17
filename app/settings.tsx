@@ -19,6 +19,7 @@ import DelayInputComponent from '../components/DelayInputComponent';
 import { showAlert } from '../components/CustomAlert';
 import { availableDateFormats, availableSeparators, availableTimeFormats, getDateFormatDisplayName, getTimeFormatDisplayName } from '../utils/dateFormatters';
 import { DateFormat, DateSeparator, TimeFormat } from '../types/task';
+import { Ionicons } from '@expo/vector-icons';
 
 export default function SettingsScreen() {
   const { 
@@ -247,6 +248,7 @@ export default function SettingsScreen() {
       paddingVertical: 12,
       paddingHorizontal: 8,
       alignItems: 'center',
+      borderRadius: config.borderRadius,
     },
     timeText: {
       fontFamily: 'JetBrainsMono_500Medium',
@@ -306,6 +308,7 @@ export default function SettingsScreen() {
       paddingHorizontal: 12,
       paddingVertical: 8,
       alignItems: 'flex-start',
+      borderRadius: config.borderRadius,
     },
     dateFormatButtonActive: {
       backgroundColor: colors.accent,
@@ -334,6 +337,7 @@ export default function SettingsScreen() {
       minWidth: 48,
       alignItems: 'center',
       justifyContent: 'center',
+      borderRadius: config.borderRadius,
     },
     separatorButtonActive: {
       backgroundColor: colors.accent,
@@ -360,6 +364,7 @@ export default function SettingsScreen() {
       paddingHorizontal: 12,
       paddingVertical: 8,
       alignItems: 'flex-start',
+      borderRadius: config.borderRadius,
     },
     timeFormatButtonActive: {
       backgroundColor: colors.accent,
@@ -468,9 +473,13 @@ export default function SettingsScreen() {
             style={styles.backButton}
             onPress={goBack}
           >
-            <Text style={styles.backButtonText}>[ESC] BACK</Text>
+            <Ionicons 
+              name="arrow-back" 
+              size={20} 
+              color={colors.textSecondary} 
+            />
           </TouchableOpacity>
-          <Text style={styles.terminalTitle}>SETTINGS.EXE</Text>
+          <Text style={styles.terminalTitle}>Settings</Text>
         </View>
       </View>
 
@@ -486,8 +495,8 @@ export default function SettingsScreen() {
         {/* Instructions */}
         {isLoaded && (
           <Text style={styles.instructionText}>
-            // Configure app settings - changes take effect immediately
-            {'\n'}// Working hours and 24H mode are mutually exclusive
+Customize your experience - changes take effect immediately
+{'\n'}Working hours and 24H mode are mutually exclusive
           </Text>
         )}
         
@@ -496,14 +505,14 @@ export default function SettingsScreen() {
           <>
             {/* General Settings */}
             <View style={styles.sectionCard}>
-          <Text style={styles.sectionTitle}>GENERAL SETTINGS</Text>
+          <Text style={styles.sectionTitle}>General</Text>
           
           {/* Work Hours Toggle */}
           <View style={styles.settingRow}>
             <View style={{ flex: 1 }}>
-              <Text style={styles.settingLabel}>WORK_HOURS</Text>
+              <Text style={styles.settingLabel}>Work Hours</Text>
               <Text style={styles.settingSubtext}>
-                // Restrict notifications to working hours only
+Restrict notifications to working hours only
               </Text>
             </View>
             <Switch
@@ -518,7 +527,7 @@ export default function SettingsScreen() {
           {settings.workingHoursEnabled && (
             <View style={styles.timePickersRow}>
               <View style={styles.timeContainer}>
-                <Text style={styles.timeLabel}>START_TIME</Text>
+                <Text style={styles.timeLabel}>Start Time</Text>
                 <TouchableOpacity
                   style={styles.timeButton}
                   onPress={() => setShowStartPicker(true)}
@@ -539,7 +548,7 @@ export default function SettingsScreen() {
               </View>
               
               <View style={styles.timeContainer}>
-                <Text style={styles.timeLabel}>END_TIME</Text>
+                <Text style={styles.timeLabel}>End Time</Text>
                 <TouchableOpacity
                   style={styles.timeButton}
                   onPress={() => setShowEndPicker(true)}
@@ -564,9 +573,9 @@ export default function SettingsScreen() {
           {/* Delay Setting */}
           <View style={styles.settingRow}>
             <View style={{ flex: 1 }}>
-              <Text style={styles.settingLabel}>DELAY</Text>
+              <Text style={styles.settingLabel}>Default Delay</Text>
               <Text style={styles.settingSubtext}>
-                // Default delay time for postponing tasks
+                Default delay time for postponing tasks
               </Text>
             </View>
           </View>
@@ -580,9 +589,9 @@ export default function SettingsScreen() {
           {/* 24 Hour Mode */}
           <View style={styles.settingRow}>
             <View style={{ flex: 1 }}>
-              <Text style={styles.settingLabel}>24H_MODE</Text>
+              <Text style={styles.settingLabel}>24H Mode</Text>
               <Text style={styles.settingSubtext}>
-                // Allow notifications at any time (disables work hours)
+                Allow notifications at any time (disables work hours)
               </Text>
             </View>
             <Switch
@@ -597,14 +606,14 @@ export default function SettingsScreen() {
 
         {/* Accessibility Settings */}
         <View style={styles.sectionCard}>
-          <Text style={styles.sectionTitle}>ACCESSIBILITY</Text>
+          <Text style={styles.sectionTitle}>Display & Access</Text>
           
           {/* Font Scale */}
           <View style={styles.settingRow}>
             <View style={{ flex: 1 }}>
-              <Text style={styles.settingLabel}>FONT_SIZE</Text>
+              <Text style={styles.settingLabel}>Font Size</Text>
               <Text style={styles.settingSubtext}>
-                // Adjust text size for better readability
+                Adjust text size for better readability
               </Text>
             </View>
             <View style={styles.fontScaleContainer}>
@@ -621,7 +630,7 @@ export default function SettingsScreen() {
                     styles.fontScaleText,
                     settings.fontScale === scale && styles.fontScaleTextActive
                   ]}>
-                    {scale === 1.0 ? '[S]' : scale === 1.2 ? '[M]' : '[L]'}
+{scale === 1.0 ? 'S' : scale === 1.2 ? 'M' : 'L'}
                   </Text>
                 </TouchableOpacity>
               ))}
@@ -631,9 +640,9 @@ export default function SettingsScreen() {
           {/* High Contrast */}
           <View style={styles.settingRow}>
             <View style={{ flex: 1 }}>
-              <Text style={styles.settingLabel}>HIGH_CONTRAST</Text>
+              <Text style={styles.settingLabel}>High Contrast</Text>
               <Text style={styles.settingSubtext}>
-                // Enhanced contrast for better visibility
+                Enhanced contrast for better visibility
               </Text>
             </View>
             <Switch
@@ -647,9 +656,9 @@ export default function SettingsScreen() {
           {/* Reduced Motion */}
           <View style={styles.settingRow}>
             <View style={{ flex: 1 }}>
-              <Text style={styles.settingLabel}>REDUCE_MOTION</Text>
+              <Text style={styles.settingLabel}>Reduce Motion</Text>
               <Text style={styles.settingSubtext}>
-                // Minimize animations and transitions
+                Minimize animations and transitions
               </Text>
             </View>
             <Switch
@@ -663,9 +672,9 @@ export default function SettingsScreen() {
           {/* Date Format Order */}
           <View style={styles.settingRow}>
             <View style={{ flex: 1 }}>
-              <Text style={styles.settingLabel}>DATE_ORDER</Text>
+              <Text style={styles.settingLabel}>Date Order</Text>
               <Text style={styles.settingSubtext}>
-                // Choose the order of day, month, and year
+                Choose the order of day, month, and year
               </Text>
             </View>
           </View>
@@ -693,9 +702,9 @@ export default function SettingsScreen() {
           {/* Month Names Toggle */}
           <View style={styles.settingRow}>
             <View style={{ flex: 1 }}>
-              <Text style={styles.settingLabel}>MONTH_NAMES</Text>
+              <Text style={styles.settingLabel}>Month Names</Text>
               <Text style={styles.settingSubtext}>
-                // Use month names (Jan, Feb) instead of numbers (01, 02)
+                Use month names (Jan, Feb) instead of numbers (01, 02)
               </Text>
             </View>
             <Switch
@@ -709,9 +718,9 @@ export default function SettingsScreen() {
           {/* Date Separator Toggle */}
           <View style={styles.settingRow}>
             <View style={{ flex: 1 }}>
-              <Text style={styles.settingLabel}>DATE_SEPARATOR</Text>
+              <Text style={styles.settingLabel}>Date Separator</Text>
               <Text style={styles.settingSubtext}>
-                // Choose separator between date parts
+                Choose separator between date parts
               </Text>
             </View>
             <View style={styles.separatorContainer}>
@@ -739,9 +748,9 @@ export default function SettingsScreen() {
           {/* Time Format Toggle */}
           <View style={styles.settingRow}>
             <View style={{ flex: 1 }}>
-              <Text style={styles.settingLabel}>TIME_FORMAT</Text>
+              <Text style={styles.settingLabel}>Time Format</Text>
               <Text style={styles.settingSubtext}>
-                // Choose between 24-hour and 12-hour (AM/PM) format
+                Choose between 24-hour and 12-hour (AM/PM) format
               </Text>
             </View>
             <View style={styles.timeFormatContainer}>
@@ -770,11 +779,11 @@ export default function SettingsScreen() {
 
         {/* Buy Me a Coffee Section */}
         <View style={styles.supportSection}>
-          <Text style={styles.supportTitle}>SUPPORT THE DEVELOPER</Text>
+          <Text style={styles.supportTitle}>Support the Developer</Text>
           <Text style={styles.supportSubtext}>
-            // If you enjoy using CheckMate and find it helpful,
-            // consider buying me a coffee! Your support helps
-            // keep this app free and motivates continued development.
+            If you enjoy using CheckMate and find it helpful,
+            consider buying me a coffee! Your support helps
+            keep this app free and motivates continued development.
           </Text>
           
           <TouchableOpacity 
@@ -811,13 +820,13 @@ export default function SettingsScreen() {
             }}
             activeOpacity={0.8}
           >
-            <Text style={styles.coffeeButtonText}>[BUY ME A COFFEE]</Text>
+            <Text style={styles.coffeeButtonText}>Buy Me a Coffee</Text>
             <Text style={styles.coffeeSubtext}>via Revolut</Text>
           </TouchableOpacity>
           
           <Text style={styles.gratitudeText}>
-            // Thank you for using checkMate! Every bit of support
-            // means the world to an independent developer.
+Thank you for using CheckMate! Every bit of support
+            means the world to an independent developer.
           </Text>
         </View>
         </>

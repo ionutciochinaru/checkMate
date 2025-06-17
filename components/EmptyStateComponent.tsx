@@ -3,6 +3,7 @@ import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { router } from 'expo-router';
 import { useThemedStyles, useTheme } from '../hooks/useTheme';
 import { FilterType } from '../hooks/useTaskFilter';
+import { Ionicons } from '@expo/vector-icons';
 
 interface EmptyStateComponentProps {
   tasks: any[];
@@ -17,8 +18,9 @@ export default function EmptyStateComponent({
   selectedFilter,
   setSelectedFilter
 }: EmptyStateComponentProps) {
+  const { colors } = useTheme();
   
-  const styles = useThemedStyles((colors, isDark, fontScale, reducedMotion) => StyleSheet.create({
+  const styles = useThemedStyles((colors, isDark, fontScale, reducedMotion, config) => StyleSheet.create({
     emptyState: {
       flex: 1,
       justifyContent: 'center',
@@ -64,7 +66,7 @@ export default function EmptyStateComponent({
       paddingVertical: 6,
       borderWidth: 1,
       borderColor: colors.border,
-      borderRadius: 0,
+      borderRadius: config.borderRadius,
       letterSpacing: 0.5,
       textAlign: 'center',
       fontWeight: 'normal',
@@ -105,7 +107,7 @@ export default function EmptyStateComponent({
       borderColor: colors.border,
       paddingHorizontal: 16,
       paddingVertical: 8,
-      borderRadius: 0,
+      borderRadius: config.borderRadius,
     },
     filterSuggestionText: {
       fontFamily: 'JetBrainsMono_500Medium',
@@ -119,11 +121,17 @@ export default function EmptyStateComponent({
   if (tasks.length === 0) {
     return (
       <View style={styles.emptyState}>
+        <Ionicons 
+          name="list-outline" 
+          size={48} 
+          color={colors.textMuted} 
+          style={{ marginBottom: 16 }}
+        />
         <Text style={styles.emptyTitle}>
-          NO_TASKS_LOADED
+          No Tasks Yet
         </Text>
         <Text style={styles.emptySubtitle}>
-          // Create your first task to get started
+          Create your first task to get started
         </Text>
         <Text style={styles.helpText}>
           Tasks are scheduled reminders with optional recurring intervals.\nConfigure work hours to restrict notifications during off-hours.\nUse delay feature to postpone tasks when they become overdue.
@@ -132,9 +140,16 @@ export default function EmptyStateComponent({
           style={styles.emptyStateButton}
           onPress={() => router.push('/add-task')}
         >
-          <Text style={styles.emptyCommand}>
-            $ ./add_task --init
-          </Text>
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+            <Ionicons 
+              name="add" 
+              size={16} 
+              color={colors.surface} 
+            />
+            <Text style={styles.emptyCommand}>
+              Add Task
+            </Text>
+          </View>
         </TouchableOpacity>
       </View>
     );
@@ -143,11 +158,17 @@ export default function EmptyStateComponent({
   if (tasks.length > 0 && filteredTasks.length === 0) {
     return (
       <View style={styles.filterEmptyState}>
+        <Ionicons 
+          name="search-outline" 
+          size={48} 
+          color={colors.textMuted} 
+          style={{ marginBottom: 16 }}
+        />
         <Text style={styles.filterEmptyTitle}>
-          NO_TASKS_FOUND
+          No Tasks Found
         </Text>
         <Text style={styles.filterEmptySubtitle}>
-          // No tasks match filter: ${selectedFilter}
+          No tasks match filter: {selectedFilter}
         </Text>
         <View style={styles.filterSuggestions}>
           <TouchableOpacity
@@ -155,7 +176,7 @@ export default function EmptyStateComponent({
             onPress={() => setSelectedFilter('All')}
           >
             <Text style={styles.filterSuggestionText}>
-              $ show --all
+              Show All Tasks
             </Text>
           </TouchableOpacity>
         </View>

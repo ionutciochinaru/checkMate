@@ -81,7 +81,7 @@ const CustomAlert: React.FC<CustomAlertProps> = ({
     opacity: opacity.value,
   }));
 
-  const styles = useThemedStyles((colors, isDark, fontScale, reducedMotion) => StyleSheet.create({
+  const styles = useThemedStyles((colors, isDark, fontScale, reducedMotion, config) => StyleSheet.create({
     overlay: {
       flex: 1,
       backgroundColor: 'rgba(0, 0, 0, 0.7)',
@@ -100,6 +100,7 @@ const CustomAlert: React.FC<CustomAlertProps> = ({
       shadowOpacity: isDark ? 0.3 : 0.15,
       shadowRadius: 8,
       elevation: 8,
+      borderRadius: config.borderRadius,
     },
     header: {
       backgroundColor: colors.accent,
@@ -154,6 +155,7 @@ const CustomAlert: React.FC<CustomAlertProps> = ({
       minWidth: 80,
       alignItems: 'center',
       justifyContent: 'center',
+      borderRadius: config.borderRadius,
     },
     buttonCancel: {
       backgroundColor: colors.surfaceVariant,

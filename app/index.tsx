@@ -31,15 +31,7 @@ export default function HomeScreen() {
 
   return (
     <Animated.View style={[styles.container, animatedBackgroundStyle]}>
-      <HeaderComponent
-        tasks={tasks}
-        pendingTasks={pendingTasks}
-        completedTasks={completedTasks}
-        selectedFilter={selectedFilter}
-        showFilterDropdown={showFilterDropdown}
-        setSelectedFilter={setSelectedFilter}
-        setShowFilterDropdown={setShowFilterDropdown}
-      />
+      <HeaderComponent />
 
       <ScrollView 
         style={styles.content} 
@@ -56,9 +48,13 @@ export default function HomeScreen() {
         />
 
         <TaskListComponent
+          tasks={tasks}
           pendingTasks={pendingTasks}
           completedTasks={completedTasks}
           selectedFilter={selectedFilter}
+          showFilterDropdown={showFilterDropdown}
+          setSelectedFilter={setSelectedFilter}
+          setShowFilterDropdown={setShowFilterDropdown}
         />
       </ScrollView>
 

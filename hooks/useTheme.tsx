@@ -57,7 +57,7 @@ const terminalLight: ThemeConfig = {
     success: '#006400',
     warning: '#ff6600',
   },
-  borderRadius: 0,
+  borderRadius: 8,
   fontFamily: {
     regular: 'JetBrainsMono_400Regular',
     medium: 'JetBrainsMono_500Medium',
@@ -81,7 +81,7 @@ const terminalDark: ThemeConfig = {
     success: '#ff4444',
     warning: '#ffaa44',
   },
-  borderRadius: 0,
+  borderRadius: 8,
   fontFamily: {
     regular: 'JetBrainsMono_400Regular',
     medium: 'JetBrainsMono_500Medium',

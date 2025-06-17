@@ -15,6 +15,7 @@ import { useTaskStore, useMainStore } from '../hooks/useTaskStore';
 import { useThemedStyles, useTheme } from '../hooks/useTheme';
 import { showAlert } from '../components/CustomAlert';
 import { formatDateWithPreference, formatTime } from '../utils/dateFormatters';
+import { Ionicons } from '@expo/vector-icons';
 
 export default function AddTaskScreen() {
   const { addTask, tasks, updateTask } = useTaskStore();
@@ -521,10 +522,14 @@ export default function AddTaskScreen() {
                 router.back();
               }}
           >
-            <Text style={styles.backButtonText}>[ESC] BACK</Text>
+            <Ionicons 
+              name="arrow-back" 
+              size={20} 
+              color={colors.textSecondary} 
+            />
           </TouchableOpacity>
           <Text style={styles.terminalTitle}>
-            {isEditing ? 'EDIT_TASK.EXE' : 'NEW_TASK.EXE'}
+{isEditing ? 'Edit Task' : 'New Task'}
           </Text>
         </View>
 
@@ -534,17 +539,17 @@ export default function AddTaskScreen() {
         {/* Instructions */}
         <Text style={styles.instructionText}>
           {isEditing 
-            ? '// Edit task details and schedule - past times allowed when rescheduling'
-            : '// Create a new task with scheduled reminder time (default: 10min from now)'
+            ? 'Edit task details and schedule - past times allowed when rescheduling'
+            : 'Create a new task with scheduled reminder time (default: 10min from now)'
           }
-          {'\n'}// Required fields marked with (*), optional settings below
+          {'\n'}Required fields marked with (*), optional settings below
         </Text>
         
         {/* Title Field */}
         <View style={styles.section}>
-          <Text style={styles.label}>TASK_NAME *</Text>
+          <Text style={styles.label}>Task Name *</Text>
           <Text style={styles.helpText}>
-            // Short name for the task
+            Short name for the task
           </Text>
           <TextInput
             style={styles.textInput}
@@ -557,15 +562,15 @@ export default function AddTaskScreen() {
 
         {/* Description Field */}
         <View style={styles.section}>
-          <Text style={styles.label}>DESCRIPTION</Text>
+          <Text style={styles.label}>Description</Text>
           <Text style={styles.helpText}>
-            // Detailed description or notes for the task
+            Detailed description or notes for the task
           </Text>
           <TextInput
             style={[styles.textInput, styles.multilineInput]}
             value={description}
             onChangeText={setDescription}
-            placeholder="// Optional task description..."
+            placeholder="Optional task description..."
             placeholderTextColor={colors.textMuted}
             multiline
             numberOfLines={3}
@@ -575,11 +580,11 @@ export default function AddTaskScreen() {
 
         {/* Schedule Date */}
         <View style={styles.section}>
-          <Text style={styles.label}>SCHEDULE_DATE</Text>
+          <Text style={styles.label}>Schedule Date</Text>
           <Text style={styles.helpText}>
             {isEditing 
-              ? '// Date when the task reminder should be triggered (past dates allowed when editing)'
-              : '// Date when the task reminder should be triggered (cannot be in the past)'
+              ? 'Date when the task reminder should be triggered (past dates allowed when editing)'
+              : 'Date when the task reminder should be triggered (cannot be in the past)'
             }
           </Text>
           <TouchableOpacity
@@ -607,11 +612,11 @@ export default function AddTaskScreen() {
 
         {/* Schedule Time */}
         <View style={styles.section}>
-          <Text style={styles.label}>SCHEDULE_TIME</Text>
+          <Text style={styles.label}>Schedule Time</Text>
           <Text style={styles.helpText}>
             {isEditing 
-              ? '// Time when the task reminder should be triggered (24-hour format, past times allowed)'
-              : '// Time when the task reminder should be triggered (24-hour format, must be future)'
+              ? 'Time when the task reminder should be triggered (24-hour format, past times allowed)'
+              : 'Time when the task reminder should be triggered (24-hour format, must be future)'
             }
           </Text>
           <TouchableOpacity
@@ -640,9 +645,9 @@ export default function AddTaskScreen() {
         <View style={styles.toggleCard}>
           <View style={styles.toggleRow}>
             <View style={{ flex: 1 }}>
-              <Text style={styles.toggleLabel}>LOOP_MODE</Text>
-              <Text style={styles.toggleSubtext}>// Reschedule task at intervals</Text>
-              <Text style={styles.toggleSubtext}>// [Ex: Eat, Drink water]</Text>
+              <Text style={styles.toggleLabel}>Recurring Task</Text>
+              <Text style={styles.toggleSubtext}>Reschedule task at intervals</Text>
+              <Text style={styles.toggleSubtext}>Examples: Eat, Drink water, Take medicine</Text>
             </View>
             <Switch
               value={isRecurring}
@@ -654,7 +659,7 @@ export default function AddTaskScreen() {
           
           {isRecurring && (
             <View style={styles.intervalSection}>
-              <Text style={styles.intervalLabel}>LOOP_INTERVAL</Text>
+              <Text style={styles.intervalLabel}>Repeat Interval</Text>
               <Text style={styles.helpText}>
                 Time between automatic task rescheduling (H=hours, D=days, W=weeks)
               </Text>
@@ -688,8 +693,8 @@ export default function AddTaskScreen() {
         <View style={styles.toggleCard}>
           <View style={styles.toggleRow}>
             <View style={{ flex: 1 }}>
-              <Text style={styles.toggleLabel}>24H_MODE</Text>
-              <Text style={styles.toggleSubtext}>// Allow notifications outside configured work hours</Text>
+              <Text style={styles.toggleLabel}>24 Hour Mode</Text>
+              <Text style={styles.toggleSubtext}>Allow notifications outside configured work hours</Text>
             </View>
             <Switch
               value={ignoreWorkingHours}
@@ -704,9 +709,9 @@ export default function AddTaskScreen() {
         <View style={styles.toggleCard}>
           <View style={styles.toggleRow}>
             <View style={{ flex: 1 }}>
-              <Text style={styles.toggleLabel}>SEQUENTIAL_NOTIFY</Text>
-              <Text style={styles.toggleSubtext}>// Send follow-up reminder if first notification is ignored</Text>
-              <Text style={styles.toggleSubtext}>// Notification A at time T, then B at T + interval</Text>
+              <Text style={styles.toggleLabel}>Follow-up Reminders</Text>
+              <Text style={styles.toggleSubtext}>Send follow-up reminder if first notification is ignored</Text>
+              <Text style={styles.toggleSubtext}>Notification A at time T, then B at T + interval</Text>
             </View>
             <Switch
               value={enableSequentialNotification}
@@ -718,7 +723,7 @@ export default function AddTaskScreen() {
           
           {enableSequentialNotification && (
             <View style={styles.intervalSection}>
-              <Text style={styles.intervalLabel}>FOLLOW_UP_INTERVAL</Text>
+              <Text style={styles.intervalLabel}>Follow-up Interval</Text>
               <Text style={styles.helpText}>
                 Time delay before sending follow-up notification (if first is ignored)
               </Text>
@@ -757,7 +762,7 @@ export default function AddTaskScreen() {
             }}
             activeOpacity={0.7}
           >
-            <Text style={styles.cancelButtonText}>[ESC]</Text>
+            <Text style={styles.cancelButtonText}>Cancel</Text>
           </TouchableOpacity>
           
           <TouchableOpacity
@@ -768,7 +773,7 @@ export default function AddTaskScreen() {
             activeOpacity={0.7}
           >
             <Text style={styles.submitButtonText}>
-              {isEditing ? '[UPD]' : '[EXE]'}
+              {isEditing ? 'Update Task' : 'Create Task'}
             </Text>
           </TouchableOpacity>
         </View>

@@ -25,25 +25,28 @@ export default function AddButtonComponent({
       position: 'absolute',
       bottom: 32,
       right: 24,
-      backgroundColor: colors.accent,
+      width: 56,
+      height: 56,
+      borderRadius: 28,
+      backgroundColor: isDark ? '#000000' : '#ffffff',
       borderWidth: 2,
-      borderColor: colors.textSecondary,
-      paddingHorizontal: 16,
-      paddingVertical: 12,
-      minHeight: 44,
-      borderRadius: 0,
-      color: colors.surface,
-      maxWidth: '60%',
+      borderStyle: 'dashed',
+      borderColor: isDark ? '#ff4444' : '#000000',
       alignItems: 'center',
       justifyContent: 'center',
+      shadowColor: isDark ? '#ff4444' : '#000000',
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.3,
+      shadowRadius: 4,
+      elevation: 4,
     },
     addButtonText: {
       fontFamily: 'JetBrainsMono_700Bold',
-      fontSize: 13 * fontScale,
-      color: colors.surface,
-      letterSpacing: 0.5,
+      fontSize: 24 * fontScale,
+      color: isDark ? '#ff4444' : '#000000',
       textAlign: 'center',
       fontWeight: 'bold',
+      lineHeight: 24 * fontScale,
     },
   }));
 
@@ -57,12 +60,7 @@ export default function AddButtonComponent({
         }}
         activeOpacity={0.8}
       >
-        <Text style={styles.addButtonText}>
-          {filteredTasks.length === 0 && tasks.length > 0 
-            ? `$ ./add_task --${selectedFilter.toLowerCase()}` 
-            : '$ ./add_task --init'
-          }
-        </Text>
+        <Text style={styles.addButtonText}>+</Text>
       </TouchableOpacity>
     );
   }
