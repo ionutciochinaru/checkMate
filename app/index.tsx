@@ -25,7 +25,8 @@ export default function HomeScreen() {
       flex: 1,
     },
     contentContainer: {
-      padding: 16,
+      paddingHorizontal: 5,
+      paddingVertical: 15
     },
   }));
 

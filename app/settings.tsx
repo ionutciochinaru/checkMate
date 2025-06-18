@@ -16,6 +16,7 @@ import { useFocusEffect } from '@react-navigation/native';
 import { useSettingsStore } from '../hooks/useSettingsStore';
 import { useThemedStyles, useTheme } from '../hooks/useTheme';
 import DelayInputComponent from '../components/DelayInputComponent';
+import MockDataGenerator from '../components/MockDataGenerator';
 import { showAlert } from '../components/CustomAlert';
 import { availableDateFormats, availableSeparators, availableTimeFormats, getDateFormatDisplayName, getTimeFormatDisplayName } from '../utils/dateFormatters';
 import { DateFormat, DateSeparator, TimeFormat } from '../types/task';
@@ -777,6 +778,9 @@ Restrict notifications to working hours only
         </View>
 
 
+        {/* Developer Tools */}
+        <MockDataGenerator />
+        
         {/* Buy Me a Coffee Section */}
         <View style={styles.supportSection}>
           <Text style={styles.supportTitle}>Support the Developer</Text>

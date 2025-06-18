@@ -31,7 +31,7 @@ export default function HeaderComponent({}: HeaderComponentProps) {
       borderBottomWidth: isTerminalTheme ? 2 : 0,
       borderBottomColor: colors.border,
       paddingTop: isTerminalTheme ? 50 : 60,
-      paddingBottom: 16,
+      paddingBottom: 0,
       paddingHorizontal: 16,
       ...(isTerminalTheme ? {} : {
         shadowColor: '#000000',
@@ -41,13 +41,27 @@ export default function HeaderComponent({}: HeaderComponentProps) {
         elevation: config.elevation.low,
       }),
     },
+    filterContainer: {
+      backgroundColor: colors.surface,
+      paddingHorizontal: 0,
+      paddingVertical: 0,
+      position: 'relative',
+      marginBottom: 16,
+    },
+    filterRow: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      flexWrap: 'wrap',
+      gap: 8,
+    },
     terminalBar: {
       flexDirection: 'row',
       justifyContent: 'space-between',
       alignItems: 'center',
       marginBottom: 8,
       flexWrap: 'wrap',
-      minHeight: 40,
+      minHeight: 35,
     },
     terminalTitle: {
       fontFamily: config.fontFamily.bold,
@@ -61,67 +75,40 @@ export default function HeaderComponent({}: HeaderComponentProps) {
     topRightControls: {
       flexDirection: 'row',
       alignItems: 'center',
-      gap: 8,
+      gap: 10,
       flexShrink: 0,
     },
     themeToggle: {
-      paddingHorizontal: 8,
+      paddingHorizontal: 10,
       paddingVertical: 8,
       backgroundColor: isTerminalTheme ? colors.surfaceVariant : colors.accent,
       borderWidth: isTerminalTheme ? 1 : 0,
       borderColor: colors.accent,
       borderRadius: isTerminalTheme ? config.borderRadius : 20,
-      minWidth: isTerminalTheme ? 44 : 56,
+      minWidth: isTerminalTheme ? 28 : 40,
       minHeight: isTerminalTheme ? 28 : 40,
       alignItems: 'center',
       justifyContent: 'center',
-      ...(isTerminalTheme ? {} : {
-        shadowColor: '#000000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.1,
-        shadowRadius: 3,
-        elevation: 2,
-      }),
-    },
-    themeToggleText: {
-      fontFamily: config.fontFamily.bold,
-      fontSize: isTerminalTheme ? 11 * fontScale : 14 * fontScale,
-      color: isTerminalTheme ? colors.accent : colors.surface,
-      letterSpacing: config.letterSpacing * 0.6,
-      fontWeight: isTerminalTheme ? '800' : '600',
     },
     settingsButton: {
-      paddingHorizontal: 8,
+      paddingHorizontal: 10,
       paddingVertical: 8,
-      backgroundColor: isTerminalTheme ? colors.surfaceVariant : 'transparent',
+      backgroundColor: isTerminalTheme ? colors.surfaceVariant : colors.accent,
       borderWidth: isTerminalTheme ? 1 : 0,
       borderColor: colors.accent,
-      borderRadius: isTerminalTheme ? config.borderRadius : 20,
-      minWidth: isTerminalTheme ? 36 : 48,
+      borderRadius: isTerminalTheme ? config.borderRadius : 15,
+      minWidth: isTerminalTheme ? 28 : 40,
       minHeight: isTerminalTheme ? 28 : 40,
       alignItems: 'center',
       justifyContent: 'center',
-    },
-    settingsIcon: {
-      fontFamily: config.fontFamily.bold,
-      fontSize: 12 * fontScale,
-      color: colors.accent,
-      letterSpacing: config.letterSpacing * 0.3,
-      fontWeight: '800',
-    },
-    statusText: {
-      fontFamily: config.fontFamily.medium,
-      fontSize: 12 * fontScale,
-      color: colors.textSecondary,
-      letterSpacing: config.letterSpacing * 0.3,
-      flexShrink: 1,
     },
   }));
 
   return (
     <View style={styles.header}>
       <View style={styles.terminalBar}>
-        <Text style={styles.terminalTitle}>CheckMate <Text style={styles.statusText}>{currentDate}</Text> </Text>
+        <Text style={styles.terminalTitle}>CheckMate </Text>
+        {/*<Text style={styles.statusText}>{currentDate}</Text>*/}
         <View style={styles.topRightControls}>
           <TouchableOpacity
             style={styles.themeToggle}

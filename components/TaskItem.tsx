@@ -1,5 +1,5 @@
-import React from 'react';
-import { View, Text, Text as RNText, StyleSheet, TouchableOpacity } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import Animated, { 
   FadeInUp, 
   FadeOutRight, 
@@ -11,7 +11,7 @@ import { useTheme , useThemedStyles } from '../hooks/useTheme';
 import { router } from 'expo-router';
 import { useTaskStore, useMainStore } from '../hooks/useTaskStore';
 import { Task } from '../types/task';
-import { formatDateWithPreference, formatTime } from '../utils/dateFormatters';
+import { formatTime } from '../utils/dateFormatters';
 import { Ionicons } from '@expo/vector-icons';
 
 import { showAlert } from './CustomAlert';
@@ -20,13 +20,40 @@ interface TaskItemProps {
   task: Task;
 }
 
-// Theme-appropriate colors that work with both light and dark themes
-const getStatusColors = (colors: any, isDark: boolean) => ({
-  success: colors.success, // Use theme success color
-  info: isDark ? colors.textSecondary : colors.accent, // Use theme colors for info/edit
-  delayed: colors.warning, // Use theme warning color for delayed
-  completion: isDark ? colors.textSecondary : colors.textMuted, // Use theme colors for completion count
-});
+// Color palette from design - exact color codes for light theme
+const LIGHT_CARD_COLORS = {
+  orange: '#EB8146',
+  blue: '#A9CEF2', 
+  yellow: '#D7D982',
+  pink: '#F09BAF',
+  lightYellow: '#EEC045',
+  lightGray: '#F0EFEC',
+};
+
+
+const CARD_TEXT_COLORS = {
+  light: '#313131',
+  dark: '#FFFFFF',
+};
+
+// Get card color based on task properties and theme
+const getCardColor = (task: Task, isDark: boolean, themeColors: any) => {
+  if (task.isCompleted) {
+    return isDark ? themeColors.surfaceVariant : LIGHT_CARD_COLORS.lightGray;
+  }
+  
+  if (isDark) {
+    // Use theme colors for dark mode - variations matching filter and header
+    const darkColors = [themeColors.surfaceVariant];
+    const index = Math.abs(task.id.split('').reduce((a, b) => a + b.charCodeAt(0), 0)) % darkColors.length;
+    return darkColors[index];
+  } else {
+    // Use colorful palette for light theme
+    const lightColors = [LIGHT_CARD_COLORS.orange, LIGHT_CARD_COLORS.blue, LIGHT_CARD_COLORS.yellow, LIGHT_CARD_COLORS.pink, LIGHT_CARD_COLORS.lightYellow];
+    const index = Math.abs(task.id.split('').reduce((a, b) => a + b.charCodeAt(0), 0)) % lightColors.length;
+    return lightColors[index];
+  }
+};
 
 const TaskItem: React.FC<TaskItemProps> = React.memo(({ task }) => {
   const { toggleComplete, delayTask, deleteTask } = useTaskStore();
@@ -34,363 +61,296 @@ const TaskItem: React.FC<TaskItemProps> = React.memo(({ task }) => {
   const { colors, reducedMotion, isDark } = useTheme();
   
   const settings = getSettings();
-  const statusColors = getStatusColors(colors, isDark);
   const delayTime = settings.defaultDelay || '30m';
+  const cardColor = getCardColor(task, isDark, colors);
+  const textColor = isDark ? colors.text : CARD_TEXT_COLORS.light;
+  const textColorVariant = isDark ? colors.background : CARD_TEXT_COLORS.dark;
+  const lightTextColor = isDark ? colors.textSecondary : LIGHT_CARD_COLORS.lightGray;
   
   const cardScale = useSharedValue(1);
-  const buttonPulse = useSharedValue(1);
 
-  const getTaskStatus = () => {
-    const now = new Date();
-    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-    const tomorrow = new Date(today.getTime() + 24 * 60 * 60 * 1000);
-    
+  // State for menu dropdown
+  const [showMenu, setShowMenu] = useState(false);
+
+  // Get day info for completed tasks
+  const getDayInfo = () => {
     const reminderDate = task.reminderTime instanceof Date ? task.reminderTime : new Date(task.reminderTime);
-    if (isNaN(reminderDate.getTime())) {
-      return { icon: '[ERR]', text: 'Invalid date', style: 'overdue' };
-    }
-    
-    const taskDate = new Date(reminderDate.getFullYear(), reminderDate.getMonth(), reminderDate.getDate());
-    
-    if (task.isCompleted && !task.isRecurring) {
-      return { icon: '[OK]', text: 'Completed', style: 'completed' };
-    }
-    
-    if (task.delayCount > 0) {
-      if (taskDate.getTime() === today.getTime()) {
-        return { icon: '[DLY]', text: 'Delayed to today', style: 'delayed' };
-      } else if (taskDate.getTime() === tomorrow.getTime()) {
-        return { icon: '[DLY]', text: 'Delayed to tomorrow', style: 'delayed' };
-      } else if (taskDate.getTime() > tomorrow.getTime()) {
-        return { icon: '[DLY]', text: 'Delayed to future', style: 'delayed' };
-      }
-    }
-    
-    if (taskDate.getTime() === today.getTime()) {
-      return { icon: '[NOW]', text: task.isRecurring ? 'Next due today' : 'Scheduled for today', style: 'today' };
-    } else if (taskDate.getTime() === tomorrow.getTime()) {
-      return { icon: '[TMR]', text: task.isRecurring ? 'Next due tomorrow' : 'Scheduled for tomorrow', style: 'tomorrow' };
-    } else if (taskDate.getTime() > tomorrow.getTime()) {
-      return { icon: '[FUT]', text: task.isRecurring ? 'Next due later' : 'Scheduled for later', style: 'future' };
-    } else {
-      return { icon: '[OVR]', text: 'Overdue', style: 'overdue' };
-    }
+    const dayNumber = reminderDate.getDate();
+    const dayName = reminderDate.toLocaleDateString('en-US', { weekday: 'short' }).toUpperCase();
+    return { dayNumber, dayName };
   };
 
-  const taskStatus = getTaskStatus();
+  // Truncate description text
+  const getTruncatedDescription = (text: string, maxLength: number = 50) => {
+    if (!text) return '';
+    if (text.length <= maxLength) return text;
+    return text.substring(0, maxLength).trim() + '...';
+  };
 
-  const getCardBorderColor = () => {
-    if (task.isCompleted) return statusColors.success;
+  // Get time info for display
+  const getTimeInfo = () => {
+    const reminderDate = task.reminderTime instanceof Date ? task.reminderTime : new Date(task.reminderTime);
+    const now = new Date();
+    const timeDiff = reminderDate.getTime() - now.getTime();
+    const minutesLeft = Math.ceil(timeDiff / (1000 * 60));
     
-    switch (taskStatus.style) {
-      case 'today': return colors.accent;
-      case 'tomorrow': return statusColors.info;
-      case 'delayed': return statusColors.delayed;
-      case 'overdue': return colors.danger;
-      default: return colors.border;
-    }
+    if (minutesLeft < 0) return 'Overdue';
+    if (minutesLeft < 60) return `${minutesLeft} min`;
+    
+    const hoursLeft = Math.ceil(minutesLeft / 60);
+    if (hoursLeft < 24) return `${hoursLeft}h ${minutesLeft % 60}m`;
+    
+    return formatTime(reminderDate, settings.timeFormat);
   };
 
   const styles = useThemedStyles((colors, isDark, fontScale, reducedMotion, config) => StyleSheet.create({
     container: {
-      marginBottom: 16,
+      marginBottom: 3,
     },
+    // Normal task card (card_normal.png style)
     taskCard: {
-      backgroundColor: colors.surface,
-      borderWidth: 2,
-      borderColor: getCardBorderColor(),
-      borderRadius: config.borderRadius,
-      padding: 16,
-      shadowColor: isDark ? getCardBorderColor() : 'transparent',
-      shadowOffset: { width: 0, height: 0 },
-      shadowOpacity: isDark ? 0.3 : 0,
-      shadowRadius: isDark ? 4 : 0,
-      elevation: isDark ? 4 : 0,
+      backgroundColor: cardColor,
+      borderRadius: 32,
+      padding: 20,
+      minHeight: 120,
+      shadowColor: '#000',
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.1,
+      shadowRadius: 8,
+      elevation: 4,
     },
+    // Completed task card (card_done.png style)
     completedCard: {
-      backgroundColor: colors.surfaceVariant,
-      borderColor: statusColors.success,
+      backgroundColor: cardColor,
+      flexDirection: 'row',
+      alignItems: 'center',
+      minHeight: 60,
+      paddingVertical: 12,
+      paddingHorizontal: 16,
     },
-    futureCard: {
-      opacity: 0.8,
-      borderStyle: 'dashed',
+    dayCircle: {
+      width: 56,
+      height: 56,
+      borderRadius: 28,
+      backgroundColor: isDark ? colors.background : CARD_TEXT_COLORS.light,
+      justifyContent: 'center',
+      alignItems: 'center',
+      marginRight: 16,
     },
-    mainTaskLine: {
-      marginBottom: 12,
-      minHeight: 44,
+    dayText: {
+      fontSize: 16,
+      fontWeight: 'bold',
+      color: lightTextColor,
+      textAlign: 'center',
     },
-    
-    firstRow: {
+    dayLabel: {
+      fontSize: 8,
+      color: lightTextColor,
+      textAlign: 'center',
+      textTransform: 'uppercase',
+      letterSpacing: 0.5,
+    },
+    cardHeader: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'flex-start',
+      marginBottom: 5,
+    },
+    headerLeft: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 8,
+    },
+    headerRight: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 6,
+      flexWrap: 'wrap',
+    },
+    taskId: {
+      fontSize: 10,
+      color: textColor,
+      fontWeight: '700',
+      letterSpacing: 0.5,
+    },
+    timeInfo: {
+      fontSize: 12,
+      color: textColor,
+      fontWeight: '500',
+    },
+    delayBadge: {
+      fontSize: 10,
+      color: textColor,
+      fontWeight: '600',
+      paddingHorizontal: 6,
+      paddingVertical: 2,
+      borderRadius: 6,
+    },
+    recurringBadge: {
+      fontSize: 10,
+      color: textColor,
+      fontWeight: '600',
+      paddingHorizontal: 6,
+      paddingVertical: 2,
+      borderRadius: 6,
+    },
+    alwaysOnBadge: {
+      fontSize: 10,
+      color: textColor,
+      fontWeight: '600',
+      paddingHorizontal: 6,
+      paddingVertical: 2,
+      borderRadius: 6,
+    },
+    taskMeta: {
       flexDirection: 'row',
       justifyContent: 'space-between',
       alignItems: 'center',
-      marginBottom: 8,
-    },
-    
-    titleRow: {
-      marginBottom: 8,
-    },
-    leftSection: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      gap: 12,
-    },
-    rightSection: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      gap: 4,
-    },
-    scheduleSection: {
-      marginBottom: 8,
-    },
-    descriptionSection: {
-      marginBottom: 8,
-    },
-    taskId: {
-      fontFamily: 'JetBrainsMono_700Bold',
-      fontSize: 12 * fontScale,
-      color: colors.textSecondary,
-      letterSpacing: 1.0,
-      fontWeight: '700',
-      minWidth: 50,
-    },
-    statusIndicators: {
-      flexDirection: 'row',
-      gap: 6,
-    },
-    statusBadge: {
-      fontFamily: 'JetBrainsMono_700Bold',
-      fontSize: 9 * fontScale,
-      color: colors.textMuted,
-      backgroundColor: colors.surfaceVariant,
-      paddingHorizontal: 6,
-      paddingVertical: 3,
-      borderWidth: 0,
-      letterSpacing: 0.3,
-      fontWeight: '700',
-      borderRadius: config.borderRadius,
-      overflow: 'hidden',
-    },
-    delayBadge: {
-      color: statusColors.delayed,
-      backgroundColor: `${statusColors.delayed}15`,
-    },
-    loopBadge: {
-      color: statusColors.info,
-      backgroundColor: `${statusColors.info}15`,
-    },
-    alwaysOnBadge: {
-      color: statusColors.success,
-      backgroundColor: `${statusColors.success}15`,
-    },
-    completionBadge: {
-      color: statusColors.completion,
-      backgroundColor: `${statusColors.completion}15`,
-    },
-    timestamp: {
-      fontFamily: 'JetBrainsMono_500Medium',
-      fontSize: 11 * fontScale,
-      color: colors.textSecondary,
-      letterSpacing: 0.8,
-      fontWeight: '500',
-      marginBottom: 2,
-    },
-    originalTimestamp: {
-      fontFamily: 'JetBrainsMono_500Medium',
-      fontSize: 11 * fontScale,
-      color: colors.textMuted,
-      letterSpacing: 0.8,
-      textDecorationLine: 'line-through',
-      fontWeight: '500',
-      marginBottom: 2,
-      opacity: 0.7,
-    },
-    newTimestamp: {
-      fontFamily: 'JetBrainsMono_500Medium',
-      fontSize: 11 * fontScale,
-      color: statusColors.delayed,
-      letterSpacing: 0.8,
-      fontWeight: '600',
-      marginBottom: 2,
-      textShadowColor: isDark ? statusColors.delayed : 'transparent',
-      textShadowOffset: { width: 0, height: 0 },
-      textShadowRadius: isDark ? 3 : 0,
-    },
-    statusIndicator: {
-      fontFamily: 'JetBrainsMono_500Medium',
-      fontSize: 11 * fontScale,
-      letterSpacing: 0.8,
-      fontWeight: '600',
-      marginBottom: 2,
-    },
-    status_completed: {
-      color: statusColors.success,
-      textShadowColor: isDark ? statusColors.success : 'transparent',
-      textShadowOffset: { width: 0, height: 0 },
-      textShadowRadius: isDark ? 3 : 0,
-    },
-    status_today: {
-      color: colors.accent,
-      textShadowColor: isDark ? colors.accent : 'transparent',
-      textShadowOffset: { width: 0, height: 0 },
-      textShadowRadius: isDark ? 3 : 0,
-    },
-    status_tomorrow: {
-      color: statusColors.info,
-      textShadowColor: isDark ? statusColors.info : 'transparent',
-      textShadowOffset: { width: 0, height: 0 },
-      textShadowRadius: isDark ? 3 : 0,
-    },
-    status_future: {
-      color: colors.textSecondary,
-    },
-    status_delayed: {
-      color: statusColors.delayed,
-      textShadowColor: isDark ? statusColors.delayed : 'transparent',
-      textShadowOffset: { width: 0, height: 0 },
-      textShadowRadius: isDark ? 3 : 0,
-    },
-    status_overdue: {
-      color: colors.danger,
-      textShadowColor: isDark ? colors.danger : 'transparent',
-      textShadowOffset: { width: 0, height: 0 },
-      textShadowRadius: isDark ? 3 : 0,
-    },
-    content: {
       marginBottom: 12,
+      paddingVertical: 6,
+      paddingHorizontal: 8,
+      backgroundColor: 'rgba(255,255,255,0.1)',
+      borderRadius: 8,
     },
-    taskContent: {
-      flexDirection: 'row',
-      alignItems: 'flex-start',
-    },
-    checkboxContainer: {
-      marginRight: 12,
-      marginTop: 2,
-    },
-    checkbox: {
-      width: 24,
-      height: 24,
-      borderWidth: 1,
-      borderColor: colors.border,
-      backgroundColor: 'transparent',
-      alignItems: 'center',
-      justifyContent: 'center',
-    },
-    checkedBox: {
-      backgroundColor: statusColors.success,
-      borderColor: statusColors.success,
-    },
-    checkboxText: {
-      fontFamily: 'JetBrainsMono_700Bold',
-      fontSize: 12 * fontScale,
-      color: colors.textSecondary,
-      letterSpacing: 0.5,
-      fontWeight: '700',
-    },
-    checkedText: {
-      color: isDark ? colors.background : '#ffffff',
-    },
-    textContainer: {
-      flex: 1,
+    metaText: {
+      fontSize: 12,
+      color: textColor,
+      fontWeight: '500',
     },
     taskTitle: {
-      fontFamily: 'JetBrainsMono_700Bold',
-      fontSize: 15 * fontScale,
-      color: colors.text,
-      letterSpacing: 0.8,
-      fontWeight: '700',
-      // paddingLeft: spacing.xl + 12, // Align with ID after checkbox
-    },
-    completedTitle: {
-      color: colors.textMuted,
-      textDecorationLine: 'line-through',
-      opacity: 0.7,
+      fontSize: 18,
+      fontWeight: 'bold',
+      color: textColor,
+      marginBottom: 4,
+      lineHeight: 24,
     },
     taskDescription: {
-      fontFamily: 'JetBrainsMono_400Regular',
-      fontSize: 13 * fontScale,
-      color: colors.textSecondary,
-      letterSpacing: 0.5,
-      lineHeight: 18 * fontScale,
+      fontSize: 13,
+      color: textColor,
+      marginBottom: 12,
+      lineHeight: 18,
       fontStyle: 'italic',
     },
-    completedDescription: {
-      color: colors.textMuted,
-      opacity: 0.7,
-    },
-    actions: {
+    actionButtonsContainer: {
       flexDirection: 'row',
-      justifyContent: 'flex-end',
-      gap: 6,
+      justifyContent: 'space-between',
+      gap: 8,
       flexWrap: 'wrap',
-      marginTop: 4,
     },
-    actionButton: {
-      borderWidth: 1,
-      borderColor: colors.border,
-      backgroundColor: colors.surface,
-      paddingHorizontal: 12,
-      paddingVertical: 8,
-      borderRadius: 8,
-      minWidth: 56,
-      minHeight: 16,
+    actionBtnDone: {
+      backgroundColor: textColor,
+      flexDirection: 'row',
       alignItems: 'center',
+      paddingVertical: 6,
+      paddingHorizontal: 10,
+      borderRadius: 16,
+      borderStyle: 'solid',
+      borderWidth: 0.5,
+      minHeight: 28,
+      flex: 1,
       justifyContent: 'center',
     },
-    completedButton: {
-      borderColor: colors.textMuted,
-      backgroundColor: colors.surface,
+    actionBtnTextDone: {
+      color: textColorVariant,
+      fontSize: 12,
+      fontWeight: '600',
+      marginLeft: 4,
     },
-    actionText: {
-      fontFamily: 'JetBrainsMono_700Bold',
-      fontSize: 13 * fontScale,
-      color: colors.textSecondary,
-      letterSpacing: 1.5,
-      fontWeight: '800',
+    actionBtn: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      paddingVertical: 6,
+      paddingHorizontal: 10,
+      borderRadius: 16,
+      borderStyle: 'solid',
+      borderWidth: 0.5,
+      minHeight: 28,
+      flex: 1,
+      justifyContent: 'center',
     },
-    completedActionText: {
-      color: colors.textMuted,
+    actionBtnText: {
+      color: textColor,
+      fontSize: 12,
+      fontWeight: '600',
+      marginLeft: 4,
     },
-    delayButton: {
-      backgroundColor: colors.surfaceVariant,
-      borderColor: statusColors.delayed,
+    completedTaskInfo: {
+      flex: 1,
     },
-    delayButtonText: {
-      color: statusColors.delayed,
+    completedTitle: {
+      fontSize: 16,
+      fontWeight: '600',
+      color: textColor,
+      marginBottom: 4,
     },
-    doneButton: {
-      backgroundColor: colors.success,
-      borderColor: colors.success,
+    completedSubtitle: {
+      fontSize: 12,
+      color: textColor,
     },
-    doneButtonText: {
-      color: isDark ? colors.background : '#ffffff',
-      fontFamily: 'JetBrainsMono_700Bold',
+    undoButton: {
+      width: 40,
+      height: 40,
+      borderRadius: 20,
+      backgroundColor: 'transparent',
+      borderWidth: 0.5,
+      borderColor: textColor,
+      justifyContent: 'center',
+      alignItems: 'center',
+      marginLeft: 8,
     },
-    deleteButton: {
-      backgroundColor: colors.surfaceVariant,
-      borderColor: colors.danger,
+    menuButton: {
+      width: 40,
+      height: 40,
+      borderRadius: 20,
+      backgroundColor: 'transparent',
+      borderWidth: 0.5,
+      borderColor: '#666',
+      justifyContent: 'center',
+      alignItems: 'center',
+      marginLeft: 8,
     },
-    deleteButtonText: {
-      color: colors.danger,
-      fontFamily: 'JetBrainsMono_700Bold',
+    menuDropdown: {
+      position: 'absolute',
+      top: 45,
+      right: 0,
+      backgroundColor: '#fff',
+      borderRadius: 12,
+      padding: 8,
+      minWidth: 220,
+      shadowColor: '#000',
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.15,
+      shadowRadius: 8,
+      elevation: 5,
+      zIndex: 1000,
     },
-    editButton: {
-      backgroundColor: colors.surfaceVariant,
-      borderColor: statusColors.info,
+    menuItem: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      padding: 12,
+      borderRadius: 8,
     },
-    editButtonText: {
-      color: statusColors.info,
-      fontFamily: 'JetBrainsMono_700Bold',
+    menuItemText: {
+      marginLeft: 8,
+      fontSize: 14,
+      fontWeight: '500',
+      color: textColor,
+    },
+    deleteMenuItem: {
+      color: textColor,
+    },
+    doneStatus: {
+      fontSize: 12,
+      color: textColor,
+      fontWeight: '500',
+      marginTop: 2,
+      opacity: 0.7,
     },
   }));
 
   // Animation styles
   const animatedCardStyle = useAnimatedStyle(() => ({
     transform: [{ scale: cardScale.value }]
-  }));
-
-  const animatedButtonStyle = useAnimatedStyle(() => ({
-    transform: [{ scale: buttonPulse.value }]
   }));
 
   // Animate card when task updates
@@ -402,29 +362,14 @@ const TaskItem: React.FC<TaskItemProps> = React.memo(({ task }) => {
     });
   };
 
-  // Animate button when pressed
-  const animateButtonPress = () => {
-    if (reducedMotion) return;
-    
-    buttonPulse.value = withSpring(0.95, { damping: 20, stiffness: 400 }, () => {
-      buttonPulse.value = withSpring(1, { damping: 20, stiffness: 400 });
-    });
+  const handleToggleComplete = async () => {
+    toggleComplete(task.id);
+    animateCardUpdate();
   };
 
   const handleDelayTask = async () => {
-    animateButtonPress();
-    setTimeout(() => {
-      delayTask(task.id, delayTime);
-      animateCardUpdate();
-    }, 100);
-  };
-
-  const handleToggleComplete = async () => {
-    animateButtonPress();
-    setTimeout(() => {
-      toggleComplete(task.id);
-      animateCardUpdate();
-    }, 100);
+    delayTask(task.id, delayTime);
+    animateCardUpdate();
   };
 
   const showDeleteConfirmation = () => {
@@ -445,258 +390,154 @@ const TaskItem: React.FC<TaskItemProps> = React.memo(({ task }) => {
     );
   };
 
-  const getDelayMessage = (count: number) => {
-    if (count === 0) return '';
-    if (count === 1) return 'Delayed';
-    return `Delayed ${count}x`;
-  };
-
-  const getLoopIntervalLabel = (hours: number) => {
-    if (hours === 1) return '1H';
-    if (hours === 4) return '4H';
-    if (hours === 8) return '8H';
-    if (hours === 12) return '12H';
-    if (hours === 24) return '24H';
-    if (hours === 72) return '3D';
-    if (hours === 168) return '1W';
-    // Fallback for custom intervals
-    if (hours < 24) return `${hours}H`;
-    if (hours % 24 === 0) return `${hours / 24}D`;
-    return `${hours}H`;
-  };
-
-  const formatTimeWithPreference = (date: Date | string) => {
-    const dateObj = date instanceof Date ? date : new Date(date);
-    if (isNaN(dateObj.getTime())) {
-      return 'Invalid Time';
-    }
-    return formatTime(dateObj, settings.timeFormat);
-  };
-
-  const formatDate = (date: Date | string) => {
-    const dateObj = date instanceof Date ? date : new Date(date);
-    if (isNaN(dateObj.getTime())) {
-      return 'Invalid Date';
-    }
-    return formatDateWithPreference(
-      dateObj, 
-      settings.dateFormat, 
-      settings.dateUseMonthNames, 
-      settings.dateSeparator
+  if (task.isCompleted) {
+    // Completed task design (card_done.png style)
+    return (
+      <Animated.View 
+        entering={reducedMotion ? undefined : FadeInUp} 
+        exiting={reducedMotion ? undefined : FadeOutRight} 
+        style={[styles.container, animatedCardStyle]}
+      >
+        <View style={[styles.taskCard, styles.completedCard, { position: 'relative' }]}>
+          <View style={styles.dayCircle}>
+            <Text style={styles.dayText}>{getDayInfo().dayNumber}</Text>
+            <Text style={styles.dayLabel}>{getDayInfo().dayName}</Text>
+          </View>
+          
+          <View style={styles.completedTaskInfo}>
+            <Text style={styles.completedTitle}>{task.title}</Text>
+            <Text style={styles.doneStatus}>Done</Text>
+            {task.description && (
+              <Text style={styles.completedSubtitle}>
+                {getTruncatedDescription(task.description)}
+              </Text>
+            )}
+          </View>
+          
+          <TouchableOpacity style={styles.undoButton} onPress={handleToggleComplete}>
+            <Ionicons name="arrow-undo" size={16} color={textColor} />
+          </TouchableOpacity>
+          
+          <View style={{ position: 'relative' }}>
+            <TouchableOpacity 
+              style={styles.menuButton} 
+              onPress={() => setShowMenu(!showMenu)}
+            >
+              <Ionicons name="ellipsis-horizontal" size={16} color={textColor} />
+            </TouchableOpacity>
+            
+            {showMenu && (
+              <View style={styles.menuDropdown}>
+                <TouchableOpacity 
+                  style={styles.menuItem} 
+                  onPress={() => {
+                    setShowMenu(false);
+                    router.push(`/add-task?edit=${task.id}`);
+                  }}
+                >
+                  <Ionicons name="create-outline" size={16} color={textColor} />
+                  <Text style={styles.menuItemText}>Edit</Text>
+                </TouchableOpacity>
+                
+                <TouchableOpacity 
+                  style={styles.menuItem} 
+                  onPress={() => {
+                    setShowMenu(false);
+                    showDeleteConfirmation();
+                  }}
+                >
+                  <Ionicons name="trash-outline" size={16} color={textColor} />
+                  <Text style={[styles.menuItemText, styles.deleteMenuItem]}>Delete</Text>
+                </TouchableOpacity>
+              </View>
+            )}
+          </View>
+        </View>
+      </Animated.View>
     );
-  };
+  }
 
+  // Normal task design (card_normal.png style)
   return (
     <Animated.View 
       entering={reducedMotion ? undefined : FadeInUp} 
       exiting={reducedMotion ? undefined : FadeOutRight} 
       style={[styles.container, animatedCardStyle]}
     >
-      <Animated.View style={[
-        styles.taskCard, 
-        task.isCompleted && styles.completedCard,
-        taskStatus.style === 'future' && styles.futureCard
-      ]}>
-        {/* Main task section with separate rows */}
-        <View style={styles.mainTaskLine}>
-          {/* First row: checkbox + ID + badges */}
-          {task.isRecurring ? (
-            <View style={styles.firstRow}>
-              <View style={styles.leftSection}>
-                <RNText style={styles.taskId}>#{task.id.slice(-4).toUpperCase()}</RNText>
-              </View>
-              
-              <View style={styles.rightSection}>
-                {task.delayCount > 0 && (
-                  <RNText style={[styles.statusBadge, styles.delayBadge]}>
-                    {getDelayMessage(task.delayCount)}
-                  </RNText>
-                )}
-                {task.isRecurring && (
-                  <RNText style={[styles.statusBadge, styles.loopBadge]}>
-Loop {getLoopIntervalLabel(task.recurringInterval || 24)}
-                  </RNText>
-                )}
-                {task.isRecurring && (task.completionCount || 0) > 0 && (
-                  <RNText style={[styles.statusBadge, styles.completionBadge]}>
-Done {task.completionCount}x
-                  </RNText>
-                )}
-                {task.ignoreWorkingHours && (
-                  <RNText style={[styles.statusBadge, styles.alwaysOnBadge]}>24H</RNText>
-                )}
-              </View>
-            </View>
-          ) : (
-            <TouchableOpacity 
-              style={styles.firstRow}
-              onPress={handleToggleComplete}
-              activeOpacity={0.7}
-            >
-              <View style={styles.leftSection}>
-                <View style={[styles.checkbox, task.isCompleted && styles.checkedBox]}>
-                  <RNText style={[styles.checkboxText, task.isCompleted && styles.checkedText]}>
-                    {task.isCompleted ? '[X]' : '[ ]'}
-                  </RNText>
-                </View>
-                
-                <RNText style={styles.taskId}>#{task.id.slice(-4).toUpperCase()}</RNText>
-              </View>
-              
-              <View style={styles.rightSection}>
-                {task.delayCount > 0 && (
-                  <RNText style={[styles.statusBadge, styles.delayBadge]}>
-                    {getDelayMessage(task.delayCount)}
-                  </RNText>
-                )}
-                {task.ignoreWorkingHours && (
-                  <RNText style={[styles.statusBadge, styles.alwaysOnBadge]}>24H</RNText>
-                )}
-              </View>
-            </TouchableOpacity>
-          )}
-          
-          {/* Second row: title */}
-          {task.isRecurring ? (
-            <View style={styles.titleRow}>
-              <RNText style={[styles.taskTitle, task.isCompleted && styles.completedTitle]}>
-                {task.title.toUpperCase()}
-              </RNText>
-            </View>
-          ) : (
-            <TouchableOpacity 
-              style={styles.titleRow}
-              onPress={handleToggleComplete}
-              activeOpacity={0.7}
-            >
-              <RNText style={[styles.taskTitle, task.isCompleted && styles.completedTitle]}>
-                {task.title.toUpperCase()}
-              </RNText>
-            </TouchableOpacity>
-          )}
-        </View>
-
-        {/* Schedule information */}
-        <View style={styles.scheduleSection}>
-          {task.delayCount > 0 && task.originalReminderTime ? (
-            <>
-              <RNText style={styles.originalTimestamp}>
-                Originally: {formatDate(task.originalReminderTime)} {formatTimeWithPreference(task.originalReminderTime)}
-              </RNText>
-              <RNText style={styles.newTimestamp}>
-                Delayed to: {formatDate(task.reminderTime)} {formatTimeWithPreference(task.reminderTime)}
-              </RNText>
-            </>
-          ) : (
-            <RNText style={styles.timestamp}>
-{task.isRecurring ? 'Next:' : 'Due:'} {formatDate(task.reminderTime)} {formatTimeWithPreference(task.reminderTime)}
-            </RNText>
-          )}
-          
-          <RNText style={[styles.statusIndicator, (styles as any)[`status_${taskStatus.style}`]]}>
-Status: {taskStatus.text}
-          </RNText>
-        </View>
-
-        {/* Description if exists */}
-        {task.description && (
-          <View style={styles.descriptionSection}>
-            <RNText style={[styles.taskDescription, task.isCompleted && styles.completedDescription]}>
-              // {task.description}
-            </RNText>
+      <View style={[styles.taskCard, { position: 'relative' }]}>
+        <View style={styles.cardHeader}>
+          <View style={styles.headerLeft}>
+            <Text style={styles.taskId}>#{task.id.slice(-4).toUpperCase()}</Text>
           </View>
+          <View style={styles.headerRight}>
+            <Text style={styles.timeInfo}>{getTimeInfo()}</Text>
+            {task.delayCount > 0 && (
+              <Text style={styles.delayBadge}>Delayed {task.delayCount}x</Text>
+            )}
+            {task.isRecurring && (
+              <Text style={styles.recurringBadge}>Loop</Text>
+            )}
+          </View>
+        </View>
+        
+        <Text style={styles.taskTitle}>{task.title}</Text>
+        
+        {task.description && (
+          <Text style={styles.taskDescription}>// {task.description}</Text>
         )}
-
+        
+        <View style={styles.taskMeta}>
+          <Text style={styles.metaText}>
+            {task.isRecurring ? 'Next:' : 'Due:'} {formatTime(task.reminderTime instanceof Date ? task.reminderTime : new Date(task.reminderTime), settings.timeFormat)}
+          </Text>
+          {task.ignoreWorkingHours && (
+            <Text style={styles.alwaysOnBadge}>24H</Text>
+          )}
+        </View>
+        
         {/* Action buttons */}
-        <View style={styles.actions}>
+        <View style={styles.actionButtonsContainer}>
           {!task.isCompleted && (
-            <Animated.View style={animatedButtonStyle}>
-              <TouchableOpacity 
-                style={[styles.actionButton, styles.delayButton]}
-                onPress={handleDelayTask}
-                activeOpacity={0.7}
-              >
-                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
-                  <Ionicons 
-                    name="time-outline" 
-                    size={12} 
-                    color={statusColors.delayed} 
-                  />
-                  <Text style={[styles.actionText, styles.delayButtonText]}>
-                    {delayTime}
-                  </Text>
-                </View>
-              </TouchableOpacity>
-            </Animated.View>
+            <TouchableOpacity 
+              style={[styles.actionBtn]}
+              onPress={handleDelayTask}
+            >
+              <Ionicons name="time-outline" size={14} color={textColor} />
+              <Text style={styles.actionBtnText}>{delayTime}</Text>
+            </TouchableOpacity>
           )}
           
-          <Animated.View style={animatedButtonStyle}>
-            <TouchableOpacity 
-              style={[
-                styles.actionButton, 
-                task.isCompleted ? styles.completedButton : styles.doneButton
-              ]}
-              onPress={handleToggleComplete}
-              activeOpacity={0.7}
-            >
-              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
-                <Ionicons 
-                  name={task.isCompleted ? 'refresh-outline' : (task.isRecurring ? 'add' : 'checkmark')} 
-                  size={12} 
-                  color={task.isCompleted ? colors.textMuted : (isDark ? colors.background : '#ffffff')} 
-                />
-                <Text style={[styles.actionText, task.isCompleted ? styles.completedActionText : styles.doneButtonText]}>
-                  {task.isCompleted ? 'UNDO' : (task.isRecurring ? 'NEXT' : 'DONE')}
-                </Text>
-              </View>
-            </TouchableOpacity>
-          </Animated.View>
+          <TouchableOpacity 
+            style={[styles.actionBtnDone]}
+            onPress={handleToggleComplete}
+          >
+            <Ionicons 
+              name={task.isCompleted ? 'refresh-outline' : (task.isRecurring ? 'add' : 'checkmark')} 
+              size={14} 
+              color={textColorVariant}
+            />
+            <Text style={styles.actionBtnTextDone}>
+              {task.isCompleted ? 'UNDO' : (task.isRecurring ? 'NEXT' : 'DONE')}
+            </Text>
+          </TouchableOpacity>
 
-          <Animated.View style={animatedButtonStyle}>
-            <TouchableOpacity 
-              style={[styles.actionButton, styles.editButton]}
-              onPress={() => {
-                animateButtonPress();
-                router.push(`/add-task?edit=${task.id}`);
-              }}
-              activeOpacity={0.7}
-            >
-              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
-                <Ionicons 
-                  name="create-outline" 
-                  size={12} 
-                  color={statusColors.info} 
-                />
-                <Text style={[styles.actionText, styles.editButtonText]}>
-                  EDIT
-                </Text>
-              </View>
-            </TouchableOpacity>
-          </Animated.View>
+          <TouchableOpacity 
+            style={[styles.actionBtn]}
+            onPress={() => router.push(`/add-task?edit=${task.id}`)}
+          >
+            <Ionicons name="create-outline" size={14} color={textColor} />
+            <Text style={styles.actionBtnText}>EDIT</Text>
+          </TouchableOpacity>
 
-          <Animated.View style={animatedButtonStyle}>
-            <TouchableOpacity 
-              style={[styles.actionButton, styles.deleteButton]}
-              onPress={() => {
-                animateButtonPress();
-                showDeleteConfirmation();
-              }}
-              activeOpacity={0.7}
-            >
-              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
-                <Ionicons 
-                  name="trash-outline" 
-                  size={12} 
-                  color={colors.danger} 
-                />
-                <Text style={[styles.actionText, styles.deleteButtonText]}>
-                  DEL
-                </Text>
-              </View>
-            </TouchableOpacity>
-          </Animated.View>
+          <TouchableOpacity 
+            style={[styles.actionBtn]}
+            onPress={showDeleteConfirmation}
+          >
+            <Ionicons name="trash-outline" size={14} color={textColor} />
+            <Text style={styles.actionBtnText}>DEL</Text>
+          </TouchableOpacity>
         </View>
-      </Animated.View>
+      </View>
     </Animated.View>
   );
 });

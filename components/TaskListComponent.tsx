@@ -37,7 +37,7 @@ export default function TaskListComponent({
       padding: 12,
       marginBottom: 16,
       flexDirection: 'row',
-      justifyContent: 'space-between',
+      justifyContent: 'space-around',
       alignItems: 'center',
       flexWrap: 'wrap',
       minHeight: 36,
@@ -67,70 +67,63 @@ export default function TaskListComponent({
       backgroundColor: colors.surfaceVariant,
       borderWidth: 1,
       borderColor: colors.border,
-      paddingHorizontal: 8,
-      paddingVertical: 6,
-      borderRadius: config.borderRadius,
+      paddingHorizontal: 12,
+      paddingVertical: 8,
+      borderRadius: 12,
       flexDirection: 'row',
       alignItems: 'center',
       flexShrink: 1,
-      minWidth: 100,
+      minWidth: 120,
     },
     filterButtonActive: {
       backgroundColor: colors.accent,
       borderColor: colors.accent,
     },
     filterText: {
-      fontFamily: config.fontFamily.bold,
-      fontSize: 12 * fontScale,
+      fontFamily: config.fontFamily.medium,
+      fontSize: 14 * fontScale,
       color: colors.text,
-      letterSpacing: config.letterSpacing * 0.5,
-      fontWeight: '700',
+      fontWeight: '600',
       flexShrink: 1,
+      marginRight: 8,
     },
     filterDropdown: {
       position: 'absolute',
-      top: 38,
+      top: 45,
       left: 0,
       right: 0,
-      backgroundColor: colors.surfaceVariant,
+      backgroundColor: colors.surface,
       borderWidth: 1,
       borderColor: colors.border,
-      borderRadius: config.borderRadius,
+      borderRadius: 12,
       zIndex: 1000,
       elevation: 5,
-      shadowColor: isDark ? '#000000' : '#000000',
+      shadowColor: '#000',
       shadowOffset: { width: 0, height: 2 },
-      shadowOpacity: isDark ? 0.5 : 0.25,
-      shadowRadius: 4,
-      maxHeight: 200,
+      shadowOpacity: 0.15,
+      shadowRadius: 8,
+      padding: 4,
     },
     filterOption: {
       paddingHorizontal: 12,
       paddingVertical: 10,
-      borderBottomWidth: 1,
-      borderBottomColor: colors.border,
+      borderRadius: 8,
       flexDirection: 'row',
       alignItems: 'center',
       justifyContent: 'space-between',
-      minHeight: 36,
     },
     selectedFilterOption: {
       backgroundColor: colors.accent,
     },
     filterOptionText: {
       fontFamily: config.fontFamily.medium,
-      fontSize: 12 * fontScale,
+      fontSize: 14 * fontScale,
       color: colors.text,
-      letterSpacing: config.letterSpacing * 0.5,
-      fontWeight: '600',
-      flexShrink: 1,
+      fontWeight: '500',
     },
     selectedFilterOptionText: {
-      color: colors.background,
-      fontFamily: config.fontFamily.bold,
-    },
-    lastFilterOption: {
-      borderBottomWidth: 0,
+      color: isDark ? colors.background : '#ffffff',
+      fontWeight: '600',
     },
     quickFilters: {
       flexDirection: 'row',
@@ -213,30 +206,77 @@ export default function TaskListComponent({
       {/* Status Line */}
       <View style={styles.statusLine}>
         <Text style={styles.statusText}>
-          {tasks.length} tasks | {pendingTasks.length} pending | {completedTasks.length} done
+          {tasks.length} tasks
+        </Text>
+        <Text style={styles.statusText}>
+          |
+        </Text>
+        <Text style={styles.statusText}>
+         {pendingTasks.length} pending
+        </Text>
+        <Text style={styles.statusText}>
+          |
+        </Text>
+        <Text style={styles.statusText}>
+         {completedTasks.length} done
         </Text>
       </View>
 
       {/* Filter Container */}
       <View style={styles.filterContainer}>
         <View style={styles.filterRow}>
-          <TouchableOpacity
+          <View style={{ position: 'relative', flexShrink: 1 }}>
+            <TouchableOpacity
               style={[styles.filterButton, showFilterDropdown && styles.filterButtonActive]}
               onPress={() => setShowFilterDropdown(!showFilterDropdown)}
               activeOpacity={0.7}
-          >
-            <Text style={[
-              styles.filterText,
-              showFilterDropdown && { color: isDark ? colors.background : '#ffffff' }
-            ]}>
-              Filter: {selectedFilter}
-            </Text>
-            <Ionicons
-              name={showFilterDropdown ? 'chevron-up' : 'chevron-down'} 
-              size={16} 
-              color={showFilterDropdown ? (isDark ? colors.background : '#ffffff') : colors.textSecondary} 
-            />
-          </TouchableOpacity>
+            >
+              <Text style={[
+                styles.filterText,
+                showFilterDropdown && { color: isDark ? colors.background : '#ffffff' }
+              ]}>
+                {selectedFilter}
+              </Text>
+              <Ionicons
+                name={showFilterDropdown ? 'chevron-up' : 'chevron-down'} 
+                size={16} 
+                color={showFilterDropdown ? (isDark ? colors.background : '#ffffff') : colors.textSecondary} 
+              />
+            </TouchableOpacity>
+            
+            {showFilterDropdown && (
+              <View style={styles.filterDropdown}>
+                {(['Today', 'Tomorrow', 'This Week', 'All'] as FilterType[]).map((filter) => (
+                  <TouchableOpacity
+                    key={filter}
+                    style={[
+                      styles.filterOption,
+                      selectedFilter === filter && styles.selectedFilterOption
+                    ]}
+                    onPress={() => {
+                      setSelectedFilter(filter);
+                      setShowFilterDropdown(false);
+                    }}
+                    activeOpacity={0.7}
+                  >
+                    <Text style={[
+                      styles.filterOptionText,
+                      selectedFilter === filter && styles.selectedFilterOptionText
+                    ]}>
+                      {filter}
+                    </Text>
+                    {selectedFilter === filter && (
+                      <Ionicons 
+                        name="checkmark" 
+                        size={16} 
+                        color={isDark ? colors.background : '#ffffff'} 
+                      />
+                    )}
+                  </TouchableOpacity>
+                ))}
+              </View>
+            )}
+          </View>
 
           <View style={styles.quickFilters}>
             {(['Today', 'All'] as FilterType[]).map(filter => (
@@ -263,70 +303,20 @@ export default function TaskListComponent({
           </View>
         </View>
 
-        {showFilterDropdown && (
-            <View style={styles.filterDropdown}>
-              {(['Today', 'Tomorrow', 'This Week', 'All'] as FilterType[]).map((filter, index) => (
-                  <TouchableOpacity
-                      key={filter}
-                      style={[
-                        styles.filterOption,
-                        selectedFilter === filter && styles.selectedFilterOption,
-                        index === 3 && styles.lastFilterOption
-                      ]}
-                      onPress={() => {
-                        setSelectedFilter(filter);
-                        setShowFilterDropdown(false);
-                      }}
-                      activeOpacity={0.7}
-                  >
-                    <Text style={[
-                      styles.filterOptionText,
-                      selectedFilter === filter && styles.selectedFilterOptionText
-                    ]}>
-                      {filter}
-                    </Text>
-                    {selectedFilter === filter && (
-                      <Ionicons 
-                        name="checkmark" 
-                        size={16} 
-                        color={colors.background} 
-                      />
-                    )}
-                  </TouchableOpacity>
-              ))}
-            </View>
-        )}
       </View>
 
-      {pendingTasks.length > 0 && (
+      {/* Single unified task list */}
+      {tasks.length > 0 && (
         <View style={styles.section}>
-          <View style={styles.sectionHeader}>
-            <Text style={styles.sectionTitle}>
-              Active Tasks [{pendingTasks.length}]
-              {selectedFilter !== 'All' && (
-                <Text style={styles.filterIndicator}> Filter: {selectedFilter}</Text>
-              )}
-            </Text>
-            <View style={styles.sectionLine} />
-          </View>
-          {pendingTasks.map(task => (
-            <TaskItem key={task.id} task={task} />
-          ))}
-        </View>
-      )}
-
-      {completedTasks.length > 0 && (
-        <View style={styles.section}>
-          <View style={styles.sectionHeader}>
-            <Text style={styles.sectionTitle}>
-              Completed Tasks [{completedTasks.length}]
-              {selectedFilter !== 'All' && (
-                <Text style={styles.filterIndicator}> Filter: {selectedFilter}</Text>
-              )}
-            </Text>
-            <View style={styles.sectionLine} />
-          </View>
-          {completedTasks.map(task => (
+          {selectedFilter !== 'All' && (
+            <View style={styles.sectionHeader}>
+              <Text style={styles.sectionTitle}>
+                Tasks [{tasks.length}] - Filter: {selectedFilter}
+              </Text>
+              <View style={styles.sectionLine} />
+            </View>
+          )}
+          {tasks.map(task => (
             <TaskItem key={task.id} task={task} />
           ))}
         </View>
