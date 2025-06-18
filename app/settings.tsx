@@ -17,6 +17,7 @@ import { useSettingsStore } from '../hooks/useSettingsStore';
 import { useThemedStyles, useTheme } from '../hooks/useTheme';
 import DelayInputComponent from '../components/DelayInputComponent';
 import MockDataGenerator from '../components/MockDataGenerator';
+import DeleteAllTasksComponent from '../components/DeleteAllTasksComponent';
 import { showAlert } from '../components/CustomAlert';
 import { availableDateFormats, availableSeparators, availableTimeFormats, getDateFormatDisplayName, getTimeFormatDisplayName } from '../utils/dateFormatters';
 import { DateFormat, DateSeparator, TimeFormat } from '../types/task';
@@ -780,6 +781,9 @@ Restrict notifications to working hours only
 
         {/* Developer Tools */}
         <MockDataGenerator />
+        
+        {/* Delete All Tasks */}
+        <DeleteAllTasksComponent />
         
         {/* Buy Me a Coffee Section */}
         <View style={styles.supportSection}>

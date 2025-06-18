@@ -102,6 +102,15 @@ export const deleteTaskFromDb = async (id: string): Promise<void> => {
   }
 };
 
+export const deleteAllTasksFromDb = async (): Promise<void> => {
+  try {
+    const database = await initializeDatabase();
+    await database.runAsync('DELETE FROM tasks');
+  } catch (error) {
+    throw error;
+  }
+};
+
 interface TaskStore {
   tasks: Task[];
   isLoaded: boolean;
@@ -116,6 +125,7 @@ interface TaskStore {
   toggleComplete: (id: string) => Promise<void>;
   delayTask: (id: string, delayAmount?: string) => Promise<void>;
   deleteTask: (id: string) => Promise<void>;
+  deleteAllTasks: () => Promise<void>;
   
   // Notification scheduling
   scheduleNotification: (task: Task, settings?: any) => Promise<void>;
@@ -313,6 +323,30 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
       set(state => ({
         tasks: state.tasks.filter(task => task.id !== id)
       }));
+    } catch (error) {
+      throw error;
+    }
+  },
+
+  deleteAllTasks: async () => {
+    try {
+      const currentTasks = get().tasks;
+      
+      // Cancel all notifications for all tasks
+      for (const task of currentTasks) {
+        try {
+          await Notifications.cancelScheduledNotificationAsync(task.id);
+          await Notifications.cancelScheduledNotificationAsync(`${task.id}_followup`);
+        } catch (error) {
+          // Silently handle cancellation errors
+        }
+      }
+      
+      // Delete all tasks from database
+      await deleteAllTasksFromDb();
+      
+      // Clear tasks from state
+      set({ tasks: [] });
     } catch (error) {
       throw error;
     }

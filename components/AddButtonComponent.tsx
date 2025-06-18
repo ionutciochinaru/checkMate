@@ -29,7 +29,7 @@ export default function AddButtonComponent({
       height: 56,
       borderRadius: 28,
       backgroundColor: isDark ? '#000000' : '#ffffff',
-      borderWidth: 2,
+      borderWidth: 1,
       borderStyle: 'dashed',
       borderColor: isDark ? '#ff4444' : '#000000',
       alignItems: 'center',

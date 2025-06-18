@@ -5,21 +5,13 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="171acf02-a826-4aaf-937f-dcb4d8420b57" name="Changes" comment="Ui improvements">
-      <change afterPath="$PROJECT_DIR$/components/MockDataGenerator.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/insp/card_done.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/insp/card_normal.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/insp/color_pallet.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/scripts/generateMockTasks.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/components/DeleteAllTasksComponent.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/index.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/index.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/settings.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/settings.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/components/HeaderComponent.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/components/HeaderComponent.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/components/AddButtonComponent.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/components/AddButtonComponent.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/components/TaskItem.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/components/TaskItem.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/components/TaskListComponent.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/components/TaskListComponent.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/hooks/useTheme.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/hooks/useTheme.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/insp/Screenshot 2025-06-16 001911.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/stores/taskStore.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/stores/taskStore.tsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -157,7 +149,7 @@
       <workItem from="1750058860782" duration="37000" />
       <workItem from="1750058914603" duration="46000" />
       <workItem from="1750180352537" duration="8906000" />
-      <workItem from="1750230783597" duration="6653000" />
+      <workItem from="1750230783597" duration="11881000" />
     </task>
     <task id="LOCAL-00001" summary="first commit">
       <option name="closed" value="true" />
@@ -335,7 +327,15 @@
       <option name="project" value="LOCAL" />
       <updated>1750187159878</updated>
     </task>
-    <option name="localTasksCounter" value="23" />
+    <task id="LOCAL-00023" summary="Ui improvements">
+      <option name="closed" value="true" />
+      <created>1750238853360</created>
+      <option name="number" value="00023" />
+      <option name="presentableId" value="LOCAL-00023" />
+      <option name="project" value="LOCAL" />
+      <updated>1750238853360</updated>
+    </task>
+    <option name="localTasksCounter" value="24" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
