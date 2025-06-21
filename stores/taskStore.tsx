@@ -3,6 +3,9 @@ import * as Notifications from 'expo-notifications';
 import { Task } from '../types/task';
 import { initializeDatabase , useMainStore } from './mainStore';
 
+// Re-export useMainStore for convenience
+export { useMainStore };
+
 
 // Parse delay string formats like "30m", "1h", "1h30m", "90s", etc.
 const parseDelayString = (delayStr: string): number => {

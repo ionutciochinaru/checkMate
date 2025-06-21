@@ -1,13 +1,12 @@
 import React, {useState} from 'react';
-import {ScrollView, StyleSheet} from 'react-native';
-import {useTaskStore} from '../hooks/useTaskStore';
+import {useTaskStore} from '../stores/taskStore';
 import {useThemedStyles, useTheme} from '../hooks/useTheme';
 import {useTaskFilter, FilterType} from '../hooks/useTaskFilter';
-import Animated from 'react-native-reanimated';
 import HeaderComponent from '../components/HeaderComponent';
 import EmptyStateComponent from '../components/EmptyStateComponent';
 import TaskListComponent from '../components/TaskListComponent';
 import AddButtonComponent from '../components/AddButtonComponent';
+import {Animated, ScrollView, StyleSheet} from 'react-native';
 
 export default function HomeScreen() {
     const {tasks} = useTaskStore();

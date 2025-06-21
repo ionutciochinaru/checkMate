@@ -14,7 +14,7 @@ import Animated, {
 import { useTheme, useThemedStyles } from '../hooks/useTheme';
 import { getTaskCardColor } from '../theme';
 import { router } from 'expo-router';
-import { useTaskStore, useMainStore } from '../hooks/useTaskStore';
+import { useTaskStore, useMainStore } from '../stores/taskStore';
 import { Task } from '../types/task';
 import { formatTime } from '../utils/dateFormatters';
 import { Ionicons } from '@expo/vector-icons';

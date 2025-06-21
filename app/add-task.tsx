@@ -11,7 +11,7 @@ import {
 import { Switch } from 'react-native-paper';
 import { router, useLocalSearchParams } from 'expo-router';
 import DateTimePicker, { DateTimePickerAndroid } from '@react-native-community/datetimepicker';
-import { useTaskStore, useMainStore } from '../hooks/useTaskStore';
+import { useTaskStore, useMainStore } from '../stores/taskStore';
 import { useThemedStyles, useTheme } from '../hooks/useTheme';
 import { showAlert } from '../components/CustomAlert';
 import { formatDateWithPreference, formatTime } from '../utils/dateFormatters';

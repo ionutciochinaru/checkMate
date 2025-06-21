@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Alert } from 'react-native';
 import { useTheme } from '../hooks/useTheme';
-import { useTaskStore } from '../hooks/useTaskStore';
+import { useTaskStore } from '../stores/taskStore';
 import { Ionicons } from '@expo/vector-icons';
 
 const DeleteAllTasksComponent: React.FC = () => {

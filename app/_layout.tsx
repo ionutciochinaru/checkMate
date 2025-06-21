@@ -3,7 +3,8 @@ import { Stack } from 'expo-router';
 import { PaperProvider } from 'react-native-paper';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect, useState } from 'react';
-import { useTaskStore, useMainStore } from '../hooks/useTaskStore';
+import { LogBox } from 'react-native';
+import { useTaskStore, useMainStore } from '../stores/taskStore';
 import { ThemeProvider, useTheme } from '../hooks/useTheme';
 import { useNotifications } from '../hooks/useNotifications';
 import { AlertProvider } from '../components/CustomAlert';
@@ -13,7 +14,15 @@ import {
   JetBrainsMono_500Medium,
   JetBrainsMono_700Bold,
 } from '@expo-google-fonts/jetbrains-mono';
-import {SafeAreaProvider} from "react-native-safe-area-context";
+import { SafeAreaProvider } from "react-native-safe-area-context";
+
+// Ignore development warnings in Expo Go
+LogBox.ignoreLogs([
+  '[Reanimated] Mismatch between JavaScript part and native part of Reanimated',
+  'expo-notifications: Android Push notifications',
+  'Route "." is missing the required default export',
+  'Invalid prop `style` supplied to `React.Fragment`',
+]);
 
 const createPaperTheme = (theme: any) => ({
   colors: {
@@ -60,7 +69,7 @@ const createPaperTheme = (theme: any) => ({
   },
 });
 
-const ThemedLayout = () => {
+function ThemedLayout() {
   const { theme } = useTheme();
   // Initialize notifications system
   useNotifications();
@@ -96,7 +105,7 @@ const ThemedLayout = () => {
       <StatusBar style={theme.isDark ? 'light' : 'dark'} backgroundColor={theme.colors.background} />
     </PaperProvider>
   );
-};
+}
 
 export default function RootLayout() {
   const initializeMain = useMainStore(state => state.initialize);
@@ -127,12 +136,12 @@ export default function RootLayout() {
   }
 
   return (
-      <SafeAreaProvider>
-        <ThemeProvider>
-          <AlertProvider>
-            <ThemedLayout />
-          </AlertProvider>
-        </ThemeProvider>
-      </SafeAreaProvider>
+    <SafeAreaProvider>
+      <ThemeProvider>
+        <AlertProvider>
+          <ThemedLayout />
+        </AlertProvider>
+      </ThemeProvider>
+    </SafeAreaProvider>
   );
 }
