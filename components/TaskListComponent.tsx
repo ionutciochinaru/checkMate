@@ -25,14 +25,14 @@ export default function TaskListComponent({
   setShowFilterDropdown
 }: TaskListComponentProps) {
   
-  const { colors, isDark } = useTheme();
+  const { theme } = useTheme();
   
-  const styles = useThemedStyles((colors, isDark, fontScale, reducedMotion, config) => StyleSheet.create({
+  const styles = useThemedStyles((theme) => StyleSheet.create({
     statusLine: {
-      backgroundColor: colors.surfaceVariant,
+      backgroundColor: theme.colors.surfaceVariant,
       borderWidth: 1,
-      borderColor: colors.border,
-      borderRadius: config.borderRadius,
+      borderColor: theme.colors.border,
+      borderRadius: theme.borderRadius.md,
       padding: 12,
       marginBottom: 16,
       flexDirection: 'row',
@@ -42,14 +42,14 @@ export default function TaskListComponent({
       minHeight: 36,
     },
     statusText: {
-      fontFamily: config.fontFamily.medium,
-      fontSize: 12 * fontScale,
-      color: colors.textSecondary,
-      letterSpacing: config.letterSpacing * 0.3,
+      fontFamily: theme.typography.fontFamily.medium,
+      fontSize: theme.typography.fontSize.xs,
+      color: theme.colors.textSecondary,
+      letterSpacing: theme.typography.letterSpacing * 0.3,
       flexShrink: 1,
     },
     filterContainer: {
-      backgroundColor: colors.surface,
+      backgroundColor: theme.colors.surface,
       paddingHorizontal: 0,
       paddingVertical: 0,
       position: 'relative',
@@ -63,9 +63,9 @@ export default function TaskListComponent({
       gap: 8,
     },
     filterButton: {
-      backgroundColor: colors.surfaceVariant,
+      backgroundColor: theme.colors.surfaceVariant,
       borderWidth: 1,
-      borderColor: colors.border,
+      borderColor: theme.colors.border,
       paddingHorizontal: 12,
       paddingVertical: 8,
       borderRadius: 12,
@@ -75,13 +75,13 @@ export default function TaskListComponent({
       minWidth: 120,
     },
     filterButtonActive: {
-      backgroundColor: colors.accent,
-      borderColor: colors.accent,
+      backgroundColor: theme.colors.accent,
+      borderColor: theme.colors.accent,
     },
     filterText: {
-      fontFamily: config.fontFamily.medium,
-      fontSize: 14 * fontScale,
-      color: colors.text,
+      fontFamily: theme.typography.fontFamily.medium,
+      fontSize: theme.typography.fontSize.md,
+      color: theme.colors.text,
       fontWeight: '600',
       flexShrink: 1,
       marginRight: 8,
@@ -91,9 +91,9 @@ export default function TaskListComponent({
       top: 45,
       left: 0,
       right: 0,
-      backgroundColor: colors.surface,
+      backgroundColor: theme.colors.surface,
       borderWidth: 1,
-      borderColor: colors.border,
+      borderColor: theme.colors.border,
       borderRadius: 12,
       zIndex: 1000,
       elevation: 5,
@@ -112,16 +112,16 @@ export default function TaskListComponent({
       justifyContent: 'space-between',
     },
     selectedFilterOption: {
-      backgroundColor: colors.accent,
+      backgroundColor: theme.colors.accent,
     },
     filterOptionText: {
-      fontFamily: config.fontFamily.medium,
-      fontSize: 14 * fontScale,
-      color: colors.text,
+      fontFamily: theme.typography.fontFamily.medium,
+      fontSize: theme.typography.fontSize.md,
+      color: theme.colors.text,
       fontWeight: '500',
     },
     selectedFilterOptionText: {
-      color: isDark ? colors.background : '#ffffff',
+      color: theme.isDark ? theme.colors.background : '#ffffff',
       fontWeight: '600',
     },
     quickFilters: {
@@ -130,28 +130,28 @@ export default function TaskListComponent({
       flexShrink: 0,
     },
     quickFilterChip: {
-      backgroundColor: colors.surfaceVariant,
+      backgroundColor: theme.colors.surfaceVariant,
       borderWidth: 1,
-      borderColor: colors.border,
+      borderColor: theme.colors.border,
       paddingHorizontal: 6,
       paddingVertical: 4,
-      borderRadius: config.borderRadius,
+      borderRadius: theme.borderRadius.md,
       minWidth: 32,
       alignItems: 'center',
       justifyContent: 'center',
     },
     quickFilterChipActive: {
-      backgroundColor: colors.accent,
-      borderColor: colors.accent,
+      backgroundColor: theme.colors.accent,
+      borderColor: theme.colors.accent,
     },
     quickFilterText: {
-      fontFamily: config.fontFamily.bold,
-      fontSize: 12 * fontScale,
-      color: colors.textSecondary,
-      letterSpacing: config.letterSpacing * 0.3,
+      fontFamily: theme.typography.fontFamily.bold,
+      fontSize: theme.typography.fontSize.xs,
+      color: theme.colors.textSecondary,
+      letterSpacing: theme.typography.letterSpacing * 0.3,
     },
     quickFilterTextActive: {
-      color: colors.background,
+      color: theme.colors.background,
     },
     section: {
       marginBottom: 24,
@@ -163,13 +163,13 @@ export default function TaskListComponent({
       backgroundColor: 'transparent',
       paddingHorizontal: 0,
       paddingVertical: 0,
-      borderRadius: config.borderRadius,
+      borderRadius: theme.borderRadius.md,
       marginHorizontal: 0,
     },
     sectionTitle: {
       fontFamily: 'JetBrainsMono_700Bold',
-      fontSize: 14 * fontScale,
-      color: colors.text,
+      fontSize: theme.typography.fontSize.md,
+      color: theme.colors.text,
       letterSpacing: 0.8,
       marginRight: 12,
       marginBottom: 0,
@@ -179,18 +179,18 @@ export default function TaskListComponent({
     sectionLine: {
       flex: 1,
       height: 1,
-      backgroundColor: colors.border,
+      backgroundColor: theme.colors.border,
       display: 'flex',
     },
     filterIndicator: {
       fontSize: 12,
-      color: colors.textMuted,
+      color: theme.colors.textMuted,
       fontFamily: 'JetBrainsMono_400Regular',
       fontWeight: 'normal',
       backgroundColor: 'transparent',
       paddingHorizontal: 0,
       paddingVertical: 0,
-      borderRadius: config.borderRadius,
+      borderRadius: theme.borderRadius.md,
       alignSelf: 'auto',
       overflow: 'hidden',
     },
@@ -232,14 +232,14 @@ export default function TaskListComponent({
             >
               <Text style={[
                 styles.filterText,
-                showFilterDropdown && { color: isDark ? colors.background : '#ffffff' }
+                showFilterDropdown && { color: theme.isDark ? theme.colors.background : '#ffffff' }
               ]}>
                 {selectedFilter}
               </Text>
               <Ionicons
                 name={showFilterDropdown ? 'chevron-up' : 'chevron-down'} 
                 size={16} 
-                color={showFilterDropdown ? (isDark ? colors.background : '#ffffff') : colors.textSecondary} 
+                color={showFilterDropdown ? (theme.isDark ? theme.colors.background : '#ffffff') : theme.colors.textSecondary} 
               />
             </TouchableOpacity>
             
@@ -268,7 +268,7 @@ export default function TaskListComponent({
                       <Ionicons 
                         name="checkmark" 
                         size={16} 
-                        color={isDark ? colors.background : '#ffffff'} 
+                        color={theme.isDark ? theme.colors.background : '#ffffff'} 
                       />
                     )}
                   </TouchableOpacity>

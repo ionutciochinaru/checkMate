@@ -4,146 +4,31 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { 
   useSharedValue, 
   useAnimatedStyle, 
-  withTiming, 
+  withTiming 
 } from 'react-native-reanimated';
 import { useMainStore } from './useTaskStore';
-
-type Theme = 'light' | 'dark' | 'auto';
-type ThemeStyle = 'terminal';
-
-interface ThemeColors {
-  background: string;
-  surface: string;
-  surfaceVariant: string;
-  border: string;
-  text: string;
-  textSecondary: string;
-  textMuted: string;
-  accent: string;
-  danger: string;
-  success: string;
-  warning: string;
-}
-
-interface ThemeConfig {
-  colors: ThemeColors;
-  borderRadius: number;
-  fontFamily: {
-    regular: string;
-    medium: string;
-    bold: string;
-  };
-  letterSpacing: number;
-  elevation: {
-    low: number;
-    medium: number;
-    high: number;
-  };
-}
-
-// Terminal Theme Configurations
-const terminalLight: ThemeConfig = {
-  colors: {
-    background: '#f8f8f6',
-    surface: '#ffffff', 
-    surfaceVariant: '#f0f0ee',
-    border: '#c0c0c0',
-    text: '#000000',
-    textSecondary: '#333333',
-    textMuted: '#666666',
-    accent: '#000000',
-    danger: '#800000',
-    success: '#006400',
-    warning: '#ff6600',
-  },
-  borderRadius: 16,
-  fontFamily: {
-    regular: 'JetBrainsMono_400Regular',
-    medium: 'JetBrainsMono_500Medium',
-    bold: 'JetBrainsMono_700Bold',
-  },
-  letterSpacing: 1.2,
-  elevation: { low: 0, medium: 0, high: 0 },
-};
-
-const terminalDark: ThemeConfig = {
-  colors: {
-    background: '#000000',
-    surface: '#111111',
-    surfaceVariant: '#1a1a1a',
-    border: '#333333',
-    text: '#ff4444',
-    textSecondary: '#cc3333',
-    textMuted: '#882222',
-    accent: '#ff4444',
-    danger: '#ff6666',
-    success: '#ff4444',
-    warning: '#ffaa44',
-  },
-  borderRadius: 16,
-  fontFamily: {
-    regular: 'JetBrainsMono_400Regular',
-    medium: 'JetBrainsMono_500Medium',
-    bold: 'JetBrainsMono_700Bold',
-  },
-  letterSpacing: 1.2,
-  elevation: { low: 0, medium: 0, high: 0 },
-};
-
-
-// High Contrast Variants
-const terminalLightHighContrast: ThemeConfig = {
-  ...terminalLight,
-  colors: {
-    ...terminalLight.colors,
-    background: '#ffffff',
-    surface: '#ffffff',
-    surfaceVariant: '#ffffff',
-    border: '#000000',
-    text: '#000000',
-    textSecondary: '#000000',
-    textMuted: '#333333',
-    accent: '#000000',
-  },
-};
-
-const terminalDarkHighContrast: ThemeConfig = {
-  ...terminalDark,
-  colors: {
-    ...terminalDark.colors,
-    background: '#000000',
-    surface: '#000000',
-    surfaceVariant: '#000000',
-    border: '#ff4444',
-    text: '#ff4444',
-    textSecondary: '#ff4444',
-    textMuted: '#cc3333',
-    accent: '#ff4444',
-  },
-};
-
+import { 
+  Theme, 
+  ThemeMode, 
+  lightTheme, 
+  darkTheme, 
+  lightHighContrastTheme, 
+  darkHighContrastTheme 
+} from '../theme';
 
 interface ThemeContextValue {
   theme: Theme;
-  themeStyle: ThemeStyle;
-  colors: ThemeColors;
-  config: ThemeConfig;
-  isDark: boolean;
-  setTheme: (theme: Theme) => void;
-  setThemeStyle: (themeStyle: ThemeStyle) => void;
+  themeMode: ThemeMode;
+  setThemeMode: (mode: ThemeMode) => void;
   animatedBackgroundStyle: any;
   animatedSurfaceStyle: any;
   animatedTextStyle: any;
-  fontScale: number;
-  highContrast: boolean;
-  reducedMotion: boolean;
 }
 
 const ThemeContext = createContext<ThemeContextValue | undefined>(undefined);
 
 export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [theme, setThemeState] = useState<Theme>('auto');
-  const [themeStyle, setThemeStyleState] = useState<ThemeStyle>('terminal');
+  const [themeMode, setThemeModeState] = useState<ThemeMode>('auto');
   const [systemColorScheme, setSystemColorScheme] = useState<ColorSchemeName>(
     Appearance.getColorScheme()
   );
@@ -158,36 +43,31 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
   // Animated values for smooth transitions
   const backgroundProgress = useSharedValue(0);
-  const surfaceProgress = useSharedValue(0);
-  const textProgress = useSharedValue(0);
 
-  const isDark = theme === 'dark' || (theme === 'auto' && systemColorScheme === 'dark');
+  const isDark = themeMode === 'dark' || (themeMode === 'auto' && systemColorScheme === 'dark');
   
-  // Get theme configuration based on style and mode
-  const getThemeConfig = (): ThemeConfig => {
-    if (settings.highContrast) {
-      return isDark ? terminalDarkHighContrast : terminalLightHighContrast;
-    }
-
-    return isDark ? terminalDark : terminalLight;
+  // Get theme based on mode and settings
+  const getTheme = (): Theme => {
+    const baseTheme = settings.highContrast 
+      ? (isDark ? darkHighContrastTheme : lightHighContrastTheme)
+      : (isDark ? darkTheme : lightTheme);
+    
+    return {
+      ...baseTheme,
+      isDark,
+      reducedMotion: settings.reducedMotion
+    };
   };
 
-  const config = getThemeConfig();
-  const colors = config.colors;
+  const theme = getTheme();
 
-  // Load saved theme and style on mount
+  // Load saved theme on mount
   useEffect(() => {
     const loadTheme = async () => {
       try {
         const savedTheme = await AsyncStorage.getItem('theme');
-        const savedThemeStyle = await AsyncStorage.getItem('themeStyle');
-        
         if (savedTheme && ['light', 'dark', 'auto'].includes(savedTheme)) {
-          setThemeState(savedTheme as Theme);
-        }
-        
-        if (savedThemeStyle && savedThemeStyle === 'terminal') {
-          setThemeStyleState(savedThemeStyle as ThemeStyle);
+          setThemeModeState(savedTheme as ThemeMode);
         }
       } catch {
         // Use default theme
@@ -209,62 +89,38 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     const targetValue = isDark ? 1 : 0;
     const duration = settings.reducedMotion ? 0 : 300;
     backgroundProgress.value = withTiming(targetValue, { duration });
-    surfaceProgress.value = withTiming(targetValue, { duration });
-    textProgress.value = withTiming(targetValue, { duration });
-  }, [isDark, settings.reducedMotion, backgroundProgress, surfaceProgress, textProgress]);
+  }, [isDark, settings.reducedMotion, backgroundProgress]);
 
-  const setTheme = async (newTheme: Theme) => {
-    setThemeState(newTheme);
+  const setThemeMode = async (newMode: ThemeMode) => {
+    setThemeModeState(newMode);
     try {
-      await AsyncStorage.setItem('theme', newTheme);
+      await AsyncStorage.setItem('theme', newMode);
     } catch {
       // Silently fail theme save
     }
   };
 
-  const setThemeStyle = async (newThemeStyle: ThemeStyle) => {
-    setThemeStyleState(newThemeStyle);
-    try {
-      await AsyncStorage.setItem('themeStyle', newThemeStyle);
-    } catch {
-      // Silently fail theme style save
-    }
-  };
-
   // Animated styles for smooth transitions
   const animatedBackgroundStyle = useAnimatedStyle(() => ({
-    backgroundColor: colors.background,
+    backgroundColor: theme.colors.background,
   }));
 
   const animatedSurfaceStyle = useAnimatedStyle(() => ({
-    backgroundColor: colors.surface,
-    borderColor: colors.border,
+    backgroundColor: theme.colors.surface,
+    borderColor: theme.colors.border,
   }));
 
   const animatedTextStyle = useAnimatedStyle(() => ({
-    color: colors.text,
+    color: theme.colors.text,
   }));
-
-  // React to settings changes from main store
-  useEffect(() => {
-    // Colors will automatically update when settings change because
-    // we're getting settings directly from the store
-  }, [settings.fontScale, settings.highContrast, settings.reducedMotion]);
 
   const value: ThemeContextValue = {
     theme,
-    themeStyle,
-    colors,
-    config,
-    isDark,
-    setTheme,
-    setThemeStyle,
+    themeMode,
+    setThemeMode,
     animatedBackgroundStyle,
     animatedSurfaceStyle,
     animatedTextStyle,
-    fontScale: settings.fontScale,
-    highContrast: settings.highContrast,
-    reducedMotion: settings.reducedMotion,
   };
 
   return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>;
@@ -278,10 +134,10 @@ export const useTheme = (): ThemeContextValue => {
   return context;
 };
 
-// Theme-aware hook for creating dynamic styles with accessibility support
+// Legacy support - will be deprecated
 export const useThemedStyles = <T extends Record<string, any>>(
-  styleFactory: (colors: ThemeColors, isDark: boolean, fontScale: number, reducedMotion: boolean, config: ThemeConfig) => T
+  styleFactory: (theme: Theme) => T
 ): T => {
-  const { colors, isDark, fontScale, reducedMotion, config } = useTheme();
-  return styleFactory(colors, isDark, fontScale, reducedMotion, config);
+  const { theme } = useTheme();
+  return styleFactory(theme);
 };

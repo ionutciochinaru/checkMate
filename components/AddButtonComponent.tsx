@@ -20,7 +20,7 @@ export default function AddButtonComponent({
   setShowFilterDropdown
 }: AddButtonComponentProps) {
   
-  const styles = useThemedStyles((colors, isDark, fontScale, reducedMotion) => StyleSheet.create({
+  const styles = useThemedStyles((theme) => StyleSheet.create({
     addButton: {
       position: 'absolute',
       bottom: 32,
@@ -28,13 +28,13 @@ export default function AddButtonComponent({
       width: 56,
       height: 56,
       borderRadius: 28,
-      backgroundColor: isDark ? '#000000' : '#ffffff',
+      backgroundColor: theme.isDark ? '#000000' : '#ffffff',
       borderWidth: 1,
       borderStyle: 'dashed',
-      borderColor: isDark ? '#ff4444' : '#000000',
+      borderColor: theme.isDark ? '#ff4444' : '#000000',
       alignItems: 'center',
       justifyContent: 'center',
-      shadowColor: isDark ? '#ff4444' : '#000000',
+      shadowColor: theme.isDark ? '#ff4444' : '#000000',
       shadowOffset: { width: 0, height: 2 },
       shadowOpacity: 0.3,
       shadowRadius: 4,
@@ -42,11 +42,11 @@ export default function AddButtonComponent({
     },
     addButtonText: {
       fontFamily: 'JetBrainsMono_700Bold',
-      fontSize: 24 * fontScale,
-      color: isDark ? '#ff4444' : '#000000',
+      fontSize: theme.typography.fontSize.xl,
+      color: theme.isDark ? '#ff4444' : '#000000',
       textAlign: 'center',
       fontWeight: 'bold',
-      lineHeight: 24 * fontScale,
+      lineHeight: theme.typography.fontSize.xl,
     },
   }));
 

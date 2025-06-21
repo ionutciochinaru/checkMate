@@ -6,7 +6,7 @@ import { Ionicons } from '@expo/vector-icons';
 
 const DeleteAllTasksComponent: React.FC = () => {
   const [isDeleting, setIsDeleting] = useState(false);
-  const { colors, config } = useTheme();
+  const { theme } = useTheme();
   const { deleteAllTasks, tasks } = useTaskStore();
 
   const handleDeleteAllTasks = async () => {
@@ -37,12 +37,12 @@ const DeleteAllTasksComponent: React.FC = () => {
 
   const styles = StyleSheet.create({
     container: {
-      backgroundColor: colors.surface,
-      borderRadius: config.borderRadius,
+      backgroundColor: theme.colors.surface,
+      borderRadius: theme.borderRadius.md,
       padding: 16,
       margin: 16,
       borderWidth: 2,
-      borderColor: colors.danger,
+      borderColor: theme.colors.danger,
     },
     header: {
       flexDirection: 'row',
@@ -55,50 +55,50 @@ const DeleteAllTasksComponent: React.FC = () => {
     title: {
       fontSize: 16,
       fontWeight: 'bold',
-      color: colors.danger,
-      fontFamily: config.fontFamily.bold,
+      color: theme.colors.danger,
+      fontFamily: theme.typography.fontFamily.bold,
     },
     description: {
       fontSize: 13,
-      color: colors.textSecondary,
+      color: theme.colors.textSecondary,
       marginBottom: 16,
       lineHeight: 18,
-      fontFamily: config.fontFamily.regular,
+      fontFamily: theme.typography.fontFamily.regular,
     },
     warningBox: {
-      backgroundColor: colors.danger + '15', // 15% opacity
+      backgroundColor: theme.colors.danger + '15', // 15% opacity
       borderRadius: 8,
       padding: 12,
       marginBottom: 16,
       borderWidth: 1,
-      borderColor: colors.danger + '30',
+      borderColor: theme.colors.danger + '30',
     },
     warningText: {
       fontSize: 12,
-      color: colors.danger,
+      color: theme.colors.danger,
       fontWeight: '600',
       textAlign: 'center',
-      fontFamily: config.fontFamily.medium,
+      fontFamily: theme.typography.fontFamily.medium,
     },
     taskCount: {
       fontSize: 14,
-      color: colors.text,
+      color: theme.colors.text,
       marginBottom: 16,
       textAlign: 'center',
       fontWeight: '600',
-      fontFamily: config.fontFamily.medium,
+      fontFamily: theme.typography.fontFamily.medium,
     },
     button: {
-      backgroundColor: colors.danger,
+      backgroundColor: theme.colors.danger,
       paddingVertical: 14,
       paddingHorizontal: 24,
-      borderRadius: config.borderRadius,
+      borderRadius: theme.borderRadius.md,
       alignItems: 'center',
       flexDirection: 'row',
       justifyContent: 'center',
     },
     buttonDisabled: {
-      backgroundColor: colors.border,
+      backgroundColor: theme.colors.border,
       opacity: 0.6,
     },
     buttonText: {
@@ -106,10 +106,10 @@ const DeleteAllTasksComponent: React.FC = () => {
       fontSize: 14,
       fontWeight: '700',
       marginLeft: 8,
-      fontFamily: config.fontFamily.bold,
+      fontFamily: theme.typography.fontFamily.bold,
     },
     buttonTextDisabled: {
-      color: colors.textMuted,
+      color: theme.colors.textMuted,
     },
   });
 
@@ -119,7 +119,7 @@ const DeleteAllTasksComponent: React.FC = () => {
         <Ionicons 
           name="warning" 
           size={24} 
-          color={colors.danger} 
+          color={theme.colors.danger} 
           style={styles.icon} 
         />
         <Text style={styles.title}>Danger Zone</Text>
@@ -152,7 +152,7 @@ const DeleteAllTasksComponent: React.FC = () => {
         <Ionicons 
           name={isDeleting ? "hourglass-outline" : "trash"} 
           size={16} 
-          color={(isDeleting || tasks.length === 0) ? colors.textMuted : '#fff'} 
+          color={(isDeleting || tasks.length === 0) ? theme.colors.textMuted : '#fff'} 
         />
         <Text style={[
           styles.buttonText, 

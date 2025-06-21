@@ -21,7 +21,7 @@ export default function DelayInputComponent({ value, onValueChange }: DelayInput
     onValueChange(presetValue);
   };
 
-  const styles = useThemedStyles((colors, isDark, fontScale, reducedMotion, config) => StyleSheet.create({
+  const styles = useThemedStyles((theme) => StyleSheet.create({
     container: {
       flex: 1,
     },
@@ -31,34 +31,34 @@ export default function DelayInputComponent({ value, onValueChange }: DelayInput
       gap: 6,
     },
     presetButton: {
-      backgroundColor: colors.surfaceVariant,
+      backgroundColor: theme.colors.surfaceVariant,
       borderWidth: 1,
-      borderColor: colors.border,
+      borderColor: theme.colors.border,
       paddingHorizontal: 12,
       paddingVertical: 8,
       minWidth: 48,
       alignItems: 'center',
       justifyContent: 'center',
-      borderRadius: config.borderRadius,
+      borderRadius: theme.borderRadius.md,
     },
     presetButtonActive: {
-      backgroundColor: colors.accent,
-      borderColor: colors.accent,
+      backgroundColor: theme.colors.accent,
+      borderColor: theme.colors.accent,
     },
     presetButtonText: {
       fontFamily: 'JetBrainsMono_700Bold',
-      fontSize: 12 * fontScale,
-      color: colors.textSecondary,
+      fontSize: 12 * 1.0,
+      color: theme.colors.textSecondary,
       letterSpacing: 0.5,
       fontWeight: '700',
     },
     presetButtonTextActive: {
-      color: colors.background,
+      color: theme.colors.background,
     },
     helpText: {
       fontFamily: 'JetBrainsMono_400Regular',
-      fontSize: 10 * fontScale,
-      color: colors.textMuted,
+      fontSize: 10 * 1.0,
+      color: theme.colors.textMuted,
       letterSpacing: 0.3,
       marginTop: 8,
     },

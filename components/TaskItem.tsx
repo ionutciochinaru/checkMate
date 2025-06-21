@@ -11,7 +11,8 @@ import Animated, {
   interpolate,
   Extrapolate,
 } from 'react-native-reanimated';
-import { useTheme , useThemedStyles } from '../hooks/useTheme';
+import { useTheme, useThemedStyles } from '../hooks/useTheme';
+import { getTaskCardColor } from '../theme';
 import { router } from 'expo-router';
 import { useTaskStore, useMainStore } from '../hooks/useTaskStore';
 import { Task } from '../types/task';
@@ -24,52 +25,17 @@ interface TaskItemProps {
   task: Task;
 }
 
-// Color palette from design - exact color codes for light theme
-const LIGHT_CARD_COLORS = {
-  orange: '#EB8146',
-  blue: '#A9CEF2', 
-  yellow: '#D7D982',
-  pink: '#F09BAF',
-  lightYellow: '#EEC045',
-  lightGray: '#F0EFEC',
-};
-
-
-const CARD_TEXT_COLORS = {
-  light: '#313131',
-  dark: '#FFFFFF',
-};
-
-// Get card color based on task properties and theme
-const getCardColor = (task: Task, isDark: boolean, themeColors: any) => {
-  if (task.isCompleted) {
-    return isDark ? themeColors.surfaceVariant : LIGHT_CARD_COLORS.lightGray;
-  }
-  
-  if (isDark) {
-    // Use theme colors for dark mode - variations matching filter and header
-    const darkColors = [themeColors.surfaceVariant];
-    const index = Math.abs(task.id.split('').reduce((a, b) => a + b.charCodeAt(0), 0)) % darkColors.length;
-    return darkColors[index];
-  } else {
-    // Use colorful palette for light theme
-    const lightColors = [LIGHT_CARD_COLORS.orange, LIGHT_CARD_COLORS.blue, LIGHT_CARD_COLORS.yellow, LIGHT_CARD_COLORS.pink, LIGHT_CARD_COLORS.lightYellow];
-    const index = Math.abs(task.id.split('').reduce((a, b) => a + b.charCodeAt(0), 0)) % lightColors.length;
-    return lightColors[index];
-  }
-};
 
 const TaskItem: React.FC<TaskItemProps> = React.memo(({ task }) => {
   const { toggleComplete, delayTask, deleteTask } = useTaskStore();
   const { getSettings } = useMainStore();
-  const { colors, reducedMotion, isDark } = useTheme();
+  const { theme } = useTheme();
   
   const settings = getSettings();
   const delayTime = settings.defaultDelay || '30m';
-  const cardColor = getCardColor(task, isDark, colors);
-  const textColor = isDark ? colors.text : CARD_TEXT_COLORS.light;
-  const textColorVariant = isDark ? colors.background : CARD_TEXT_COLORS.dark;
-  const lightTextColor = isDark ? colors.textSecondary : LIGHT_CARD_COLORS.lightGray;
+  const cardColor = getTaskCardColor(task.id, theme, task.isCompleted);
+  const textColor = theme.colors.cardText;
+  const textColorVariant = theme.colors.cardTextInverse;
   
   const cardScale = useSharedValue(1);
   const strikethroughProgress = useSharedValue(0);
@@ -149,29 +115,29 @@ const TaskItem: React.FC<TaskItemProps> = React.memo(({ task }) => {
 
   // Effect to handle time change animations after delays
   useEffect(() => {
-    if (wasDelayed() && !reducedMotion) {
+    if (wasDelayed() && !theme.reducedMotion) {
       timeChangeProgress.value = withSequence(
         withTiming(1, { duration: 300 }),
         withTiming(0, { duration: 300 })
       );
     }
-  }, [task.reminderTime, task.delayCount, reducedMotion]);
+  }, [task.reminderTime, task.delayCount, theme.reducedMotion]);
 
-  const styles = useThemedStyles((colors, isDark, fontScale, reducedMotion, config) => StyleSheet.create({
+  const styles = useThemedStyles((theme) => StyleSheet.create({
     container: {
-      marginBottom: 3,
+      marginBottom: theme.spacing.xs,
     },
     // Normal task card (card_normal.png style)
     taskCard: {
       backgroundColor: cardColor,
-      borderRadius: 32,
-      padding: 20,
+      borderRadius: theme.borderRadius.xl,
+      padding: theme.spacing.lg,
       minHeight: 120,
-      shadowColor: '#000',
+      shadowColor: theme.isDark ? '#000000' : '#000000',
       shadowOffset: { width: 0, height: 2 },
       shadowOpacity: 0.1,
       shadowRadius: 8,
-      elevation: 4,
+      elevation: theme.elevation.medium,
     },
     // Completed task card (card_done.png style)
     completedCard: {
@@ -179,73 +145,73 @@ const TaskItem: React.FC<TaskItemProps> = React.memo(({ task }) => {
       flexDirection: 'row',
       alignItems: 'center',
       minHeight: 60,
-      paddingVertical: 12,
-      paddingHorizontal: 16,
+      paddingVertical: theme.spacing.sm,
+      paddingHorizontal: theme.spacing.md,
     },
     dayCircle: {
       width: 56,
       height: 56,
       borderRadius: 28,
-      backgroundColor: isDark ? colors.background : CARD_TEXT_COLORS.light,
+      backgroundColor: theme.colors.cardTextInverse,
       justifyContent: 'center',
       alignItems: 'center',
-      marginRight: 16,
+      marginRight: theme.spacing.md,
     },
     dayText: {
-      fontSize: 16,
+      fontSize: theme.typography.fontSize.lg,
       fontWeight: 'bold',
-      color: lightTextColor,
+      color: theme.colors.cardText,
       textAlign: 'center',
     },
     dayLabel: {
-      fontSize: 8,
-      color: lightTextColor,
+      fontSize: theme.typography.fontSize.xs,
+      color: theme.colors.cardText,
       textAlign: 'center',
       textTransform: 'uppercase',
-      letterSpacing: 0.5,
+      letterSpacing: theme.typography.letterSpacing * 0.5,
     },
     cardHeader: {
       flexDirection: 'row',
       justifyContent: 'space-between',
       alignItems: 'flex-start',
-      marginBottom: 5,
+      marginBottom: theme.spacing.xs,
     },
     headerLeft: {
       flexDirection: 'row',
       alignItems: 'center',
-      gap: 8,
+      gap: theme.spacing.sm,
     },
     headerRight: {
       flexDirection: 'row',
       alignItems: 'center',
-      gap: 6,
+      gap: theme.spacing.xs,
       flexWrap: 'wrap',
       flex: 1,
       justifyContent: 'flex-end',
     },
     taskId: {
-      fontSize: 10,
+      fontSize: theme.typography.fontSize.xs,
       color: textColor,
-      fontWeight: '700',
-      letterSpacing: 0.5,
+      fontFamily: theme.typography.fontFamily.bold,
+      letterSpacing: theme.typography.letterSpacing * 0.5,
     },
     taskStatus: {
-      fontSize: 9,
+      fontSize: theme.typography.fontSize.xs,
       color: textColor,
-      fontWeight: '600',
+      fontFamily: theme.typography.fontFamily.medium,
       opacity: 0.8,
-      marginLeft: 8,
-      paddingHorizontal: 6,
+      marginLeft: theme.spacing.sm,
+      paddingHorizontal: theme.spacing.xs,
       paddingVertical: 2,
-      borderRadius: 4,
+      borderRadius: theme.borderRadius.sm,
       backgroundColor: 'rgba(255,255,255,0.1)',
       textTransform: 'uppercase',
-      letterSpacing: 0.3,
+      letterSpacing: theme.typography.letterSpacing * 0.3,
     },
     timeInfo: {
-      fontSize: 12,
+      fontSize: theme.typography.fontSize.sm,
       color: textColor,
-      fontWeight: '500',
+      fontFamily: theme.typography.fontFamily.medium,
     },
     delayBadge: {
       fontSize: 10,
@@ -439,7 +405,7 @@ const TaskItem: React.FC<TaskItemProps> = React.memo(({ task }) => {
     },
     strikethroughLine: {
       height: 3,
-      backgroundColor: colors.accent,
+      backgroundColor: theme.colors.accent,
       width: '80%',
       borderRadius: 2,
     },
@@ -505,11 +471,11 @@ const TaskItem: React.FC<TaskItemProps> = React.memo(({ task }) => {
     },
     // Enhanced button states
     actionBtnPressed: {
-      backgroundColor: colors.accent,
+      backgroundColor: theme.colors.accent,
       transform: [{ scale: 0.95 }],
     },
     delayingButton: {
-      backgroundColor: colors.warning,
+      backgroundColor: theme.colors.warning,
     },
   }));
 
@@ -536,7 +502,7 @@ const TaskItem: React.FC<TaskItemProps> = React.memo(({ task }) => {
 
   // Animate card when task updates
   const animateCardUpdate = () => {
-    if (reducedMotion) return;
+    if (theme.reducedMotion) return;
     
     cardScale.value = withSpring(1.02, { damping: 15, stiffness: 300 }, () => {
       cardScale.value = withSpring(1, { damping: 15, stiffness: 300 });
@@ -573,7 +539,7 @@ const TaskItem: React.FC<TaskItemProps> = React.memo(({ task }) => {
     
     setIsDelaying(true);
     
-    if (!reducedMotion) {
+    if (!theme.reducedMotion) {
       // Animate strikethrough effect
       strikethroughProgress.value = withTiming(1, { duration: 600 }, () => {
         strikethroughProgress.value = withTiming(0, { duration: 300 });
@@ -585,7 +551,7 @@ const TaskItem: React.FC<TaskItemProps> = React.memo(({ task }) => {
       delayTask(task.id, delayTime);
       animateCardUpdate();
       setIsDelaying(false);
-    }, reducedMotion ? 0 : 300);
+    }, theme.reducedMotion ? 0 : 300);
   };
 
   const showDeleteConfirmation = () => {
@@ -610,8 +576,8 @@ const TaskItem: React.FC<TaskItemProps> = React.memo(({ task }) => {
     // Completed task design (card_done.png style)
     return (
       <Animated.View 
-        entering={reducedMotion ? undefined : FadeInUp} 
-        exiting={reducedMotion ? undefined : FadeOutRight} 
+        entering={theme.reducedMotion ? undefined : FadeInUp} 
+        exiting={theme.reducedMotion ? undefined : FadeOutRight} 
         style={[styles.container, animatedCardStyle]}
       >
         <View style={[styles.taskCard, styles.completedCard, { position: 'relative' }]}>
@@ -675,8 +641,8 @@ const TaskItem: React.FC<TaskItemProps> = React.memo(({ task }) => {
   // Normal task design (card_normal.png style)
   return (
     <Animated.View 
-      entering={reducedMotion ? undefined : FadeInUp} 
-      exiting={reducedMotion ? undefined : FadeOutRight} 
+      entering={theme.reducedMotion ? undefined : FadeInUp} 
+      exiting={theme.reducedMotion ? undefined : FadeOutRight} 
       style={[styles.container, animatedCardStyle]}
     >
       <View style={[styles.taskCard, { position: 'relative' }]}>
@@ -755,8 +721,8 @@ const TaskItem: React.FC<TaskItemProps> = React.memo(({ task }) => {
           <TouchableOpacity 
             style={[
               styles.actionBtnDone,
-              task.isCompleted && { backgroundColor: colors.warning },
-              isProcessingNext && { backgroundColor: colors.accent }
+              task.isCompleted && { backgroundColor: theme.colors.warning },
+              isProcessingNext && { backgroundColor: theme.colors.accent }
             ]}
             onPress={handleToggleComplete}
             activeOpacity={0.7}
@@ -770,14 +736,14 @@ const TaskItem: React.FC<TaskItemProps> = React.memo(({ task }) => {
               } 
               size={14} 
               color={
-                isProcessingNext ? colors.background :
-                task.isCompleted ? colors.background : textColorVariant
+                isProcessingNext ? theme.colors.background :
+                task.isCompleted ? theme.colors.background : textColorVariant
               }
             />
             <Text style={[
               styles.actionBtnTextDone,
-              task.isCompleted && { color: colors.background },
-              isProcessingNext && { color: colors.background }
+              task.isCompleted && { color: theme.colors.background },
+              isProcessingNext && { color: theme.colors.background }
             ]}>
               {
                 isProcessingNext ? 'NEXT...' :
@@ -801,8 +767,8 @@ const TaskItem: React.FC<TaskItemProps> = React.memo(({ task }) => {
             onPress={showDeleteConfirmation}
             activeOpacity={0.7}
           >
-            <Ionicons name="trash-outline" size={14} color={colors.danger} />
-            <Text style={[styles.actionBtnText, { color: colors.danger }]}>DEL</Text>
+            <Ionicons name="trash-outline" size={14} color={theme.colors.danger} />
+            <Text style={[styles.actionBtnText, { color: theme.colors.danger }]}>DEL</Text>
           </TouchableOpacity>
         </View>
       </View>

@@ -30,7 +30,7 @@ const CustomAlert: React.FC<CustomAlertProps> = ({
   buttons = [{ text: 'OK' }],
   onDismiss
 }) => {
-  const { reducedMotion } = useTheme();
+  const { theme } = useTheme();
   const [isVisible, setIsVisible] = useState(visible);
   
   // Animation values
@@ -41,16 +41,16 @@ const CustomAlert: React.FC<CustomAlertProps> = ({
   useEffect(() => {
     if (visible) {
       setIsVisible(true);
-      const duration = reducedMotion ? 0 : 200;
+      const duration = theme.reducedMotion ? 0 : 200;
       
       opacity.value = withTiming(1, { duration });
       scale.value = withSpring(1, { 
-        damping: reducedMotion ? 100 : 15,
-        stiffness: reducedMotion ? 100 : 150 
+        damping: theme.reducedMotion ? 100 : 15,
+        stiffness: theme.reducedMotion ? 100 : 150 
       });
       translateY.value = withTiming(0, { duration });
     } else {
-      const duration = reducedMotion ? 0 : 150;
+      const duration = theme.reducedMotion ? 0 : 150;
       
       opacity.value = withTiming(0, { duration });
       scale.value = withTiming(0.8, { duration });
@@ -58,7 +58,7 @@ const CustomAlert: React.FC<CustomAlertProps> = ({
         runOnJS(setIsVisible)(false);
       });
     }
-  }, [visible, reducedMotion]);
+  }, [visible, theme.reducedMotion]);
 
   const handleButtonPress = (button: AlertButton) => {
     if (button.onPress) {
@@ -81,7 +81,7 @@ const CustomAlert: React.FC<CustomAlertProps> = ({
     opacity: opacity.value,
   }));
 
-  const styles = useThemedStyles((colors, isDark, fontScale, reducedMotion, config) => StyleSheet.create({
+  const styles = useThemedStyles((theme) => StyleSheet.create({
     overlay: {
       flex: 1,
       backgroundColor: 'rgba(0, 0, 0, 0.7)',
@@ -90,24 +90,24 @@ const CustomAlert: React.FC<CustomAlertProps> = ({
       padding: 20,
     },
     container: {
-      backgroundColor: colors.surface,
+      backgroundColor: theme.colors.surface,
       borderWidth: 2,
-      borderColor: colors.accent,
+      borderColor: theme.colors.accent,
       minWidth: 280,
       maxWidth: Dimensions.get('window').width - 40,
-      shadowColor: colors.accent,
+      shadowColor: theme.colors.accent,
       shadowOffset: { width: 0, height: 4 },
-      shadowOpacity: isDark ? 0.3 : 0.15,
+      shadowOpacity: theme.isDark ? 0.3 : 0.15,
       shadowRadius: 8,
       elevation: 8,
-      borderRadius: config.borderRadius,
+      borderRadius: theme.borderRadius.md,
     },
     header: {
-      backgroundColor: colors.accent,
+      backgroundColor: theme.colors.accent,
       paddingHorizontal: 16,
       paddingVertical: 12,
       borderBottomWidth: 1,
-      borderBottomColor: colors.border,
+      borderBottomColor: theme.colors.border,
     },
     titleContainer: {
       flexDirection: 'row',
@@ -116,16 +116,16 @@ const CustomAlert: React.FC<CustomAlertProps> = ({
     },
     title: {
       fontFamily: 'JetBrainsMono_700Bold',
-      fontSize: 14 * fontScale,
-      color: colors.background,
+      fontSize: 14 * 1.0,
+      color: theme.colors.background,
       letterSpacing: 1,
       fontWeight: '800',
       flex: 1,
     },
     titleIcon: {
       fontFamily: 'JetBrainsMono_700Bold',
-      fontSize: 12 * fontScale,
-      color: colors.background,
+      fontSize: 12 * 1.0,
+      color: theme.colors.background,
       letterSpacing: 0.5,
       marginLeft: 8,
     },
@@ -134,10 +134,10 @@ const CustomAlert: React.FC<CustomAlertProps> = ({
     },
     message: {
       fontFamily: 'JetBrainsMono_500Medium',
-      fontSize: 12 * fontScale,
-      color: colors.text,
+      fontSize: 12 * 1.0,
+      color: theme.colors.text,
       letterSpacing: 0.3,
-      lineHeight: 18 * fontScale,
+      lineHeight: 18 * 1.0,
       marginBottom: message ? 16 : 0,
     },
     buttonContainer: {
@@ -147,43 +147,43 @@ const CustomAlert: React.FC<CustomAlertProps> = ({
       marginTop: 8,
     },
     button: {
-      backgroundColor: colors.surfaceVariant,
+      backgroundColor: theme.colors.surfaceVariant,
       borderWidth: 1,
-      borderColor: colors.border,
+      borderColor: theme.colors.border,
       paddingHorizontal: 16,
       paddingVertical: 8,
       minWidth: 80,
       alignItems: 'center',
       justifyContent: 'center',
-      borderRadius: config.borderRadius,
+      borderRadius: theme.borderRadius.md,
     },
     buttonCancel: {
-      backgroundColor: colors.surfaceVariant,
-      borderColor: colors.textMuted,
+      backgroundColor: theme.colors.surfaceVariant,
+      borderColor: theme.colors.textMuted,
     },
     buttonDestructive: {
-      backgroundColor: colors.danger,
-      borderColor: colors.danger,
+      backgroundColor: theme.colors.danger,
+      borderColor: theme.colors.danger,
     },
     buttonDefault: {
-      backgroundColor: colors.accent,
-      borderColor: colors.accent,
+      backgroundColor: theme.colors.accent,
+      borderColor: theme.colors.accent,
     },
     buttonText: {
       fontFamily: 'JetBrainsMono_700Bold',
-      fontSize: 11 * fontScale,
-      color: colors.text,
+      fontSize: 11 * 1.0,
+      color: theme.colors.text,
       letterSpacing: 0.5,
       fontWeight: '700',
     },
     buttonTextCancel: {
-      color: colors.textMuted,
+      color: theme.colors.textMuted,
     },
     buttonTextDestructive: {
-      color: colors.background,
+      color: theme.colors.background,
     },
     buttonTextDefault: {
-      color: colors.background,
+      color: theme.colors.background,
     },
     singleButtonContainer: {
       justifyContent: 'center',

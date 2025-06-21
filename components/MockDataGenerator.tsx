@@ -5,7 +5,7 @@ import { generateMockTasks } from '../scripts/generateMockTasks';
 
 const MockDataGenerator: React.FC = () => {
   const [isGenerating, setIsGenerating] = useState(false);
-  const { colors } = useTheme();
+  const { theme } = useTheme();
 
   const handleGenerateTasks = async () => {
     Alert.alert(
@@ -35,33 +35,33 @@ const MockDataGenerator: React.FC = () => {
   const styles = StyleSheet.create({
     container: {
       padding: 16,
-      backgroundColor: colors.surface,
+      backgroundColor: theme.colors.surface,
       borderRadius: 12,
       margin: 16,
       borderWidth: 1,
-      borderColor: colors.border,
+      borderColor: theme.colors.border,
     },
     title: {
       fontSize: 18,
       fontWeight: 'bold',
-      color: colors.text,
+      color: theme.colors.text,
       marginBottom: 8,
     },
     description: {
       fontSize: 14,
-      color: colors.textSecondary,
+      color: theme.colors.textSecondary,
       marginBottom: 16,
       lineHeight: 20,
     },
     button: {
-      backgroundColor: colors.accent,
+      backgroundColor: theme.colors.accent,
       paddingVertical: 12,
       paddingHorizontal: 24,
       borderRadius: 8,
       alignItems: 'center',
     },
     buttonDisabled: {
-      backgroundColor: colors.border,
+      backgroundColor: theme.colors.border,
     },
     buttonText: {
       color: '#fff',
@@ -69,7 +69,7 @@ const MockDataGenerator: React.FC = () => {
       fontWeight: '600',
     },
     buttonTextDisabled: {
-      color: colors.textMuted,
+      color: theme.colors.textMuted,
     },
   });
 

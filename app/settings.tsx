@@ -30,7 +30,7 @@ export default function SettingsScreen() {
     saveAndExit, 
     updateSetting,
   } = useSettingsStore();
-  const { colors } = useTheme();
+  const { theme } = useTheme();
 
   const [showStartPicker, setShowStartPicker] = useState(false);
   const [showEndPicker, setShowEndPicker] = useState(false);
@@ -126,15 +126,15 @@ export default function SettingsScreen() {
     router.back();
   };
 
-  const styles = useThemedStyles((colors, isDark, fontScale, reducedMotion, config) => StyleSheet.create({
+  const styles = useThemedStyles((theme) => StyleSheet.create({
     container: {
       flex: 1,
-      backgroundColor: colors.background,
+      backgroundColor: theme.colors.background,
     },
     header: {
-      backgroundColor: colors.surface,
+      backgroundColor: theme.colors.surface,
       borderBottomWidth: 2,
-      borderBottomColor: colors.border,
+      borderBottomColor: theme.colors.border,
       paddingTop: 50,
       paddingBottom: 16,
       paddingHorizontal: 16,
@@ -145,20 +145,20 @@ export default function SettingsScreen() {
       alignItems: 'center',
     },
     terminalTitle: {
-      fontFamily: config.fontFamily.bold,
-      fontSize: 20 * fontScale,
-      color: colors.text,
-      letterSpacing: config.letterSpacing,
+      fontFamily: theme.typography.fontFamily.bold,
+      fontSize: theme.typography.fontSize.xxl,
+      color: theme.colors.text,
+      letterSpacing: theme.typography.letterSpacing,
       fontWeight: '800',
     },
     backButton: {
       padding: 0,
     },
     backButtonText: {
-      fontFamily: config.fontFamily.bold,
-      fontSize: 14 * fontScale,
-      color: colors.textSecondary,
-      letterSpacing: config.letterSpacing * 0.8,
+      fontFamily: theme.typography.fontFamily.bold,
+      fontSize: theme.typography.fontSize.md,
+      color: theme.colors.textSecondary,
+      letterSpacing: theme.typography.letterSpacing * 0.8,
       fontWeight: '700',
     },
     content: {
@@ -168,35 +168,35 @@ export default function SettingsScreen() {
       padding: 16,
     },
     instructionText: {
-      fontFamily: config.fontFamily.medium,
+      fontFamily: theme.typography.fontFamily.medium,
       fontSize: 12,
-      color: colors.textSecondary,
-      letterSpacing: config.letterSpacing * 0.4,
+      color: theme.colors.textSecondary,
+      letterSpacing: theme.typography.letterSpacing * 0.4,
       marginBottom: 16,
       paddingHorizontal: 12,
       paddingVertical: 10,
-      backgroundColor: colors.surfaceVariant,
+      backgroundColor: theme.colors.surfaceVariant,
       borderLeftWidth: 4,
-      borderLeftColor: colors.accent,
-      borderRadius: config.borderRadius,
+      borderLeftColor: theme.colors.accent,
+      borderRadius: theme.borderRadius.md,
       fontWeight: '600',
     },
     section: {
       marginBottom: 20,
     },
     sectionCard: {
-      backgroundColor: colors.surfaceVariant,
+      backgroundColor: theme.colors.surfaceVariant,
       borderWidth: 1,
-      borderColor: colors.border,
-      borderRadius: config.borderRadius,
+      borderColor: theme.colors.border,
+      borderRadius: theme.borderRadius.md,
       padding: 16,
       marginBottom: 20,
     },
     sectionTitle: {
-      fontFamily: config.fontFamily.bold,
-      fontSize: 16 * fontScale,
-      color: colors.text,
-      letterSpacing: config.letterSpacing,
+      fontFamily: theme.typography.fontFamily.bold,
+      fontSize: theme.typography.fontSize.lg,
+      color: theme.colors.text,
+      letterSpacing: theme.typography.letterSpacing,
       marginBottom: 16,
       fontWeight: '800',
     },
@@ -209,8 +209,8 @@ export default function SettingsScreen() {
     },
     settingLabel: {
       fontFamily: 'JetBrainsMono_700Bold',
-      fontSize: 14 * fontScale,
-      color: colors.text,
+      fontSize: theme.typography.fontSize.md,
+      color: theme.colors.text,
       letterSpacing: 1,
       fontWeight: '700',
       flex: 1,
@@ -219,7 +219,7 @@ export default function SettingsScreen() {
     settingSubtext: {
       fontFamily: 'JetBrainsMono_400Regular',
       fontSize: 11,
-      color: colors.textMuted,
+      color: theme.colors.textMuted,
       marginTop: 2,
       letterSpacing: 0.5,
       lineHeight: 16,
@@ -234,25 +234,25 @@ export default function SettingsScreen() {
     },
     timeLabel: {
       fontFamily: 'JetBrainsMono_500Medium',
-      fontSize: 10 * fontScale,
-      color: colors.textMuted,
+      fontSize: theme.typography.fontSize.xs,
+      color: theme.colors.textMuted,
       letterSpacing: 0.5,
       marginBottom: 4,
       textAlign: 'center',
     },
     timeButton: {
-      backgroundColor: colors.surface,
+      backgroundColor: theme.colors.surface,
       borderWidth: 1,
-      borderColor: colors.border,
+      borderColor: theme.colors.border,
       paddingVertical: 12,
       paddingHorizontal: 8,
       alignItems: 'center',
-      borderRadius: config.borderRadius,
+      borderRadius: theme.borderRadius.md,
     },
     timeText: {
       fontFamily: 'JetBrainsMono_500Medium',
-      fontSize: 14 * fontScale,
-      color: colors.text,
+      fontSize: theme.typography.fontSize.md,
+      color: theme.colors.text,
       letterSpacing: 0.5,
       fontWeight: '500',
     },
@@ -263,37 +263,37 @@ export default function SettingsScreen() {
     },
     helpText: {
       fontFamily: 'JetBrainsMono_400Regular',
-      fontSize: 10 * fontScale,
-      color: colors.textMuted,
+      fontSize: theme.typography.fontSize.xs,
+      color: theme.colors.textMuted,
       letterSpacing: 0.5,
       marginTop: 4,
-      lineHeight: 12 * fontScale,
+      lineHeight: 12 * 1.0,
     },
     fontScaleContainer: {
       flexDirection: 'row',
       gap: 8,
     },
     fontScaleButton: {
-      backgroundColor: colors.surface,
+      backgroundColor: theme.colors.surface,
       borderWidth: 1,
-      borderColor: colors.border,
+      borderColor: theme.colors.border,
       paddingHorizontal: 12,
       paddingVertical: 8,
       minWidth: 40,
       alignItems: 'center',
     },
     fontScaleButtonActive: {
-      backgroundColor: colors.accent,
-      borderColor: colors.accent,
+      backgroundColor: theme.colors.accent,
+      borderColor: theme.colors.accent,
     },
     fontScaleText: {
       fontFamily: 'JetBrainsMono_700Bold',
-      fontSize: 10 * fontScale,
-      color: colors.textSecondary,
+      fontSize: theme.typography.fontSize.xs,
+      color: theme.colors.textSecondary,
       letterSpacing: 0.5,
     },
     fontScaleTextActive: {
-      color: colors.background,
+      color: theme.colors.background,
     },
     dateFormatContainer: {
       marginTop: 8,
@@ -301,26 +301,26 @@ export default function SettingsScreen() {
       gap: 8,
     },
     dateFormatButton: {
-      backgroundColor: colors.surface,
+      backgroundColor: theme.colors.surface,
       borderWidth: 1,
-      borderColor: colors.border,
+      borderColor: theme.colors.border,
       paddingHorizontal: 12,
       paddingVertical: 8,
       alignItems: 'flex-start',
-      borderRadius: config.borderRadius,
+      borderRadius: theme.borderRadius.md,
     },
     dateFormatButtonActive: {
-      backgroundColor: colors.accent,
-      borderColor: colors.accent,
+      backgroundColor: theme.colors.accent,
+      borderColor: theme.colors.accent,
     },
     dateFormatText: {
       fontFamily: 'JetBrainsMono_500Medium',
-      fontSize: 11 * fontScale,
-      color: colors.textSecondary,
+      fontSize: 11 * 1.0,
+      color: theme.colors.textSecondary,
       letterSpacing: 0.5,
     },
     dateFormatTextActive: {
-      color: colors.background,
+      color: theme.colors.background,
       fontWeight: '600',
     },
     separatorContainer: {
@@ -328,59 +328,59 @@ export default function SettingsScreen() {
       gap: 8,
     },
     separatorButton: {
-      backgroundColor: colors.surface,
+      backgroundColor: theme.colors.surface,
       borderWidth: 1,
-      borderColor: colors.border,
+      borderColor: theme.colors.border,
       paddingHorizontal: 16,
       paddingVertical: 8,
       minWidth: 48,
       alignItems: 'center',
       justifyContent: 'center',
-      borderRadius: config.borderRadius,
+      borderRadius: theme.borderRadius.md,
     },
     separatorButtonActive: {
-      backgroundColor: colors.accent,
-      borderColor: colors.accent,
+      backgroundColor: theme.colors.accent,
+      borderColor: theme.colors.accent,
     },
     separatorText: {
       fontFamily: 'JetBrainsMono_700Bold',
-      fontSize: 12 * fontScale,
-      color: colors.textSecondary,
+      fontSize: 12 * 1.0,
+      color: theme.colors.textSecondary,
       letterSpacing: 0.5,
       fontWeight: '700',
     },
     separatorTextActive: {
-      color: colors.background,
+      color: theme.colors.background,
     },
     timeFormatContainer: {
       marginTop: 8,
       gap: 8,
     },
     timeFormatButton: {
-      backgroundColor: colors.surface,
+      backgroundColor: theme.colors.surface,
       borderWidth: 1,
-      borderColor: colors.border,
+      borderColor: theme.colors.border,
       paddingHorizontal: 12,
       paddingVertical: 8,
       alignItems: 'flex-start',
-      borderRadius: config.borderRadius,
+      borderRadius: theme.borderRadius.md,
     },
     timeFormatButtonActive: {
-      backgroundColor: colors.accent,
-      borderColor: colors.accent,
+      backgroundColor: theme.colors.accent,
+      borderColor: theme.colors.accent,
     },
     timeFormatText: {
       fontFamily: 'JetBrainsMono_500Medium',
-      fontSize: 11 * fontScale,
-      color: colors.textSecondary,
+      fontSize: 11 * 1.0,
+      color: theme.colors.textSecondary,
       letterSpacing: 0.5,
     },
     timeFormatTextActive: {
-      color: colors.background,
+      color: theme.colors.background,
       fontWeight: '600',
     },
     disabledText: {
-      color: colors.textMuted,
+      color: theme.colors.textMuted,
       opacity: 0.5,
     },
     loadingContainer: {
@@ -391,23 +391,23 @@ export default function SettingsScreen() {
     },
     loadingText: {
       fontFamily: 'JetBrainsMono_500Medium',
-      fontSize: 14 * fontScale,
-      color: colors.textSecondary,
+      fontSize: theme.typography.fontSize.md,
+      color: theme.colors.textSecondary,
       letterSpacing: 0.5,
       marginTop: 16,
     },
     supportSection: {
-      backgroundColor: colors.surfaceVariant,
+      backgroundColor: theme.colors.surfaceVariant,
       borderWidth: 1,
-      borderColor: colors.border,
+      borderColor: theme.colors.border,
       padding: 16,
       marginBottom: 40,
       alignItems: 'center',
     },
     supportTitle: {
       fontFamily: 'JetBrainsMono_700Bold',
-      fontSize: 14 * fontScale,
-      color: colors.text,
+      fontSize: theme.typography.fontSize.md,
+      color: theme.colors.text,
       letterSpacing: 1.2,
       marginBottom: 8,
       fontWeight: '800',
@@ -415,49 +415,49 @@ export default function SettingsScreen() {
     supportSubtext: {
       fontFamily: 'JetBrainsMono_400Regular',
       fontSize: 11,
-      color: colors.textMuted,
+      color: theme.colors.textMuted,
       letterSpacing: 0.5,
       marginBottom: 16,
       textAlign: 'center',
       lineHeight: 16,
     },
     coffeeButton: {
-      backgroundColor: colors.accent,
+      backgroundColor: theme.colors.accent,
       borderWidth: 2,
-      borderColor: colors.accent,
-      borderRadius: config.borderRadius,
+      borderColor: theme.colors.accent,
+      borderRadius: theme.borderRadius.md,
       paddingHorizontal: 16,
       paddingVertical: 12,
       alignItems: 'center',
       justifyContent: 'center',
       marginBottom: 16,
-      shadowColor: colors.accent,
+      shadowColor: theme.colors.accent,
       shadowOffset: { width: 0, height: 2 },
       shadowOpacity: 0.3,
       shadowRadius: 4,
-      elevation: config.elevation.medium,
+      elevation: theme.elevation.medium,
     },
     coffeeButtonText: {
       fontFamily: 'JetBrainsMono_700Bold',
-      fontSize: Math.max(12, 11 * fontScale),
-      color: colors.background,
+      fontSize: Math.max(12, 11 * 1.0),
+      color: theme.colors.background,
       letterSpacing: 1,
       fontWeight: '800',
       marginBottom: 2,
     },
     coffeeSubtext: {
       fontFamily: 'JetBrainsMono_400Regular',
-      fontSize: Math.max(12, 9 * fontScale),
-      color: colors.background,
+      fontSize: Math.max(12, 9 * 1.0),
+      color: theme.colors.background,
       letterSpacing: 0.5,
       opacity: 0.8,
     },
     gratitudeText: {
       fontFamily: 'JetBrainsMono_400Regular',
-      fontSize: Math.max(12, 9 * fontScale),
-      color: colors.textMuted,
+      fontSize: Math.max(12, 9 * 1.0),
+      color: theme.colors.textMuted,
       letterSpacing: 0.3,
-      lineHeight: Math.max(14, 12 * fontScale),
+      lineHeight: Math.max(14, 12 * 1.0),
       textAlign: 'center',
       fontStyle: 'italic',
     },
@@ -475,7 +475,7 @@ export default function SettingsScreen() {
             <Ionicons 
               name="arrow-back" 
               size={20} 
-              color={colors.textSecondary} 
+              color={theme.colors.textSecondary} 
             />
           </TouchableOpacity>
           <Text style={styles.terminalTitle}>Settings</Text>
@@ -486,7 +486,7 @@ export default function SettingsScreen() {
         {/* Loading State */}
         {isLoading && (
           <View style={styles.loadingContainer}>
-            <ActivityIndicator size="large" color={colors.accent} />
+            <ActivityIndicator size="large" color={theme.colors.accent} />
             <Text style={styles.loadingText}>Loading settings...</Text>
           </View>
         )}
@@ -517,8 +517,8 @@ Restrict notifications to working hours only
             <Switch
               value={settings.workingHoursEnabled}
               onValueChange={(value) => handleUpdateSetting('workingHoursEnabled', value)}
-              trackColor={{ false: colors.border, true: colors.textSecondary }}
-              thumbColor={settings.workingHoursEnabled ? colors.accent : colors.textMuted}
+              trackColor={{ false: theme.colors.border, true: theme.colors.textSecondary }}
+              thumbColor={settings.workingHoursEnabled ? theme.colors.accent : theme.colors.textMuted}
             />
           </View>
 
@@ -596,8 +596,8 @@ Restrict notifications to working hours only
             <Switch
               value={settings.twentyFourHourMode}
               onValueChange={(value) => handleUpdateSetting('twentyFourHourMode', value)}
-              trackColor={{ false: colors.border, true: colors.textSecondary }}
-              thumbColor={settings.twentyFourHourMode ? colors.accent : colors.textMuted}
+              trackColor={{ false: theme.colors.border, true: theme.colors.textSecondary }}
+              thumbColor={settings.twentyFourHourMode ? theme.colors.accent : theme.colors.textMuted}
             />
           </View>
         </View>
@@ -647,8 +647,8 @@ Restrict notifications to working hours only
             <Switch
               value={settings.highContrast}
               onValueChange={(value) => handleUpdateSetting('highContrast', value)}
-              trackColor={{ false: colors.border, true: colors.textSecondary }}
-              thumbColor={settings.highContrast ? colors.accent : colors.textMuted}
+              trackColor={{ false: theme.colors.border, true: theme.colors.textSecondary }}
+              thumbColor={settings.highContrast ? theme.colors.accent : theme.colors.textMuted}
             />
           </View>
 
@@ -663,8 +663,8 @@ Restrict notifications to working hours only
             <Switch
               value={settings.reducedMotion}
               onValueChange={(value) => handleUpdateSetting('reducedMotion', value)}
-              trackColor={{ false: colors.border, true: colors.textSecondary }}
-              thumbColor={settings.reducedMotion ? colors.accent : colors.textMuted}
+              trackColor={{ false: theme.colors.border, true: theme.colors.textSecondary }}
+              thumbColor={settings.reducedMotion ? theme.colors.accent : theme.colors.textMuted}
             />
           </View>
 
@@ -709,8 +709,8 @@ Restrict notifications to working hours only
             <Switch
               value={settings.dateUseMonthNames}
               onValueChange={(value) => handleUpdateSetting('dateUseMonthNames', value)}
-              trackColor={{ false: colors.border, true: colors.textSecondary }}
-              thumbColor={settings.dateUseMonthNames ? colors.accent : colors.textMuted}
+              trackColor={{ false: theme.colors.border, true: theme.colors.textSecondary }}
+              thumbColor={settings.dateUseMonthNames ? theme.colors.accent : theme.colors.textMuted}
             />
           </View>
 

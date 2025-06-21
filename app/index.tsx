@@ -17,7 +17,7 @@ export default function HomeScreen() {
 
     const {filteredTasks, pendingTasks, completedTasks} = useTaskFilter(tasks, selectedFilter);
 
-    const styles = useThemedStyles((colors, isDark, fontScale, reducedMotion, config) => StyleSheet.create({
+    const styles = useThemedStyles((theme) => StyleSheet.create({
         container: {
             flex: 1,
         },

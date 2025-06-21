@@ -20,7 +20,7 @@ import { Ionicons } from '@expo/vector-icons';
 export default function AddTaskScreen() {
   const { addTask, tasks, updateTask } = useTaskStore();
   const { getSettings } = useMainStore();
-  const { colors } = useTheme();
+  const { theme } = useTheme();
   const { edit } = useLocalSearchParams();
   
   const settings = getSettings();
@@ -268,15 +268,15 @@ export default function AddTaskScreen() {
 
   const isTerminalTheme = true;
   
-  const styles = useThemedStyles((colors, isDark, fontScale, reducedMotion, config) => StyleSheet.create({
+  const styles = useThemedStyles((theme) => StyleSheet.create({
     container: {
       flex: 1,
-      backgroundColor: colors.background,
+      backgroundColor: theme.colors.background,
     },
     header: {
-      backgroundColor: colors.surface,
+      backgroundColor: theme.colors.surface,
       borderBottomWidth: isTerminalTheme ? 2 : 0,
-      borderBottomColor: colors.border,
+      borderBottomColor: theme.colors.border,
       paddingTop: isTerminalTheme ? 50 : 60,
       paddingBottom: isTerminalTheme ? 16 : 24,
       paddingHorizontal: isTerminalTheme ? 16 : 24,
@@ -285,7 +285,7 @@ export default function AddTaskScreen() {
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.1,
         shadowRadius: 4,
-        elevation: config.elevation.low,
+        elevation: theme.elevation.low,
       }),
     },
     terminalBar: {
@@ -294,41 +294,41 @@ export default function AddTaskScreen() {
       alignItems: 'center',
     },
     terminalTitle: {
-      fontFamily: config.fontFamily.bold,
-      fontSize: 20 * fontScale,
-      color: colors.text,
-      letterSpacing: config.letterSpacing,
+      fontFamily: theme.typography.fontFamily.bold,
+      fontSize: theme.typography.fontSize.xxl,
+      color: theme.colors.text,
+      letterSpacing: theme.typography.letterSpacing,
       fontWeight: '800',
     },
     backButton: {
       padding: 0,
     },
     backButtonText: {
-      fontFamily: config.fontFamily.bold,
-      fontSize: 14 * fontScale,
-      color: colors.textSecondary,
-      letterSpacing: config.letterSpacing * 0.8,
+      fontFamily: theme.typography.fontFamily.bold,
+      fontSize: theme.typography.fontSize.md,
+      color: theme.colors.textSecondary,
+      letterSpacing: theme.typography.letterSpacing * 0.8,
       fontWeight: '700',
     },
     helpText: {
-      fontFamily: config.fontFamily.regular,
-      fontSize: 10 * fontScale,
-      color: colors.textMuted,
-      letterSpacing: config.letterSpacing * 0.4,
+      fontFamily: theme.typography.fontFamily.regular,
+      fontSize: theme.typography.fontSize.xs,
+      color: theme.colors.textMuted,
+      letterSpacing: theme.typography.letterSpacing * 0.4,
       marginBottom: 8,
-      lineHeight: 12 * fontScale,
+      lineHeight: 12,
     },
     instructionText: {
-      fontFamily: config.fontFamily.medium,
-      fontSize: 12,
-      color: colors.textSecondary,
+      fontFamily: theme.typography.fontFamily.medium,
+      fontSize: theme.typography.fontSize.sm,
+      color: theme.colors.textSecondary,
       letterSpacing: 0.5,
       marginBottom: 16,
       paddingHorizontal: 12,
       paddingVertical: 10,
-      backgroundColor: colors.surfaceVariant,
+      backgroundColor: theme.colors.surfaceVariant,
       borderLeftWidth: 4,
-      borderLeftColor: colors.accent,
+      borderLeftColor: theme.colors.accent,
       fontWeight: '600',
     },
     content: {
@@ -341,23 +341,23 @@ export default function AddTaskScreen() {
       marginBottom: 20,
     },
     label: {
-      fontFamily: config.fontFamily.bold,
-      fontSize: 14 * fontScale,
-      color: colors.text,
-      letterSpacing: config.letterSpacing,
+      fontFamily: theme.typography.fontFamily.bold,
+      fontSize: theme.typography.fontSize.md,
+      color: theme.colors.text,
+      letterSpacing: theme.typography.letterSpacing,
       marginBottom: 8,
       fontWeight: '800',
     },
     textInput: {
-      fontFamily: config.fontFamily.medium,
-      fontSize: 12 * fontScale,
-      color: colors.text,
-      backgroundColor: colors.surface,
+      fontFamily: theme.typography.fontFamily.medium,
+      fontSize: theme.typography.fontSize.sm,
+      color: theme.colors.text,
+      backgroundColor: theme.colors.surface,
       borderWidth: 2,
-      borderColor: colors.border,
-      borderRadius: config.borderRadius,
+      borderColor: theme.colors.border,
+      borderRadius: theme.borderRadius.md,
       padding: 14,
-      letterSpacing: config.letterSpacing * 0.5,
+      letterSpacing: theme.typography.letterSpacing * 0.5,
       fontWeight: '500',
     },
     multilineInput: {
@@ -365,24 +365,24 @@ export default function AddTaskScreen() {
       textAlignVertical: 'top',
     },
     dateTimeButton: {
-      backgroundColor: colors.surfaceVariant,
+      backgroundColor: theme.colors.surfaceVariant,
       borderWidth: 1,
-      borderColor: colors.border,
-      borderRadius: config.borderRadius,
+      borderColor: theme.colors.border,
+      borderRadius: theme.borderRadius.md,
       padding: 12,
     },
     dateTimeText: {
-      fontFamily: config.fontFamily.bold,
-      fontSize: 14 * fontScale,
-      color: colors.text,
-      letterSpacing: config.letterSpacing * 0.8,
+      fontFamily: theme.typography.fontFamily.bold,
+      fontSize: theme.typography.fontSize.md,
+      color: theme.colors.text,
+      letterSpacing: theme.typography.letterSpacing * 0.8,
       fontWeight: '700',
     },
     toggleCard: {
-      backgroundColor: isTerminalTheme ? colors.surfaceVariant : colors.surface,
+      backgroundColor: isTerminalTheme ? theme.colors.surfaceVariant : theme.colors.surface,
       borderWidth: isTerminalTheme ? 1 : 0,
-      borderColor: colors.border,
-      borderRadius: isTerminalTheme ? config.borderRadius : 20,
+      borderColor: theme.colors.border,
+      borderRadius: isTerminalTheme ? theme.borderRadius.md : theme.borderRadius.lg,
       padding: isTerminalTheme ? 12 : 20,
       marginBottom: 20,
       marginHorizontal: isTerminalTheme ? 0 : 4,
@@ -400,31 +400,31 @@ export default function AddTaskScreen() {
       alignItems: 'center',
     },
     toggleLabel: {
-      fontFamily: config.fontFamily.bold,
-      fontSize: 14 * fontScale,
-      color: colors.text,
-      letterSpacing: config.letterSpacing,
+      fontFamily: theme.typography.fontFamily.bold,
+      fontSize: theme.typography.fontSize.md,
+      color: theme.colors.text,
+      letterSpacing: theme.typography.letterSpacing,
       fontWeight: '800',
     },
     toggleSubtext: {
-      fontFamily: config.fontFamily.regular,
+      fontFamily: theme.typography.fontFamily.regular,
       fontSize: 11,
-      color: colors.textMuted,
+      color: theme.colors.textMuted,
       marginTop: 4,
-      letterSpacing: config.letterSpacing * 0.4,
+      letterSpacing: theme.typography.letterSpacing * 0.4,
       lineHeight: 16,
     },
     intervalSection: {
       marginTop: 12,
       paddingTop: 12,
       borderTopWidth: 1,
-      borderTopColor: colors.border,
+      borderTopColor: theme.colors.border,
     },
     intervalLabel: {
-      fontFamily: config.fontFamily.medium,
+      fontFamily: theme.typography.fontFamily.medium,
       fontSize: 10,
-      color: colors.textSecondary,
-      letterSpacing: config.letterSpacing * 0.4,
+      color: theme.colors.textSecondary,
+      letterSpacing: theme.typography.letterSpacing * 0.4,
       marginBottom: 8,
     },
     chipContainer: {
@@ -433,10 +433,10 @@ export default function AddTaskScreen() {
       gap: 8,
     },
     chip: {
-      backgroundColor: colors.surfaceVariant,
+      backgroundColor: theme.colors.surfaceVariant,
       borderWidth: 1,
-      borderColor: colors.border,
-      borderRadius: config.borderRadius,
+      borderColor: theme.colors.border,
+      borderRadius: theme.borderRadius.md,
       paddingHorizontal: 12,
       paddingVertical: 8,
       minHeight: 40,
@@ -444,17 +444,17 @@ export default function AddTaskScreen() {
       alignItems: 'center',
     },
     selectedChip: {
-      backgroundColor: colors.accent,
-      borderColor: colors.accent,
+      backgroundColor: theme.colors.accent,
+      borderColor: theme.colors.accent,
     },
     chipText: {
-      fontFamily: config.fontFamily.medium,
+      fontFamily: theme.typography.fontFamily.medium,
       fontSize: 10,
-      color: colors.textSecondary,
-      letterSpacing: config.letterSpacing * 0.4,
+      color: theme.colors.textSecondary,
+      letterSpacing: theme.typography.letterSpacing * 0.4,
     },
     selectedChipText: {
-      color: colors.background,
+      color: theme.colors.background,
     },
     actionContainer: {
       flexDirection: 'row',
@@ -463,10 +463,10 @@ export default function AddTaskScreen() {
     },
     cancelButton: {
       flex: 1,
-      backgroundColor: isTerminalTheme ? 'transparent' : colors.surfaceVariant,
+      backgroundColor: isTerminalTheme ? 'transparent' : theme.colors.surfaceVariant,
       borderWidth: isTerminalTheme ? 1 : 0,
-      borderColor: colors.textMuted,
-      borderRadius: isTerminalTheme ? config.borderRadius : 28,
+      borderColor: theme.colors.textMuted,
+      borderRadius: isTerminalTheme ? theme.borderRadius.md : theme.borderRadius.xl,
       paddingVertical: isTerminalTheme ? 16 : 20,
       alignItems: 'center',
       ...(isTerminalTheme ? {} : {
@@ -478,17 +478,17 @@ export default function AddTaskScreen() {
       }),
     },
     cancelButtonText: {
-      fontFamily: config.fontFamily.bold,
+      fontFamily: theme.typography.fontFamily.bold,
       fontSize: 11,
-      color: colors.textMuted,
-      letterSpacing: config.letterSpacing * 0.8,
+      color: theme.colors.textMuted,
+      letterSpacing: theme.typography.letterSpacing * 0.8,
     },
     submitButton: {
       flex: 1,
-      backgroundColor: colors.accent,
+      backgroundColor: theme.colors.accent,
       borderWidth: isTerminalTheme ? 1 : 0,
-      borderColor: colors.accent,
-      borderRadius: isTerminalTheme ? config.borderRadius : 28,
+      borderColor: theme.colors.accent,
+      borderRadius: isTerminalTheme ? theme.borderRadius.md : theme.borderRadius.xl,
       paddingVertical: isTerminalTheme ? 16 : 20,
       alignItems: 'center',
       ...(isTerminalTheme ? {} : {
@@ -500,10 +500,10 @@ export default function AddTaskScreen() {
       }),
     },
     submitButtonText: {
-      fontFamily: config.fontFamily.bold,
-      fontSize: 14 * fontScale,
-      color: colors.background,
-      letterSpacing: config.letterSpacing,
+      fontFamily: theme.typography.fontFamily.bold,
+      fontSize: theme.typography.fontSize.md,
+      color: theme.colors.background,
+      letterSpacing: theme.typography.letterSpacing,
       fontWeight: '800',
     },
     bottomPadding: {
@@ -525,7 +525,7 @@ export default function AddTaskScreen() {
             <Ionicons 
               name="arrow-back" 
               size={20} 
-              color={colors.textSecondary} 
+              color={theme.colors.textSecondary} 
             />
           </TouchableOpacity>
           <Text style={styles.terminalTitle}>
@@ -556,7 +556,7 @@ export default function AddTaskScreen() {
             value={title}
             onChangeText={setTitle}
             placeholder="Enter task name..."
-            placeholderTextColor={colors.textMuted}
+            placeholderTextColor={theme.colors.textMuted}
           />
         </View>
 
@@ -571,7 +571,7 @@ export default function AddTaskScreen() {
             value={description}
             onChangeText={setDescription}
             placeholder="Optional task description..."
-            placeholderTextColor={colors.textMuted}
+            placeholderTextColor={theme.colors.textMuted}
             multiline
             numberOfLines={3}
             textAlignVertical="top"
@@ -652,8 +652,8 @@ export default function AddTaskScreen() {
             <Switch
               value={isRecurring}
               onValueChange={setIsRecurring}
-              trackColor={{ false: colors.border, true: colors.textSecondary }}
-              thumbColor={isRecurring ? colors.accent : colors.textMuted}
+              trackColor={{ false: theme.colors.border, true: theme.colors.textSecondary }}
+              thumbColor={isRecurring ? theme.colors.accent : theme.colors.textMuted}
             />
           </View>
           
@@ -699,8 +699,8 @@ export default function AddTaskScreen() {
             <Switch
               value={ignoreWorkingHours}
               onValueChange={setIgnoreWorkingHours}
-              trackColor={{ false: colors.border, true: colors.textSecondary }}
-              thumbColor={ignoreWorkingHours ? colors.accent : colors.textMuted}
+              trackColor={{ false: theme.colors.border, true: theme.colors.textSecondary }}
+              thumbColor={ignoreWorkingHours ? theme.colors.accent : theme.colors.textMuted}
             />
           </View>
         </View>
@@ -716,8 +716,8 @@ export default function AddTaskScreen() {
             <Switch
               value={enableSequentialNotification}
               onValueChange={setEnableSequentialNotification}
-              trackColor={{ false: colors.border, true: colors.textSecondary }}
-              thumbColor={enableSequentialNotification ? colors.accent : colors.textMuted}
+              trackColor={{ false: theme.colors.border, true: theme.colors.textSecondary }}
+              thumbColor={enableSequentialNotification ? theme.colors.accent : theme.colors.textMuted}
             />
           </View>
           

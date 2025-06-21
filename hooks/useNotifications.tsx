@@ -29,14 +29,14 @@ const setupNotificationHandler = (colors: any, isDark: boolean) => {
 export const useNotifications = () => {
   const { tasks, toggleComplete, delayTask } = useTaskStore();
   const { getSettings } = useMainStore();
-  const { colors, isDark } = useTheme();
+  const { theme } = useTheme();
   
   const settings = getSettings();
 
   useEffect(() => {
-    setupNotificationHandler(colors, isDark);
+    setupNotificationHandler(theme.colors, theme.isDark);
     setupNotifications();
-  }, [colors, isDark, settings.defaultDelay]);
+  }, [theme.colors, theme.isDark, settings.defaultDelay]);
 
   const setupNotifications = async () => {
     // Request permissions
@@ -229,7 +229,7 @@ export const useNotifications = () => {
           },
           // Theme-aware styling (Android)
           ...(Platform.OS === 'android' && {
-            color: colors.accent,
+            color: theme.colors.accent,
             priority: Notifications.AndroidNotificationPriority.HIGH,
             vibrate: [0, 250, 250, 250],
             sound: 'default'
@@ -260,7 +260,7 @@ export const useNotifications = () => {
             },
             // Theme-aware styling (Android)
             ...(Platform.OS === 'android' && {
-              color: colors.accent,
+              color: theme.colors.accent,
               priority: Notifications.AndroidNotificationPriority.HIGH,
               vibrate: [0, 250, 250, 250],
               sound: 'default'

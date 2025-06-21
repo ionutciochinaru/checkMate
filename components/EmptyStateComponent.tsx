@@ -18,9 +18,9 @@ export default function EmptyStateComponent({
   selectedFilter,
   setSelectedFilter
 }: EmptyStateComponentProps) {
-  const { colors } = useTheme();
+  const { theme } = useTheme();
   
-  const styles = useThemedStyles((colors, isDark, fontScale, reducedMotion, config) => StyleSheet.create({
+  const styles = useThemedStyles((theme) => StyleSheet.create({
     emptyState: {
       flex: 1,
       justifyContent: 'center',
@@ -29,8 +29,8 @@ export default function EmptyStateComponent({
     },
     emptyTitle: {
       fontFamily: 'JetBrainsMono_700Bold',
-      fontSize: 18 * fontScale,
-      color: colors.text,
+      fontSize: 18 * 1.0,
+      color: theme.colors.text,
       letterSpacing: 1,
       marginBottom: 8,
       fontWeight: 'normal',
@@ -38,8 +38,8 @@ export default function EmptyStateComponent({
     },
     emptySubtitle: {
       fontFamily: 'JetBrainsMono_400Regular',
-      fontSize: 12 * fontScale,
-      color: colors.textSecondary,
+      fontSize: 12 * 1.0,
+      color: theme.colors.textSecondary,
       letterSpacing: 0.5,
       marginBottom: 16,
       textAlign: 'center',
@@ -47,11 +47,11 @@ export default function EmptyStateComponent({
     },
     helpText: {
       fontFamily: 'JetBrainsMono_400Regular',
-      fontSize: 12 * fontScale,
-      color: colors.textMuted,
+      fontSize: 12 * 1.0,
+      color: theme.colors.textMuted,
       letterSpacing: 0.5,
       marginBottom: 6,
-      lineHeight: 16 * fontScale,
+      lineHeight: 16 * 1.0,
       textAlign: 'center',
     },
     emptyStateButton: {
@@ -59,14 +59,14 @@ export default function EmptyStateComponent({
     },
     emptyCommand: {
       fontFamily: 'JetBrainsMono_500Medium',
-      fontSize: 12 * fontScale,
-      color: colors.surface,
-      backgroundColor: colors.accent,
+      fontSize: 12 * 1.0,
+      color: theme.colors.surface,
+      backgroundColor: theme.colors.accent,
       paddingHorizontal: 12,
       paddingVertical: 6,
       borderWidth: 1,
-      borderColor: colors.border,
-      borderRadius: config.borderRadius,
+      borderColor: theme.colors.border,
+      borderRadius: theme.borderRadius.md,
       letterSpacing: 0.5,
       textAlign: 'center',
       fontWeight: 'normal',
@@ -82,7 +82,7 @@ export default function EmptyStateComponent({
     filterEmptyTitle: {
       fontFamily: 'JetBrainsMono_700Bold',
       fontSize: 16,
-      color: colors.text,
+      color: theme.colors.text,
       letterSpacing: 1,
       marginBottom: 8,
       fontWeight: 'normal',
@@ -91,7 +91,7 @@ export default function EmptyStateComponent({
     filterEmptySubtitle: {
       fontFamily: 'JetBrainsMono_400Regular',
       fontSize: 12,
-      color: colors.textSecondary,
+      color: theme.colors.textSecondary,
       letterSpacing: 0.5,
       marginBottom: 24,
       textAlign: 'center',
@@ -102,17 +102,17 @@ export default function EmptyStateComponent({
       alignItems: 'center',
     },
     filterSuggestion: {
-      backgroundColor: colors.surfaceVariant,
+      backgroundColor: theme.colors.surfaceVariant,
       borderWidth: 1,
-      borderColor: colors.border,
+      borderColor: theme.colors.border,
       paddingHorizontal: 16,
       paddingVertical: 8,
-      borderRadius: config.borderRadius,
+      borderRadius: theme.borderRadius.md,
     },
     filterSuggestionText: {
       fontFamily: 'JetBrainsMono_500Medium',
       fontSize: 12,
-      color: colors.textSecondary,
+      color: theme.colors.textSecondary,
       letterSpacing: 0.5,
       fontWeight: 'normal',
     },
@@ -124,7 +124,7 @@ export default function EmptyStateComponent({
         <Ionicons 
           name="list-outline" 
           size={48} 
-          color={colors.textMuted} 
+          color={theme.colors.textMuted} 
           style={{ marginBottom: 16 }}
         />
         <Text style={styles.emptyTitle}>
@@ -144,7 +144,7 @@ export default function EmptyStateComponent({
             <Ionicons 
               name="add" 
               size={16} 
-              color={colors.surface} 
+              color={theme.colors.surface} 
             />
             <Text style={styles.emptyCommand}>
               Add Task
@@ -161,7 +161,7 @@ export default function EmptyStateComponent({
         <Ionicons 
           name="search-outline" 
           size={48} 
-          color={colors.textMuted} 
+          color={theme.colors.textMuted} 
           style={{ marginBottom: 16 }}
         />
         <Text style={styles.filterEmptyTitle}>

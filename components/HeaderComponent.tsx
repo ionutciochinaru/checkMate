@@ -9,55 +9,55 @@ interface HeaderComponentProps {
 }
 
 export default function HeaderComponent(_props: HeaderComponentProps) {
-  const { colors, theme, setTheme } = useTheme();
+  const { theme, themeMode, setThemeMode } = useTheme();
 
 
 
   const isTerminalTheme = true;
   
-  const styles = useThemedStyles((colors, isDark, fontScale, reducedMotion, config) => StyleSheet.create({
+  const styles = useThemedStyles((theme) => StyleSheet.create({
     header: {
-      backgroundColor: colors.surface,
+      backgroundColor: theme.colors.surface,
       borderBottomWidth: isTerminalTheme ? 2 : 0,
-      borderBottomColor: colors.border,
+      borderBottomColor: theme.colors.border,
       paddingTop: isTerminalTheme ? 50 : 60,
       paddingBottom: 0,
-      paddingHorizontal: 16,
+      paddingHorizontal: theme.spacing.md,
       ...(isTerminalTheme ? {} : {
-        shadowColor: '#000000',
+        shadowColor: theme.isDark ? '#000000' : '#000000',
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.1,
         shadowRadius: 4,
-        elevation: config.elevation.low,
+        elevation: theme.elevation.low,
       }),
     },
     filterContainer: {
-      backgroundColor: colors.surface,
+      backgroundColor: theme.colors.surface,
       paddingHorizontal: 0,
       paddingVertical: 0,
       position: 'relative',
-      marginBottom: 16,
+      marginBottom: theme.spacing.md,
     },
     filterRow: {
       flexDirection: 'row',
       justifyContent: 'space-between',
       alignItems: 'center',
       flexWrap: 'wrap',
-      gap: 8,
+      gap: theme.spacing.sm,
     },
     terminalBar: {
       flexDirection: 'row',
       justifyContent: 'space-between',
       alignItems: 'center',
-      marginBottom: 8,
+      marginBottom: theme.spacing.sm,
       flexWrap: 'wrap',
       minHeight: 35,
     },
     terminalTitle: {
-      fontFamily: config.fontFamily.bold,
-      fontSize: isTerminalTheme ? 20 * fontScale : 28 * fontScale,
-      color: colors.text,
-      letterSpacing: config.letterSpacing,
+      fontFamily: theme.typography.fontFamily.bold,
+      fontSize: isTerminalTheme ? theme.typography.fontSize.xxl : 28,
+      color: theme.colors.text,
+      letterSpacing: theme.typography.letterSpacing,
       fontWeight: isTerminalTheme ? '800' : '600',
       flexShrink: 1,
     },
@@ -65,28 +65,28 @@ export default function HeaderComponent(_props: HeaderComponentProps) {
     topRightControls: {
       flexDirection: 'row',
       alignItems: 'center',
-      gap: 10,
+      gap: theme.spacing.sm,
       flexShrink: 0,
     },
     themeToggle: {
-      paddingHorizontal: 10,
-      paddingVertical: 8,
-      backgroundColor: isTerminalTheme ? colors.surfaceVariant : colors.accent,
+      paddingHorizontal: theme.spacing.sm,
+      paddingVertical: theme.spacing.sm,
+      backgroundColor: isTerminalTheme ? theme.colors.surfaceVariant : theme.colors.accent,
       borderWidth: isTerminalTheme ? 1 : 0,
-      borderColor: colors.accent,
-      borderRadius: isTerminalTheme ? config.borderRadius : 20,
+      borderColor: theme.colors.accent,
+      borderRadius: isTerminalTheme ? theme.borderRadius.md : theme.borderRadius.lg,
       minWidth: isTerminalTheme ? 28 : 40,
       minHeight: isTerminalTheme ? 28 : 40,
       alignItems: 'center',
       justifyContent: 'center',
     },
     settingsButton: {
-      paddingHorizontal: 10,
-      paddingVertical: 8,
-      backgroundColor: isTerminalTheme ? colors.surfaceVariant : colors.accent,
+      paddingHorizontal: theme.spacing.sm,
+      paddingVertical: theme.spacing.sm,
+      backgroundColor: isTerminalTheme ? theme.colors.surfaceVariant : theme.colors.accent,
       borderWidth: isTerminalTheme ? 1 : 0,
-      borderColor: colors.accent,
-      borderRadius: isTerminalTheme ? config.borderRadius : 15,
+      borderColor: theme.colors.accent,
+      borderRadius: isTerminalTheme ? theme.borderRadius.md : theme.borderRadius.md,
       minWidth: isTerminalTheme ? 28 : 40,
       minHeight: isTerminalTheme ? 28 : 40,
       alignItems: 'center',
@@ -103,14 +103,14 @@ export default function HeaderComponent(_props: HeaderComponentProps) {
           <TouchableOpacity
             style={styles.themeToggle}
             onPress={() => {
-              const nextTheme = theme === 'dark' ? 'light' : 'dark';
-              setTheme(nextTheme);
+              const nextTheme = themeMode === 'dark' ? 'light' : 'dark';
+              setThemeMode(nextTheme);
             }}
           >
             <Ionicons 
-              name={theme === 'dark' ? 'moon' : 'sunny'} 
+              name={themeMode === 'dark' ? 'moon' : 'sunny'} 
               size={16} 
-              color={colors.textSecondary} 
+              color={theme.colors.textSecondary} 
             />
           </TouchableOpacity>
           <TouchableOpacity
@@ -120,7 +120,7 @@ export default function HeaderComponent(_props: HeaderComponentProps) {
             <Ionicons 
               name="settings-outline" 
               size={16} 
-              color={colors.textSecondary} 
+              color={theme.colors.textSecondary} 
             />
           </TouchableOpacity>
         </View>

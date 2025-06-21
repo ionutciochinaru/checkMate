@@ -15,67 +15,67 @@ import {
 } from '@expo-google-fonts/jetbrains-mono';
 import {SafeAreaProvider} from "react-native-safe-area-context";
 
-const createPaperTheme = (isDark: boolean) => ({
+const createPaperTheme = (theme: any) => ({
   colors: {
-    primary: isDark ? '#f5f5f0' : '#1a1a1a',
-    onPrimary: isDark ? '#1a1a1a' : '#f5f5f0',
-    primaryContainer: isDark ? '#2a2a2a' : '#e8e8e0',
-    onPrimaryContainer: isDark ? '#f5f5f0' : '#1a1a1a',
-    secondary: isDark ? '#c0c0c0' : '#4a4a4a',
-    onSecondary: isDark ? '#1a1a1a' : '#f5f5f0',
-    secondaryContainer: isDark ? '#3a3a3a' : '#d0d0c8',
-    onSecondaryContainer: isDark ? '#f5f5f0' : '#1a1a1a',
-    tertiary: isDark ? '#f5f5f0' : '#2a2a2a',
-    onTertiary: isDark ? '#1a1a1a' : '#f5f5f0',
-    tertiaryContainer: isDark ? '#2a2a2a' : '#e8e8e0',
-    onTertiaryContainer: isDark ? '#f5f5f0' : '#1a1a1a',
-    error: isDark ? '#ff453a' : '#ff3b30',
-    onError: '#f5f5f0',
-    errorContainer: isDark ? '#3a1a1a' : '#ffeae8',
-    onErrorContainer: isDark ? '#ff453a' : '#1a1a1a',
-    background: isDark ? '#0a0a0a' : '#f5f5f0',
-    onBackground: isDark ? '#f5f5f0' : '#1a1a1a',
-    surface: isDark ? '#1a1a1a' : '#f5f5f0',
-    onSurface: isDark ? '#f5f5f0' : '#1a1a1a',
-    surfaceVariant: isDark ? '#2a2a2a' : '#e8e8e0',
-    onSurfaceVariant: isDark ? '#c0c0c0' : '#4a4a4a',
-    outline: isDark ? '#3a3a3a' : '#d0d0c8',
-    outlineVariant: isDark ? '#2a2a2a' : '#e8e8e0',
-    shadow: '#000000',
-    scrim: '#000000',
-    inverseSurface: isDark ? '#f5f5f0' : '#1a1a1a',
-    inverseOnSurface: isDark ? '#1a1a1a' : '#f5f5f0',
-    inversePrimary: isDark ? '#1a1a1a' : '#8a8a8a',
+    primary: theme.colors.text,
+    onPrimary: theme.colors.textInverse,
+    primaryContainer: theme.colors.surfaceVariant,
+    onPrimaryContainer: theme.colors.text,
+    secondary: theme.colors.textSecondary,
+    onSecondary: theme.colors.textInverse,
+    secondaryContainer: theme.colors.surfaceVariant,
+    onSecondaryContainer: theme.colors.text,
+    tertiary: theme.colors.text,
+    onTertiary: theme.colors.textInverse,
+    tertiaryContainer: theme.colors.surfaceVariant,
+    onTertiaryContainer: theme.colors.text,
+    error: theme.colors.danger,
+    onError: theme.colors.textInverse,
+    errorContainer: theme.colors.danger,
+    onErrorContainer: theme.colors.text,
+    background: theme.colors.background,
+    onBackground: theme.colors.text,
+    surface: theme.colors.surface,
+    onSurface: theme.colors.text,
+    surfaceVariant: theme.colors.surfaceVariant,
+    onSurfaceVariant: theme.colors.textSecondary,
+    outline: theme.colors.border,
+    outlineVariant: theme.colors.border,
+    shadow: theme.isDark ? '#000000' : '#000000',
+    scrim: theme.isDark ? '#000000' : '#000000',
+    inverseSurface: theme.colors.textInverse,
+    inverseOnSurface: theme.colors.text,
+    inversePrimary: theme.colors.textMuted,
     elevation: {
       level0: 'transparent',
-      level1: isDark ? '#1a1a1a' : '#f8f8f3',
-      level2: isDark ? '#2a2a2a' : '#f2f2ed',
-      level3: isDark ? '#3a3a3a' : '#eaeae5',
-      level4: isDark ? '#4a4a4a' : '#e8e8e3',
-      level5: isDark ? '#5a5a5a' : '#e5e5e0',
+      level1: theme.colors.surface,
+      level2: theme.colors.surfaceVariant,
+      level3: theme.colors.surfaceVariant,
+      level4: theme.colors.surfaceVariant,
+      level5: theme.colors.surfaceVariant,
     },
-    surfaceDisabled: isDark ? 'rgba(245, 245, 240, 0.12)' : 'rgba(26, 26, 26, 0.12)',
-    onSurfaceDisabled: isDark ? 'rgba(245, 245, 240, 0.38)' : 'rgba(26, 26, 26, 0.38)',
-    backdrop: isDark ? 'rgba(0, 0, 0, 0.6)' : 'rgba(74, 74, 74, 0.4)',
+    surfaceDisabled: theme.colors.textMuted,
+    onSurfaceDisabled: theme.colors.textMuted,
+    backdrop: theme.isDark ? 'rgba(0, 0, 0, 0.6)' : 'rgba(74, 74, 74, 0.4)',
   },
 });
 
 const ThemedLayout = () => {
-  const { colors, isDark } = useTheme();
+  const { theme } = useTheme();
   // Initialize notifications system
   useNotifications();
   
   return (
-    <PaperProvider theme={createPaperTheme(isDark)}>
+    <PaperProvider theme={createPaperTheme(theme)}>
       <Stack
         screenOptions={{
           headerStyle: {
-            backgroundColor: colors.surface,
+            backgroundColor: theme.colors.surface,
           },
-          headerTintColor: colors.text,
+          headerTintColor: theme.colors.text,
           headerTitleStyle: {
-            fontFamily: 'JetBrainsMono_500Medium',
-            fontSize: 16,
+            fontFamily: theme.typography.fontFamily.medium,
+            fontSize: theme.typography.fontSize.lg,
           },
         }}
       >
@@ -93,7 +93,7 @@ const ThemedLayout = () => {
           }} 
         />
       </Stack>
-      <StatusBar style={isDark ? 'light' : 'dark'} backgroundColor={colors.background} />
+      <StatusBar style={theme.isDark ? 'light' : 'dark'} backgroundColor={theme.colors.background} />
     </PaperProvider>
   );
 };
