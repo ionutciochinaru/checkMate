@@ -1,7 +1,7 @@
 import React from 'react';
 import { TouchableOpacity, Text, StyleSheet } from 'react-native';
 import { router } from 'expo-router';
-import { useThemedStyles, useTheme } from '../hooks/useTheme';
+import { useThemedStyles } from '../hooks/useTheme';
 import { FilterType } from '../hooks/useTaskFilter';
 
 interface AddButtonComponentProps {

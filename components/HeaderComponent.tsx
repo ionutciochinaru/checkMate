@@ -2,26 +2,16 @@ import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { router } from 'expo-router';
 import { useThemedStyles, useTheme } from '../hooks/useTheme';
-import { useMainStore } from '../hooks/useTaskStore';
-import { formatDateWithPreference } from '../utils/dateFormatters';
 import { Ionicons } from '@expo/vector-icons';
 
-interface HeaderComponentProps {}
+interface HeaderComponentProps {
+  // No props needed yet
+}
 
-export default function HeaderComponent({}: HeaderComponentProps) {
-  const { colors, isDark, theme, setTheme, config } = useTheme();
-  const { getSettings } = useMainStore();
-  
-  const settings = getSettings();
+export default function HeaderComponent(_props: HeaderComponentProps) {
+  const { colors, theme, setTheme } = useTheme();
 
 
-  // Format current date using user preferences
-  const currentDate = formatDateWithPreference(
-    new Date(), 
-    settings.dateFormat, 
-    settings.dateUseMonthNames, 
-    settings.dateSeparator
-  );
 
   const isTerminalTheme = true;
   

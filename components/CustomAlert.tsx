@@ -30,7 +30,7 @@ const CustomAlert: React.FC<CustomAlertProps> = ({
   buttons = [{ text: 'OK' }],
   onDismiss
 }) => {
-  const { colors, reducedMotion } = useTheme();
+  const { reducedMotion } = useTheme();
   const [isVisible, setIsVisible] = useState(visible);
   
   // Animation values

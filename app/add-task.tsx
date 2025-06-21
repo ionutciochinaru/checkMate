@@ -20,7 +20,7 @@ import { Ionicons } from '@expo/vector-icons';
 export default function AddTaskScreen() {
   const { addTask, tasks, updateTask } = useTaskStore();
   const { getSettings } = useMainStore();
-  const { colors, config } = useTheme();
+  const { colors } = useTheme();
   const { edit } = useLocalSearchParams();
   
   const settings = getSettings();
@@ -136,7 +136,7 @@ export default function AddTaskScreen() {
       setTimeout(() => {
         router.back();
       }, 100);
-    } catch (error) {
+    } catch {
       showAlert('Error', 'Failed to save task');
     }
   };

@@ -1,5 +1,4 @@
 import { useTaskStore } from '../stores/taskStore';
-import { Task } from '../types/task';
 
 // Realistic task data
 const mockTasks = [

@@ -1,11 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { 
   View, 
   ScrollView, 
   Text, 
   StyleSheet, 
   TouchableOpacity, 
-  TextInput,
   Linking,
   ActivityIndicator
 } from 'react-native';
@@ -20,7 +19,6 @@ import MockDataGenerator from '../components/MockDataGenerator';
 import DeleteAllTasksComponent from '../components/DeleteAllTasksComponent';
 import { showAlert } from '../components/CustomAlert';
 import { availableDateFormats, availableSeparators, availableTimeFormats, getDateFormatDisplayName, getTimeFormatDisplayName } from '../utils/dateFormatters';
-import { DateFormat, DateSeparator, TimeFormat } from '../types/task';
 import { Ionicons } from '@expo/vector-icons';
 
 export default function SettingsScreen() {
@@ -31,9 +29,8 @@ export default function SettingsScreen() {
     loadSettingsForPage, 
     saveAndExit, 
     updateSetting,
-    updateMultipleSettings 
   } = useSettingsStore();
-  const { colors, config } = useTheme();
+  const { colors } = useTheme();
 
   const [showStartPicker, setShowStartPicker] = useState(false);
   const [showEndPicker, setShowEndPicker] = useState(false);
@@ -810,7 +807,7 @@ Restrict notifications to working hours only
                   await Linking.openURL(url);
                   opened = true;
                   break;
-                } catch (error) {
+                } catch {
                   continue;
                 }
               }

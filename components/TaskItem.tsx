@@ -80,13 +80,6 @@ const TaskItem: React.FC<TaskItemProps> = React.memo(({ task }) => {
   const [isDelaying, setIsDelaying] = useState(false);
   const [isProcessingNext, setIsProcessingNext] = useState(false);
 
-  // Get day info for completed tasks
-  const getDayInfo = () => {
-    const reminderDate = task.reminderTime instanceof Date ? task.reminderTime : new Date(task.reminderTime);
-    const dayNumber = reminderDate.getDate();
-    const dayName = reminderDate.toLocaleDateString('en-US', { weekday: 'short' }).toUpperCase();
-    return { dayNumber, dayName };
-  };
 
   // Truncate description text
   const getTruncatedDescription = (text: string, maxLength: number = 50) => {
@@ -95,34 +88,8 @@ const TaskItem: React.FC<TaskItemProps> = React.memo(({ task }) => {
     return text.substring(0, maxLength).trim() + '...';
   };
 
-  // Get time info for display with before/after delay logic
-  const getTimeInfo = () => {
-    const reminderDate = task.reminderTime instanceof Date ? task.reminderTime : new Date(task.reminderTime);
-    const now = new Date();
-    const timeDiff = reminderDate.getTime() - now.getTime();
-    const minutesLeft = Math.ceil(timeDiff / (1000 * 60));
-    
-    if (minutesLeft < 0) return 'Overdue';
-    if (minutesLeft < 60) return `${minutesLeft} min`;
-    
-    const hoursLeft = Math.ceil(minutesLeft / 60);
-    if (hoursLeft < 24) return `${hoursLeft}h ${minutesLeft % 60}m`;
-    
-    return formatTime(reminderDate, settings.timeFormat);
-  };
 
-  // Get formatted time for display
-  const getCurrentTime = () => {
-    const reminderDate = task.reminderTime instanceof Date ? task.reminderTime : new Date(task.reminderTime);
-    return formatTime(reminderDate, settings.timeFormat);
-  };
 
-  // Get original time (before delays) for display
-  const getOriginalTime = () => {
-    if (!task.originalReminderTime) return null;
-    const originalDate = task.originalReminderTime instanceof Date ? task.originalReminderTime : new Date(task.originalReminderTime);
-    return formatTime(originalDate, settings.timeFormat);
-  };
 
   // Get natural language time display (Option 1 format)
   const getFormattedTimeDisplay = (dateToUse?: Date, isOriginal = false) => {
@@ -165,42 +132,6 @@ const TaskItem: React.FC<TaskItemProps> = React.memo(({ task }) => {
     return prefix + timePhrase;
   };
 
-  // Legacy function for backward compatibility if needed elsewhere
-  const getDateInfo = (dateToUse?: Date) => {
-    const reminderDate = dateToUse || (task.reminderTime instanceof Date ? task.reminderTime : new Date(task.reminderTime));
-    const now = new Date();
-    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-    const taskDate = new Date(reminderDate.getFullYear(), reminderDate.getMonth(), reminderDate.getDate());
-    
-    const dayDifference = Math.floor((taskDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
-    
-    let relativeDateText = '';
-    let fullDateText = reminderDate.toLocaleDateString('en-US', { 
-      month: 'short', 
-      day: 'numeric',
-      year: reminderDate.getFullYear() !== now.getFullYear() ? 'numeric' : undefined
-    });
-
-    if (dayDifference === 0) {
-      relativeDateText = 'today';
-    } else if (dayDifference === 1) {
-      relativeDateText = 'tomorrow';
-    } else if (dayDifference === -1) {
-      relativeDateText = 'yesterday';
-    } else if (dayDifference > 1) {
-      relativeDateText = `in ${dayDifference} days`;
-    } else if (dayDifference < -1) {
-      relativeDateText = `${Math.abs(dayDifference)} days ago`;
-    } else {
-      relativeDateText = fullDateText;
-    }
-
-    return {
-      relative: relativeDateText,
-      full: fullDateText,
-      dayDifference
-    };
-  };
 
   // Check if task was delayed
   const wasDelayed = () => {
@@ -776,7 +707,7 @@ const TaskItem: React.FC<TaskItemProps> = React.memo(({ task }) => {
         <Text style={styles.taskTitle}>{task.title}</Text>
         
         {task.description && (
-          <Text style={styles.taskDescription}>// {task.description}</Text>
+          <Text style={styles.taskDescription}>{`// ${task.description}`}</Text>
         )}
         
         {/* Unified Time Information Container */}

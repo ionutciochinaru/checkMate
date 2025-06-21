@@ -5,7 +5,6 @@ import {
   useSharedValue, 
   useAnimatedStyle, 
   withTiming, 
-  interpolateColor 
 } from 'react-native-reanimated';
 import { useMainStore } from './useTaskStore';
 
@@ -190,7 +189,7 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         if (savedThemeStyle && savedThemeStyle === 'terminal') {
           setThemeStyleState(savedThemeStyle as ThemeStyle);
         }
-      } catch (error) {
+      } catch {
         // Use default theme
       }
     };
@@ -218,7 +217,7 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     setThemeState(newTheme);
     try {
       await AsyncStorage.setItem('theme', newTheme);
-    } catch (error) {
+    } catch {
       // Silently fail theme save
     }
   };
@@ -227,7 +226,7 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     setThemeStyleState(newThemeStyle);
     try {
       await AsyncStorage.setItem('themeStyle', newThemeStyle);
-    } catch (error) {
+    } catch {
       // Silently fail theme style save
     }
   };

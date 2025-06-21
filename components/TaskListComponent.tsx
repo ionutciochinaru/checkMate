@@ -2,7 +2,6 @@ import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { useThemedStyles, useTheme } from '../hooks/useTheme';
 import { FilterType } from '../hooks/useTaskFilter';
-import { formatDateWithPreference } from '../utils/dateFormatters';
 import { Ionicons } from '@expo/vector-icons';
 import TaskItem from './TaskItem';
 
