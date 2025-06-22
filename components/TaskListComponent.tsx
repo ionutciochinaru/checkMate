@@ -219,7 +219,7 @@ export default function TaskListComponent({
       lineHeight: theme.typography.fontSize.lg * 1.4,
     },
     bottomPadding: {
-      height: 80,
+      height: 10,
     },
   }));
 
