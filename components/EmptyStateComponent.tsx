@@ -25,7 +25,7 @@ export default function EmptyStateComponent({
       flex: 1,
       justifyContent: 'center',
       alignItems: 'center',
-      paddingVertical: 10,
+      paddingVertical: 5,
     },
     emptyTitle: {
       fontFamily: 'JetBrainsMono_700Bold',
