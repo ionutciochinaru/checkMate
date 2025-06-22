@@ -1,53 +1,67 @@
 import React, {useState} from 'react';
-import {useTaskStore} from '../stores/taskStore';
+import {useTaskStore, useMainStore} from '../stores/taskStore';
 import {useThemedStyles, useTheme} from '../hooks/useTheme';
 import {useTaskFilter, FilterType} from '../hooks/useTaskFilter';
-import HeaderComponent from '../components/HeaderComponent';
 import EmptyStateComponent from '../components/EmptyStateComponent';
 import TaskListComponent from '../components/TaskListComponent';
 import AddButtonComponent from '../components/AddButtonComponent';
 import {Animated, ScrollView, StyleSheet} from 'react-native';
+import { router } from 'expo-router';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export default function HomeScreen() {
     const {tasks} = useTaskStore();
-    const {animatedBackgroundStyle} = useTheme();
-    const [showFilterDropdown, setShowFilterDropdown] = useState(false);
+    const {getSettings} = useMainStore();
+    const {animatedBackgroundStyle, toggleTheme, isDark} = useTheme();
     const [selectedFilter, setSelectedFilter] = useState<FilterType>('Today');
+    const [searchText, setSearchText] = useState('');
+    const insets = useSafeAreaInsets();
 
-    const {filteredTasks, pendingTasks, completedTasks} = useTaskFilter(tasks, selectedFilter);
+    const settings = getSettings();
+    const {filteredTasks, pendingTasks, completedTasks, getFilterCount} = useTaskFilter(tasks, selectedFilter, {
+        searchText,
+        workingHoursStart: settings.workingHoursStart,
+        workingHoursEnd: settings.workingHoursEnd,
+    });
 
     const styles = useThemedStyles((theme) => StyleSheet.create({
         container: {
             flex: 1,
+            backgroundColor: theme.colors.background,
+            paddingTop: insets.top,
         },
         content: {
             flex: 1,
         },
         contentContainer: {
-            paddingHorizontal: 5,
-            paddingVertical: 15
+            paddingHorizontal: theme.spacing.sm,
+            paddingTop: theme.spacing.md,
+            paddingBottom: theme.spacing.xl + insets.bottom,
         },
     }));
 
     return (
         <Animated.View style={[styles.container, animatedBackgroundStyle]}>
-            <HeaderComponent/>
-
             <ScrollView
                 style={styles.content}
                 contentContainerStyle={styles.contentContainer}
                 onTouchStart={() => {
-                    if (showFilterDropdown) setShowFilterDropdown(false);
+                    // Native pickers handle their own interactions
                 }}
+                scrollEventThrottle={16}
             >
                 <TaskListComponent
-                    tasks={tasks}
+                    tasks={filteredTasks}
                     pendingTasks={pendingTasks}
                     completedTasks={completedTasks}
                     selectedFilter={selectedFilter}
-                    showFilterDropdown={showFilterDropdown}
                     setSelectedFilter={setSelectedFilter}
-                    setShowFilterDropdown={setShowFilterDropdown}
+                    getFilterCount={getFilterCount}
+                    searchText={searchText}
+                    setSearchText={setSearchText}
+                    onThemeToggle={toggleTheme}
+                    isDark={isDark}
+                    onSettingsPress={() => router.push('/settings')}
                 />
                 <EmptyStateComponent
                     tasks={tasks}
@@ -61,8 +75,6 @@ export default function HomeScreen() {
                 tasks={tasks}
                 filteredTasks={filteredTasks}
                 selectedFilter={selectedFilter}
-                showFilterDropdown={showFilterDropdown}
-                setShowFilterDropdown={setShowFilterDropdown}
             />
         </Animated.View>
     );

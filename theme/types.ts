@@ -25,7 +25,9 @@ export interface ThemeColors {
   cardPrimary: string[];
   cardCompleted: string;
   cardText: string;
+  cardTextDark: string;
   cardTextInverse: string;
+  cardTextInverseDark: string;
 }
 
 export interface ThemeSpacing {

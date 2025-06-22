@@ -34,7 +34,9 @@ export const darkTheme: Theme = {
       '#282828', // dark gray variation 5
     ],
     cardCompleted: '#1a1a1a',
-    cardText: '#ffffff',
+    cardTextDark: '#ff4444',
+    cardText: '#ff4444',
+    cardTextInverseDark: '#000000',
     cardTextInverse: '#000000',
   },
   spacing,

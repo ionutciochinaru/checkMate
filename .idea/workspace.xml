@@ -4,16 +4,30 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="171acf02-a826-4aaf-937f-dcb4d8420b57" name="Changes" comment="project clean up">
-      <change afterPath="$PROJECT_DIR$/metro.config.js" afterDir="false" />
+    <list default="true" id="171acf02-a826-4aaf-937f-dcb4d8420b57" name="Changes" comment="fixed the build">
+      <change afterPath="$PROJECT_DIR$/components/DashboardTaskList.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/components/FilterBarLayout.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/components/FilterDropdownComponent.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/components/FilterInlineLayout.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/components/FilterPresetManager.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/components/FilterStackedLayout.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/components/FilterTabLayout.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/components/MinimalSectionedList.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/components/SearchSuggestions.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/components/SectionedTaskList.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/hooks/useFilterPresets.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CLAUDE.md" beforeDir="false" afterPath="$PROJECT_DIR$/CLAUDE.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/_layout.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/_layout.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/add-task.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/add-task.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/index.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/index.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/components/DeleteAllTasksComponent.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/components/DeleteAllTasksComponent.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/settings.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/settings.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/components/AddButtonComponent.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/components/AddButtonComponent.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/components/TaskItem.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/components/TaskItem.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/components/TaskListComponent.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/components/TaskListComponent.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/hooks/useTaskFilter.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/hooks/useTaskFilter.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/hooks/useTheme.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/hooks/useTheme.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/theme/darkTheme.ts" beforeDir="false" afterPath="$PROJECT_DIR$/theme/darkTheme.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/theme/types.ts" beforeDir="false" afterPath="$PROJECT_DIR$/theme/types.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -54,31 +68,31 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "ASKED_ADD_EXTERNAL_FILES": "true",
-    "ASKED_SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "git-widget-placeholder": "master",
-    "ignore.virus.scanning.warn.message": "true",
-    "last_opened_file_path": "D:/WebDev/checkMate",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.standard": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.standard": "",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "npm.android.executor": "Run",
-    "npm.start.executor": "Run",
-    "run.code.analysis.last.selected.profile": "pProject Default",
-    "settings.editor.selected.configurable": "terminal",
-    "ts.external.directory.path": "D:\\WebDev\\WebStorm 2024.1.2\\plugins\\javascript-plugin\\jsLanguageServicesImpl\\external",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ASKED_ADD_EXTERNAL_FILES&quot;: &quot;true&quot;,
+    &quot;ASKED_SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
+    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;D:/WebDev/checkMate&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.standard&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.standard&quot;: &quot;&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;npm.android.executor&quot;: &quot;Run&quot;,
+    &quot;npm.start.executor&quot;: &quot;Run&quot;,
+    &quot;run.code.analysis.last.selected.profile&quot;: &quot;pProject Default&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;terminal&quot;,
+    &quot;ts.external.directory.path&quot;: &quot;D:\\WebDev\\checkmate\\node_modules\\typescript\\lib&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="D:\WebDev\checkMate\assets" />
@@ -158,7 +172,8 @@
       <workItem from="1750180352537" duration="8906000" />
       <workItem from="1750230783597" duration="11922000" />
       <workItem from="1750352941908" duration="300000" />
-      <workItem from="1750493573337" duration="7841000" />
+      <workItem from="1750493573337" duration="20612000" />
+      <workItem from="1750596014666" duration="1568000" />
     </task>
     <task id="LOCAL-00001" summary="first commit">
       <option name="closed" value="true" />
@@ -368,7 +383,15 @@
       <option name="project" value="LOCAL" />
       <updated>1750502825764</updated>
     </task>
-    <option name="localTasksCounter" value="27" />
+    <task id="LOCAL-00027" summary="fixed the build">
+      <option name="closed" value="true" />
+      <created>1750505468208</created>
+      <option name="number" value="00027" />
+      <option name="presentableId" value="LOCAL-00027" />
+      <option name="project" value="LOCAL" />
+      <updated>1750505468208</updated>
+    </task>
+    <option name="localTasksCounter" value="28" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -385,6 +408,7 @@
     <MESSAGE value="back to the original" />
     <MESSAGE value="Ui improvements" />
     <MESSAGE value="project clean up" />
-    <option name="LAST_COMMIT_MESSAGE" value="project clean up" />
+    <MESSAGE value="fixed the build" />
+    <option name="LAST_COMMIT_MESSAGE" value="fixed the build" />
   </component>
 </project>

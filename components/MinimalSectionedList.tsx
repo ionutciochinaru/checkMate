@@ -4,9 +4,9 @@ import { useThemedStyles, useTheme } from '../hooks/useTheme';
 import { FilterType } from '../hooks/useTaskFilter';
 import { Ionicons } from '@expo/vector-icons';
 import TaskItem from './TaskItem';
-import FilterBarLayout from './FilterBarLayout';
+import FilterDropdownComponent from './FilterDropdownComponent';
 
-interface TaskListComponentProps {
+interface MinimalSectionedListProps {
   tasks: any[];
   pendingTasks: any[];
   completedTasks: any[];
@@ -17,10 +17,9 @@ interface TaskListComponentProps {
   setSearchText: (text: string) => void;
   onThemeToggle: () => void;
   isDark: boolean;
-  onSettingsPress: () => void;
 }
 
-export default function TaskListComponent({
+export default function MinimalSectionedList({
   tasks,
   pendingTasks,
   completedTasks,
@@ -30,9 +29,8 @@ export default function TaskListComponent({
   searchText,
   setSearchText,
   onThemeToggle,
-  isDark,
-  onSettingsPress
-}: TaskListComponentProps) {
+  isDark
+}: MinimalSectionedListProps) {
   const { theme } = useTheme();
 
   const styles = useThemedStyles((theme) => StyleSheet.create({
@@ -44,71 +42,56 @@ export default function TaskListComponent({
       backgroundColor: theme.colors.surfaceVariant,
       borderWidth: 1,
       borderColor: theme.colors.border,
-      borderRadius: theme.borderRadius.lg,
-      paddingHorizontal: theme.spacing.lg,
-      paddingVertical: theme.spacing.md,
-      marginTop: theme.spacing.xs,
-      marginBottom: theme.spacing.md,
-      shadowColor: theme.isDark ? '#000000' : '#000000',
-      shadowOffset: { width: 0, height: 2 },
-      shadowOpacity: theme.isDark ? 0.3 : 0.1,
-      shadowRadius: 8,
-      elevation: 4,
-    },
-    headerTop: {
+      borderRadius: theme.borderRadius.md,
+      paddingHorizontal: theme.spacing.md,
+      paddingVertical: theme.spacing.sm,
+      marginBottom: theme.spacing.sm,
       flexDirection: 'row',
       justifyContent: 'space-between',
       alignItems: 'center',
-      marginBottom: theme.spacing.sm,
     },
     headerLeft: {
-      flex: 1,
-    },
-    headerRight: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      gap: theme.spacing.sm,
-    },
-    title: {
-      fontFamily: 'JetBrainsMono_700Bold',
-      fontSize: theme.typography.fontSize.xl,
-      color: theme.colors.text,
-      letterSpacing: 0.8,
-      fontWeight: '800',
-      marginBottom: theme.spacing.xs,
-    },
-    statsRow: {
       flexDirection: 'row',
       alignItems: 'center',
       gap: theme.spacing.md,
     },
-    statItem: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      gap: theme.spacing.xs,
+    title: {
+      fontFamily: 'JetBrainsMono_700Bold',
+      fontSize: theme.typography.fontSize.lg,
+      color: theme.colors.text,
+      letterSpacing: 0.8,
+      fontWeight: '800',
     },
-    statNumber: {
-      fontFamily: theme.typography.fontFamily.bold,
-      fontSize: theme.typography.fontSize.md,
-      color: theme.colors.accent,
-      letterSpacing: theme.typography.letterSpacing * 0.3,
-    },
-    statLabel: {
+    statsText: {
       fontFamily: theme.typography.fontFamily.medium,
       fontSize: theme.typography.fontSize.sm,
       color: theme.colors.textSecondary,
       letterSpacing: theme.typography.letterSpacing * 0.3,
     },
-    actionButton: {
+    themeButton: {
+      backgroundColor: theme.colors.surface,
+      borderWidth: 1,
+      borderColor: theme.colors.border,
+      borderRadius: theme.borderRadius.sm,
+      padding: theme.spacing.xs,
+      minWidth: 36,
+      alignItems: 'center',
+    },
+    // Filter Section
+    filterSection: {
       backgroundColor: theme.colors.surface,
       borderWidth: 1,
       borderColor: theme.colors.border,
       borderRadius: theme.borderRadius.md,
       padding: theme.spacing.sm,
-      minWidth: 44,
-      minHeight: 44,
-      alignItems: 'center',
-      justifyContent: 'center',
+      marginBottom: theme.spacing.sm,
+    },
+    filterHeader: {
+      fontFamily: theme.typography.fontFamily.medium,
+      fontSize: theme.typography.fontSize.sm,
+      color: theme.colors.textSecondary,
+      marginBottom: theme.spacing.xs,
+      letterSpacing: theme.typography.letterSpacing * 0.5,
     },
     // Tasks List
     tasksList: {
@@ -164,55 +147,35 @@ export default function TaskListComponent({
   }));
 
   return (
-    <>
+    <View style={styles.container}>
       {/* Header Bar */}
       <View style={styles.headerBar}>
-        <View style={styles.headerTop}>
-          <View style={styles.headerLeft}>
-            <Text style={styles.title}>Checkmate</Text>
-          </View>
-          <View style={styles.headerRight}>
-            <TouchableOpacity style={styles.actionButton} onPress={onThemeToggle}>
-              <Ionicons 
-                name={isDark ? 'sunny' : 'moon'} 
-                size={20} 
-                color={theme.colors.text} 
-              />
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.actionButton} onPress={onSettingsPress}>
-              <Ionicons 
-                name="settings-outline" 
-                size={20} 
-                color={theme.colors.text} 
-              />
-            </TouchableOpacity>
-          </View>
+        <View style={styles.headerLeft}>
+          <Text style={styles.title}>Checkmate</Text>
+          <Text style={styles.statsText}>
+            {tasks.length} tasks • {pendingTasks.length} pending • {completedTasks.length} done
+          </Text>
         </View>
-        
-        <View style={styles.statsRow}>
-          <View style={styles.statItem}>
-            <Text style={styles.statNumber}>{tasks.length}</Text>
-            <Text style={styles.statLabel}>tasks</Text>
-          </View>
-          <View style={styles.statItem}>
-            <Text style={styles.statNumber}>{pendingTasks.length}</Text>
-            <Text style={styles.statLabel}>pending</Text>
-          </View>
-          <View style={styles.statItem}>
-            <Text style={styles.statNumber}>{completedTasks.length}</Text>
-            <Text style={styles.statLabel}>done</Text>
-          </View>
-        </View>
+        <TouchableOpacity style={styles.themeButton} onPress={onThemeToggle}>
+          <Ionicons 
+            name={isDark ? 'sunny' : 'moon'} 
+            size={18} 
+            color={theme.colors.text} 
+          />
+        </TouchableOpacity>
       </View>
 
       {/* Filter Section */}
-      <FilterBarLayout
-        selectedFilter={selectedFilter}
-        setSelectedFilter={setSelectedFilter}
-        getFilterCount={getFilterCount}
-        searchText={searchText}
-        setSearchText={setSearchText}
-      />
+      <View style={styles.filterSection}>
+        <Text style={styles.filterHeader}>Filter & Search Tasks</Text>
+        <FilterDropdownComponent
+          selectedFilter={selectedFilter}
+          setSelectedFilter={setSelectedFilter}
+          getFilterCount={getFilterCount}
+          searchText={searchText}
+          setSearchText={setSearchText}
+        />
+      </View>
 
       {/* Tasks List */}
       <View style={styles.tasksList}>
@@ -237,6 +200,6 @@ export default function TaskListComponent({
       </View>
 
       <View style={styles.bottomPadding} />
-    </>
+    </View>
   );
 }

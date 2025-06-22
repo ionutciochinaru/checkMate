@@ -25,7 +25,6 @@ interface TaskItemProps {
   task: Task;
 }
 
-
 const TaskItem: React.FC<TaskItemProps> = React.memo(({ task }) => {
   const { toggleComplete, delayTask, deleteTask } = useTaskStore();
   const { getSettings } = useMainStore();
@@ -34,8 +33,8 @@ const TaskItem: React.FC<TaskItemProps> = React.memo(({ task }) => {
   const settings = getSettings();
   const delayTime = settings.defaultDelay || '30m';
   const cardColor = getTaskCardColor(task.id, theme, task.isCompleted);
-  const textColor = theme.colors.cardText;
-  const textColorVariant = theme.colors.cardTextInverse;
+  const textColor = theme.isDark ? theme.colors.cardTextDark : theme.colors;
+  const textColorVariant = theme.isDark ? theme.colors.cardTextInverseDark : theme.colors.cardText;
   
   const cardScale = useSharedValue(1);
   const strikethroughProgress = useSharedValue(0);
@@ -53,9 +52,6 @@ const TaskItem: React.FC<TaskItemProps> = React.memo(({ task }) => {
     if (text.length <= maxLength) return text;
     return text.substring(0, maxLength).trim() + '...';
   };
-
-
-
 
   // Get natural language time display (Option 1 format)
   const getFormattedTimeDisplay = (dateToUse?: Date, isOriginal = false) => {
@@ -121,7 +117,7 @@ const TaskItem: React.FC<TaskItemProps> = React.memo(({ task }) => {
         withTiming(0, { duration: 300 })
       );
     }
-  }, [task.reminderTime, task.delayCount, theme.reducedMotion]);
+  }, [task.reminderTime, task.delayCount, theme.reducedMotion, wasDelayed, timeChangeProgress]);
 
   const styles = useThemedStyles((theme) => StyleSheet.create({
     container: {
@@ -133,9 +129,11 @@ const TaskItem: React.FC<TaskItemProps> = React.memo(({ task }) => {
       borderRadius: theme.borderRadius.xl,
       padding: theme.spacing.lg,
       minHeight: 120,
-      shadowColor: theme.isDark ? '#000000' : '#000000',
+      borderWidth: theme.isDark ? 1 : 0,
+      borderColor: theme.isDark ? 'rgba(255,68,68,0.3)' : 'transparent',
+      shadowColor: theme.isDark ? '#ff4444' : '#000000',
       shadowOffset: { width: 0, height: 2 },
-      shadowOpacity: 0.1,
+      shadowOpacity: theme.isDark ? 0.3 : 0.1,
       shadowRadius: 8,
       elevation: theme.elevation.medium,
     },
@@ -147,6 +145,9 @@ const TaskItem: React.FC<TaskItemProps> = React.memo(({ task }) => {
       minHeight: 60,
       paddingVertical: theme.spacing.sm,
       paddingHorizontal: theme.spacing.md,
+      borderWidth: theme.isDark ? 1 : 0,
+      borderColor: theme.isDark ? 'rgba(255,68,68,0.2)' : 'transparent',
+      borderRadius: theme.borderRadius.md,
     },
     dayCircle: {
       width: 56,
@@ -204,7 +205,7 @@ const TaskItem: React.FC<TaskItemProps> = React.memo(({ task }) => {
       paddingHorizontal: theme.spacing.xs,
       paddingVertical: 2,
       borderRadius: theme.borderRadius.sm,
-      backgroundColor: 'rgba(255,255,255,0.1)',
+      backgroundColor: theme.isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)',
       textTransform: 'uppercase',
       letterSpacing: theme.typography.letterSpacing * 0.3,
     },
@@ -220,6 +221,7 @@ const TaskItem: React.FC<TaskItemProps> = React.memo(({ task }) => {
       paddingHorizontal: 6,
       paddingVertical: 2,
       borderRadius: 6,
+      backgroundColor: theme.isDark ? 'rgba(255,170,68,0.2)' : 'rgba(255,170,68,0.15)',
     },
     recurringBadge: {
       fontSize: 10,
@@ -228,6 +230,7 @@ const TaskItem: React.FC<TaskItemProps> = React.memo(({ task }) => {
       paddingHorizontal: 6,
       paddingVertical: 2,
       borderRadius: 6,
+      backgroundColor: theme.isDark ? 'rgba(255,68,68,0.2)' : 'rgba(255,68,68,0.15)',
     },
     alwaysOnBadge: {
       fontSize: 10,
@@ -236,6 +239,7 @@ const TaskItem: React.FC<TaskItemProps> = React.memo(({ task }) => {
       paddingHorizontal: 6,
       paddingVertical: 2,
       borderRadius: 6,
+      backgroundColor: theme.isDark ? 'rgba(68,136,255,0.2)' : 'rgba(68,136,255,0.15)',
     },
     taskMeta: {
       flexDirection: 'row',
@@ -244,7 +248,7 @@ const TaskItem: React.FC<TaskItemProps> = React.memo(({ task }) => {
       marginBottom: 12,
       paddingVertical: 6,
       paddingHorizontal: 8,
-      backgroundColor: 'rgba(255,255,255,0.1)',
+      backgroundColor: theme.isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)',
       borderRadius: 8,
     },
     metaText: {
@@ -281,6 +285,7 @@ const TaskItem: React.FC<TaskItemProps> = React.memo(({ task }) => {
       borderRadius: 16,
       borderStyle: 'solid',
       borderWidth: 0.5,
+      borderColor: theme.isDark ? 'rgba(255,255,255,0.3)' : 'rgba(0,0,0,0.3)',
       minHeight: 28,
       flex: 1,
       justifyContent: 'center',
@@ -299,6 +304,8 @@ const TaskItem: React.FC<TaskItemProps> = React.memo(({ task }) => {
       borderRadius: 16,
       borderStyle: 'solid',
       borderWidth: 0.5,
+      borderColor: theme.isDark ? 'rgba(255,255,255,0.2)' : 'rgba(0,0,0,0.2)',
+      backgroundColor: theme.isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)',
       minHeight: 28,
       flex: 1,
       justifyContent: 'center',
@@ -331,7 +338,7 @@ const TaskItem: React.FC<TaskItemProps> = React.memo(({ task }) => {
       width: 40,
       height: 40,
       borderRadius: 20,
-      backgroundColor: 'transparent',
+      backgroundColor: theme.isDark ? 'rgba(255,255,255,0.05)' : 'transparent',
       borderColor: textColor,
       borderStyle: 'dashed',
       borderWidth: 1,
@@ -346,9 +353,9 @@ const TaskItem: React.FC<TaskItemProps> = React.memo(({ task }) => {
       width: 40,
       height: 40,
       borderRadius: 20,
-      backgroundColor: 'transparent',
+      backgroundColor: theme.isDark ? 'rgba(255,255,255,0.05)' : 'transparent',
       borderWidth: 0.5,
-      borderColor: '#666',
+      borderColor: theme.isDark ? 'rgba(255,255,255,0.3)' : '#666',
       justifyContent: 'center',
       alignItems: 'center',
       marginLeft: 8,
@@ -357,13 +364,15 @@ const TaskItem: React.FC<TaskItemProps> = React.memo(({ task }) => {
       position: 'absolute',
       top: 45,
       right: 0,
-      backgroundColor: '#fff',
+      backgroundColor: theme.isDark ? '#1a1a1a' : '#fff',
       borderRadius: 12,
       padding: 8,
       minWidth: 220,
-      shadowColor: '#000',
+      borderWidth: theme.isDark ? 1 : 0,
+      borderColor: theme.isDark ? 'rgba(255,68,68,0.3)' : 'transparent',
+      shadowColor: theme.isDark ? '#ff4444' : '#000',
       shadowOffset: { width: 0, height: 2 },
-      shadowOpacity: 0.15,
+      shadowOpacity: theme.isDark ? 0.4 : 0.15,
       shadowRadius: 8,
       elevation: 5,
       zIndex: 1000,
@@ -399,7 +408,7 @@ const TaskItem: React.FC<TaskItemProps> = React.memo(({ task }) => {
       bottom: 0,
       justifyContent: 'center',
       alignItems: 'center',
-      backgroundColor: 'rgba(0,0,0,0.3)',
+      backgroundColor: theme.isDark ? 'rgba(255,68,68,0.4)' : 'rgba(0,0,0,0.3)',
       borderRadius: 32,
       zIndex: 5,
     },
@@ -434,7 +443,7 @@ const TaskItem: React.FC<TaskItemProps> = React.memo(({ task }) => {
     // Time change styles (when delayed)
     timeChangeContainer: {
       borderTopWidth: 1,
-      borderTopColor: textColor,
+      borderTopColor: theme.isDark ? 'rgba(255,68,68,0.4)' : textColor,
       paddingTop: 6,
       marginTop: 6,
       opacity: 0.8,
@@ -578,9 +587,9 @@ const TaskItem: React.FC<TaskItemProps> = React.memo(({ task }) => {
       <Animated.View 
         entering={theme.reducedMotion ? undefined : FadeInUp} 
         exiting={theme.reducedMotion ? undefined : FadeOutRight} 
-        style={[styles.container, animatedCardStyle]}
+        style={styles.container}
       >
-        <View style={[styles.taskCard, styles.completedCard, { position: 'relative' }]}>
+        <Animated.View style={[styles.taskCard, styles.completedCard, { position: 'relative' }, animatedCardStyle]}>
           <View style={styles.dayCircle}>
             <Text style={styles.dayText}>{getCompletedDayInfo().dayNumber}</Text>
             <Text style={styles.dayLabel}>{getCompletedDayInfo().dayName}</Text>
@@ -633,7 +642,7 @@ const TaskItem: React.FC<TaskItemProps> = React.memo(({ task }) => {
               </View>
             )}
           </View>
-        </View>
+        </Animated.View>
       </Animated.View>
     );
   }
@@ -643,9 +652,9 @@ const TaskItem: React.FC<TaskItemProps> = React.memo(({ task }) => {
     <Animated.View 
       entering={theme.reducedMotion ? undefined : FadeInUp} 
       exiting={theme.reducedMotion ? undefined : FadeOutRight} 
-      style={[styles.container, animatedCardStyle]}
+      style={styles.container}
     >
-      <View style={[styles.taskCard, { position: 'relative' }]}>
+      <Animated.View style={[styles.taskCard, { position: 'relative' }, animatedCardStyle]}>
         
         {/* Strikethrough Animation Overlay */}
         <Animated.View style={[styles.strikethroughOverlay, animatedStrikethroughStyle]} pointerEvents="none">
@@ -771,7 +780,7 @@ const TaskItem: React.FC<TaskItemProps> = React.memo(({ task }) => {
             <Text style={[styles.actionBtnText, { color: theme.colors.danger }]}>DEL</Text>
           </TouchableOpacity>
         </View>
-      </View>
+      </Animated.View>
     </Animated.View>
   );
 });

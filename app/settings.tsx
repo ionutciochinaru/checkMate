@@ -30,7 +30,7 @@ export default function SettingsScreen() {
     saveAndExit, 
     updateSetting,
   } = useSettingsStore();
-  const { theme } = useTheme();
+  const { theme, themeMode, setThemeMode } = useTheme();
 
   const [showStartPicker, setShowStartPicker] = useState(false);
   const [showEndPicker, setShowEndPicker] = useState(false);
@@ -607,6 +607,39 @@ Restrict notifications to working hours only
         <View style={styles.sectionCard}>
           <Text style={styles.sectionTitle}>Display & Access</Text>
           
+          {/* Theme Mode */}
+          <View style={styles.settingRow}>
+            <View style={{ flex: 1 }}>
+              <Text style={styles.settingLabel}>Theme</Text>
+              <Text style={styles.settingSubtext}>
+                Choose light, dark, or auto theme based on system
+              </Text>
+            </View>
+            <View style={styles.fontScaleContainer}>
+              {[
+                { mode: 'light', label: 'Light' },
+                { mode: 'dark', label: 'Dark' },
+                { mode: 'auto', label: 'Auto' }
+              ].map(({ mode, label }) => (
+                <TouchableOpacity
+                  key={mode}
+                  style={[
+                    styles.fontScaleButton,
+                    themeMode === mode && styles.fontScaleButtonActive
+                  ]}
+                  onPress={() => setThemeMode(mode as any)}
+                >
+                  <Text style={[
+                    styles.fontScaleText,
+                    themeMode === mode && styles.fontScaleTextActive
+                  ]}>
+                    {label}
+                  </Text>
+                </TouchableOpacity>
+              ))}
+            </View>
+          </View>
+
           {/* Font Scale */}
           <View style={styles.settingRow}>
             <View style={{ flex: 1 }}>

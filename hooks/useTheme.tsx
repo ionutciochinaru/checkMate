@@ -20,6 +20,8 @@ interface ThemeContextValue {
   theme: Theme;
   themeMode: ThemeMode;
   setThemeMode: (mode: ThemeMode) => void;
+  toggleTheme: () => void;
+  isDark: boolean;
   animatedBackgroundStyle: any;
   animatedSurfaceStyle: any;
   animatedTextStyle: any;
@@ -28,7 +30,7 @@ interface ThemeContextValue {
 const ThemeContext = createContext<ThemeContextValue | undefined>(undefined);
 
 export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [themeMode, setThemeModeState] = useState<ThemeMode>('auto');
+  const [themeMode, setThemeModeState] = useState<ThemeMode>('dark');
   const [systemColorScheme, setSystemColorScheme] = useState<ColorSchemeName>(
     Appearance.getColorScheme()
   );
@@ -101,9 +103,11 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   };
 
   // Animated styles for smooth transitions
-  const animatedBackgroundStyle = useAnimatedStyle(() => ({
-    backgroundColor: theme.colors.background,
-  }));
+  const animatedBackgroundStyle = useAnimatedStyle(() => {
+    return {
+      backgroundColor: theme.colors.background,
+    };
+  });
 
   const animatedSurfaceStyle = useAnimatedStyle(() => ({
     backgroundColor: theme.colors.surface,
@@ -114,10 +118,18 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     color: theme.colors.text,
   }));
 
+  const toggleTheme = () => {
+    const newMode = isDark ? 'light' : 'dark';
+    console.log('Toggling theme from', themeMode, 'to', newMode);
+    setThemeMode(newMode);
+  };
+
   const value: ThemeContextValue = {
     theme,
     themeMode,
     setThemeMode,
+    toggleTheme,
+    isDark,
     animatedBackgroundStyle,
     animatedSurfaceStyle,
     animatedTextStyle,

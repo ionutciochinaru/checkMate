@@ -8,16 +8,12 @@ interface AddButtonComponentProps {
   tasks: any[];
   filteredTasks: any[];
   selectedFilter: FilterType;
-  showFilterDropdown: boolean;
-  setShowFilterDropdown: (show: boolean) => void;
 }
 
 export default function AddButtonComponent({
   tasks,
   filteredTasks,
-  selectedFilter,
-  showFilterDropdown,
-  setShowFilterDropdown
+  selectedFilter
 }: AddButtonComponentProps) {
   
   const styles = useThemedStyles((theme) => StyleSheet.create({
@@ -55,7 +51,6 @@ export default function AddButtonComponent({
       <TouchableOpacity 
         style={styles.addButton}
         onPress={() => {
-          if (showFilterDropdown) setShowFilterDropdown(false);
           router.push('/add-task');
         }}
         activeOpacity={0.8}
