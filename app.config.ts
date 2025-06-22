@@ -11,7 +11,7 @@ export default {
     jsEngine: "hermes",
     version: "1.0.3",
     orientation: "portrait",
-    icon: "./assets/icon.png",
+    icon: "./assets/android/playstore-icon.png",
     userInterfaceStyle: "automatic",
     scheme: "checkmate",
     platforms: ["ios", "android"],
@@ -22,7 +22,7 @@ export default {
       [
         "expo-notifications",
         {
-          icon: "./assets/notification-icon.png",
+          icon: "./assets/favicon.png",
           color: "#1a1a1a",
           sounds: []
         }
@@ -43,7 +43,7 @@ export default {
     android: {
       package: "com.cjohnd.checkmate",
       adaptiveIcon: {
-        foregroundImage: "./assets/icon.png",
+        foregroundImage: "./assets/android/playstore-icon.png",
         backgroundColor: "#ffffff"
       },
       edgeToEdgeEnabled: true
