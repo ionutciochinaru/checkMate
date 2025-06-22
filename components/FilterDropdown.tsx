@@ -96,7 +96,6 @@ export default function FilterDropdown({
   ];
 
   const handleFilterSelect = (filter: FilterType) => {
-    console.log('Filter selected:', filter);
     setSelectedFilter(filter);
     setVisible(false);
   };
@@ -112,11 +111,11 @@ export default function FilterDropdown({
         visible={visible}
         handleOpen={() => setVisible(true)}
         handleClose={() => setVisible(false)}
-        dropdownWidth={250}
-        position="left"
+        dropdownWidth={380}
+        position="center"
         trigger={
           <View style={styles.triggerButton}>
-            <Text style={styles.triggerText}>{selectedFilter}</Text>
+            <Text style={styles.triggerText}>Filter: {selectedFilter}</Text>
             <Ionicons
               name="chevron-down"
               size={20}
@@ -132,7 +131,6 @@ export default function FilterDropdown({
         >
           {allFilters.map((filter, index) => {
             const isSelected = filter === selectedFilter;
-            const isLast = index === allFilters.length - 1;
             
             return (
               <MenuOption

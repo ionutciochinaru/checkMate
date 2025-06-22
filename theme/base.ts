@@ -1,6 +1,5 @@
 import { ThemeSpacing, ThemeTypography, ThemeElevation, ThemeBorderRadius } from './types';
 
-// Base spacing system (8pt grid)
 export const spacing: ThemeSpacing = {
   xs: 4,
   sm: 8,
@@ -10,7 +9,6 @@ export const spacing: ThemeSpacing = {
   xxl: 48,
 };
 
-// Typography system
 export const typography: ThemeTypography = {
   fontFamily: {
     regular: 'JetBrainsMono_400Regular',
@@ -33,7 +31,6 @@ export const typography: ThemeTypography = {
   letterSpacing: 1.2,
 };
 
-// Elevation/Shadow system
 export const elevation: ThemeElevation = {
   none: 0,
   low: 2,
@@ -41,7 +38,6 @@ export const elevation: ThemeElevation = {
   high: 8,
 };
 
-// Border radius system
 export const borderRadius: ThemeBorderRadius = {
   none: 0,
   sm: 8,

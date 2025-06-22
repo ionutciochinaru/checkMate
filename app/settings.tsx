@@ -12,7 +12,7 @@ import { Switch } from 'react-native-paper';
 import { router } from 'expo-router';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { useFocusEffect } from '@react-navigation/native';
-import { useSettingsStore } from '../hooks/useSettingsStore';
+import { useSettingsStore } from '../stores/settingsStore';
 import { useThemedStyles, useTheme } from '../hooks/useTheme';
 import DelayInputComponent from '../components/DelayInputComponent';
 import MockDataGenerator from '../components/MockDataGenerator';
@@ -35,7 +35,6 @@ export default function SettingsScreen() {
   const [showStartPicker, setShowStartPicker] = useState(false);
   const [showEndPicker, setShowEndPicker] = useState(false);
 
-  // Load settings when page comes into focus
   useFocusEffect(
     React.useCallback(() => {
       loadSettingsForPage();
@@ -46,7 +45,6 @@ export default function SettingsScreen() {
     }, [loadSettingsForPage, saveAndExit])
   );
 
-  // Helper to create Date from time string
   const createDateFromTimeString = (timeString: string): Date => {
     const [hours, minutes] = timeString.split(':').map(Number);
     const date = new Date();
@@ -54,19 +52,16 @@ export default function SettingsScreen() {
     return date;
   };
 
-  // Helper to convert Date to HH:MM string
   const dateToTimeString = (date: Date): string => {
     const hours = date.getHours().toString().padStart(2, '0');
     const minutes = date.getMinutes().toString().padStart(2, '0');
     return `${hours}:${minutes}`;
   };
 
-  // Update setting using the dedicated settings store
   const handleUpdateSetting = async (key: string, value: any) => {
     await updateSetting(key as keyof typeof settings, value);
   };
 
-  // Time picker handlers
   const onStartTimeChange = async (event: any, selectedDate?: Date) => {
     if (event.type === 'dismissed') {
       setShowStartPicker(false);
@@ -78,7 +73,6 @@ export default function SettingsScreen() {
       const newStartTime = dateToTimeString(selectedDate);
       await handleUpdateSetting('workingHoursStart', newStartTime);
       
-      // Auto-adjust end time if needed
       const endMinutes = timeToMinutes(settings.workingHoursEnd);
       const startMinutes = timeToMinutes(newStartTime);
       if (startMinutes >= endMinutes) {
@@ -99,7 +93,6 @@ export default function SettingsScreen() {
       const newEndTime = dateToTimeString(selectedDate);
       await handleUpdateSetting('workingHoursEnd', newEndTime);
       
-      // Auto-adjust start time if needed
       const endMinutes = timeToMinutes(newEndTime);
       const startMinutes = timeToMinutes(settings.workingHoursStart);
       if (endMinutes <= startMinutes) {
@@ -109,7 +102,6 @@ export default function SettingsScreen() {
     }
   };
 
-  // Helper functions for time validation
   const timeToMinutes = (timeStr: string): number => {
     const [hours, minutes] = timeStr.split(':').map(Number);
     return hours * 60 + minutes;
@@ -121,7 +113,6 @@ export default function SettingsScreen() {
     return `${hours.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}`;
   };
 
-  // Go back to previous screen
   const goBack = () => {
     router.back();
   };
@@ -152,7 +143,13 @@ export default function SettingsScreen() {
       fontWeight: '800',
     },
     backButton: {
-      padding: 0,
+      flexDirection: 'row',
+      alignItems: 'center',
+      paddingVertical: theme.spacing.sm,
+      minWidth: 80,
+      minHeight: 44,
+      borderRadius: theme.borderRadius.md,
+      backgroundColor: 'transparent',
     },
     backButtonText: {
       fontFamily: theme.typography.fontFamily.bold,
@@ -160,6 +157,7 @@ export default function SettingsScreen() {
       color: theme.colors.textSecondary,
       letterSpacing: theme.typography.letterSpacing * 0.8,
       fontWeight: '700',
+      marginLeft: theme.spacing.xs,
     },
     content: {
       flex: 1,
@@ -471,12 +469,14 @@ export default function SettingsScreen() {
           <TouchableOpacity
             style={styles.backButton}
             onPress={goBack}
+            activeOpacity={0.7}
           >
             <Ionicons 
               name="arrow-back" 
               size={20} 
               color={theme.colors.textSecondary} 
             />
+            <Text style={styles.backButtonText}>Back</Text>
           </TouchableOpacity>
           <Text style={styles.terminalTitle}>Settings</Text>
         </View>
@@ -834,7 +834,6 @@ Restrict notifications to working hours only
               
               let opened = false;
               
-              // Try different URL formats
               for (const url of urls) {
                 try {
                   await Linking.openURL(url);
@@ -845,7 +844,6 @@ Restrict notifications to working hours only
                 }
               }
               
-              // If all attempts failed, show manual instructions
               if (!opened) {
                 showAlert(
                   'Buy me a coffee ☕',

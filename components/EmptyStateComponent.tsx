@@ -134,7 +134,9 @@ export default function EmptyStateComponent({
           Create your first task to get started
         </Text>
         <Text style={styles.helpText}>
-          Tasks are scheduled reminders with optional recurring intervals.\nConfigure work hours to restrict notifications during off-hours.\nUse delay feature to postpone tasks when they become overdue.
+          Tasks are scheduled reminders with optional recurring intervals.
+          Configure work hours to restrict notifications during off-hours.
+          Use delay feature to postpone tasks when they become overdue.
         </Text>
         <TouchableOpacity
           style={styles.emptyStateButton}

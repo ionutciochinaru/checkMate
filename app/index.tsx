@@ -24,7 +24,6 @@ export default function HomeScreen() {
         workingHoursEnd: settings.workingHoursEnd,
     });
 
-    // Calculate unfiltered totals for header stats
     const allPendingTasks = tasks.filter(task => !task.isCompleted);
     const allCompletedTasks = tasks.filter(task => task.isCompleted);
 

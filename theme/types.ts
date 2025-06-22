@@ -1,27 +1,22 @@
 export interface ThemeColors {
-  // Base colors
   background: string;
   surface: string;
   surfaceVariant: string;
   border: string;
   
-  // Text colors
   text: string;
   textSecondary: string;
   textMuted: string;
   textInverse: string;
   
-  // Accent colors
   accent: string;
   accentSecondary: string;
   
-  // Status colors
   danger: string;
   success: string;
   warning: string;
   info: string;
   
-  // Card colors (for task items)
   cardPrimary: string[];
   cardCompleted: string;
   cardText: string;

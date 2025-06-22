@@ -7,11 +7,9 @@ interface SettingsStore {
   isLoaded: boolean;
   isLoading: boolean;
   
-  // Page lifecycle methods
   loadSettingsForPage: () => Promise<void>;
   saveAndExit: () => Promise<void>;
   
-  // Immediate update methods
   updateSetting: (key: keyof AppSettings, value: any) => Promise<void>;
   updateMultipleSettings: (updates: Partial<AppSettings>) => Promise<void>;
 }
@@ -25,13 +23,11 @@ export const useSettingsStore = create<SettingsStore>((set, get) => ({
     set({ isLoading: true });
     
     try {
-      // Ensure main store is initialized
       const mainStore = useMainStore.getState();
       if (!mainStore.isInitialized) {
         await mainStore.initialize();
       }
       
-      // Get current settings from main store
       const currentSettings = mainStore.getSettings();
       
       set({ 
@@ -52,7 +48,6 @@ export const useSettingsStore = create<SettingsStore>((set, get) => ({
       const currentSettings = get().settings;
       let newSettings = { ...currentSettings, [key]: value };
       
-      // Apply mutual exclusivity logic
       if (key === 'workingHoursEnabled' && !value) {
         newSettings.twentyFourHourMode = true;
       }
@@ -61,10 +56,8 @@ export const useSettingsStore = create<SettingsStore>((set, get) => ({
         newSettings.workingHoursEnabled = false;
       }
       
-      // Update local store immediately for responsive UI
       set({ settings: newSettings });
       
-      // Update main store
       const mainStore = useMainStore.getState();
       
       if (key === 'workingHoursEnabled' && !value) {
@@ -82,7 +75,6 @@ export const useSettingsStore = create<SettingsStore>((set, get) => ({
       }
     } catch (error) {
       
-      // Revert local changes on error
       const mainStore = useMainStore.getState();
       const revertedSettings = mainStore.getSettings();
       set({ settings: revertedSettings });
@@ -96,15 +88,12 @@ export const useSettingsStore = create<SettingsStore>((set, get) => ({
       const currentSettings = get().settings;
       const newSettings = { ...currentSettings, ...updates };
       
-      // Update local store immediately
       set({ settings: newSettings });
       
-      // Update main store
       const mainStore = useMainStore.getState();
       await mainStore.updateSettings(updates);
     } catch (error) {
       
-      // Revert local changes on error
       const mainStore = useMainStore.getState();
       const revertedSettings = mainStore.getSettings();
       set({ settings: revertedSettings });
@@ -117,11 +106,9 @@ export const useSettingsStore = create<SettingsStore>((set, get) => ({
     try {
       const { settings } = get();
       
-      // Sync all settings to main store
       const mainStore = useMainStore.getState();
       await mainStore.updateSettings(settings);
     } catch (error) {
-      // Silently fail on exit
     }
   }
 }));

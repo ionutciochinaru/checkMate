@@ -44,7 +44,6 @@ export function useTaskFilter(tasks: any[], selectedFilter: FilterType, options:
     const nextWeek = new Date(today.getTime() + 7 * 24 * 60 * 60 * 1000);
     const twoHoursFromNow = new Date(now.getTime() + 2 * 60 * 60 * 1000);
     
-    // Helper functions
     const isOverdue = (task: any) => {
       const reminderDate = task.reminderTime instanceof Date ? task.reminderTime : new Date(task.reminderTime);
       return reminderDate < now && !task.isCompleted;
@@ -74,11 +73,9 @@ export function useTaskFilter(tasks: any[], selectedFilter: FilterType, options:
       const normalText: string[] = [];
       const advancedTerms: AdvancedSearchTerm[] = [];
       
-      // Split by spaces but keep quoted strings together
       const tokens = searchText.match(/(?:[^\s"]+|"[^"]*")+/g) || [];
       
       tokens.forEach(token => {
-        // Check for advanced search patterns
         if (token.includes(':')) {
           const [key, ...valueParts] = token.split(':');
           const value = valueParts.join(':').replace(/"/g, '');
@@ -123,7 +120,6 @@ export function useTaskFilter(tasks: any[], selectedFilter: FilterType, options:
     const matchesAdvancedSearch = (task: any, searchText: string) => {
       const { normalText, advancedTerms } = parseAdvancedSearch(searchText);
       
-      // Check normal text search first
       if (normalText.trim()) {
         const normalLower = normalText.toLowerCase();
         const normalMatch = (
@@ -133,7 +129,6 @@ export function useTaskFilter(tasks: any[], selectedFilter: FilterType, options:
         if (!normalMatch) return false;
       }
       
-      // Check advanced search terms
       for (const term of advancedTerms) {
         let termMatch = false;
         
@@ -231,7 +226,6 @@ export function useTaskFilter(tasks: any[], selectedFilter: FilterType, options:
       return matchesAdvancedSearch(task, searchText);
     };
     
-    // Helper function to apply a single filter
     const applyFilter = (tasks: any[], filter: FilterType): any[] => {
       switch (filter) {
         case 'Today':
@@ -304,26 +298,21 @@ export function useTaskFilter(tasks: any[], selectedFilter: FilterType, options:
       }
     };
 
-    // Apply search filter first
     let filtered = tasks.filter(matchesSearch);
 
-    // Apply primary filter
     if (selectedFilter !== 'All') {
       filtered = applyFilter(filtered, selectedFilter);
     }
 
-    // Apply additional filters with AND/OR logic
     if (additionalFilters.length > 0) {
       const additionalResults = additionalFilters.map(filter => applyFilter(tasks.filter(matchesSearch), filter));
       
       if (filterLogic === 'OR') {
-        // Union of all filter results
         const allResults = [filtered, ...additionalResults];
         const uniqueTasks = new Map();
         allResults.flat().forEach(task => uniqueTasks.set(task.id, task));
         filtered = Array.from(uniqueTasks.values());
       } else {
-        // Intersection of all filter results (AND logic)
         additionalResults.forEach(result => {
           const resultIds = new Set(result.map(task => task.id));
           filtered = filtered.filter(task => resultIds.has(task.id));
@@ -334,7 +323,6 @@ export function useTaskFilter(tasks: any[], selectedFilter: FilterType, options:
     return filtered;
   }, [tasks, selectedFilter, searchText, workingHoursStart, workingHoursEnd, additionalFilters, filterLogic]);
 
-  // Function to get filter count preview
   const getFilterCount = (filter: FilterType): number => {
     const now = new Date();
     const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());

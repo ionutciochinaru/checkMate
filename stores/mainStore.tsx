@@ -2,7 +2,6 @@ import { create } from 'zustand';
 import * as SQLite from 'expo-sqlite';
 import { AppSettings } from '../types/task';
 
-// Default settings with proper fallbacks
 export const defaultSettings: AppSettings = {
   workingHoursEnabled: true,
   workingHoursStart: "09:00",
@@ -18,20 +17,16 @@ export const defaultSettings: AppSettings = {
   timeFormat: '24H'
 };
 
-// Global database instance
 let db: SQLite.SQLiteDatabase | null = null;
 
-// Initialize database with proper error handling
 export const initializeDatabase = async (): Promise<SQLite.SQLiteDatabase> => {
   if (db) return db;
   
   try {
     db = await SQLite.openDatabaseAsync('checkmate.db');
     
-    // Enable WAL mode for better performance
     await db.execAsync('PRAGMA journal_mode = WAL;');
     
-    // Create tables
     await db.execAsync(`
       CREATE TABLE IF NOT EXISTS tasks (
         id TEXT PRIMARY KEY,
@@ -58,13 +53,11 @@ export const initializeDatabase = async (): Promise<SQLite.SQLiteDatabase> => {
       );
     `);
 
-    // Migration for existing databases - add new columns if they don't exist
     try {
       await db.execAsync(`
         ALTER TABLE tasks ADD COLUMN enableSequentialNotification INTEGER DEFAULT 0;
       `);
     } catch (error) {
-      // Column already exists, ignore
     }
     
     try {
@@ -72,7 +65,6 @@ export const initializeDatabase = async (): Promise<SQLite.SQLiteDatabase> => {
         ALTER TABLE tasks ADD COLUMN sequentialInterval INTEGER DEFAULT 300;
       `);
     } catch (error) {
-      // Column already exists, ignore
     }
     
     try {
@@ -80,7 +72,6 @@ export const initializeDatabase = async (): Promise<SQLite.SQLiteDatabase> => {
         ALTER TABLE tasks ADD COLUMN followUpNotificationId TEXT;
       `);
     } catch (error) {
-      // Column already exists, ignore
     }
     
     return db;
@@ -89,7 +80,6 @@ export const initializeDatabase = async (): Promise<SQLite.SQLiteDatabase> => {
   }
 };
 
-// Settings operations with error handling
 export const saveSetting = async (key: string, value: any): Promise<void> => {
   try {
     const database = await initializeDatabase();
@@ -116,7 +106,6 @@ export const loadSettings = async (): Promise<AppSettings> => {
           (settings as any)[key] = JSON.parse(row.value);
         }
       } catch (error) {
-        // Skip invalid settings
       }
     });
     
@@ -131,10 +120,8 @@ interface MainStore {
   isInitialized: boolean;
   isLoading: boolean;
   
-  // Initialization
   initialize: () => Promise<void>;
   
-  // Settings management
   updateSetting: (key: keyof AppSettings, value: any) => Promise<void>;
   updateSettings: (updates: Partial<AppSettings>) => Promise<void>;
   getSettings: () => AppSettings;
@@ -184,12 +171,10 @@ export const useMainStore = create<MainStore>((set, get) => ({
 
   updateSettings: async (updates) => {
     try {
-      // Save all settings to database
       await Promise.all(
         Object.entries(updates).map(([key, value]) => saveSetting(key, value))
       );
       
-      // Update state
       set(state => ({
         settings: { ...state.settings, ...updates }
       }));

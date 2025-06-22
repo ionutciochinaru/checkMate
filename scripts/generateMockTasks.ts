@@ -1,8 +1,6 @@
 import { useTaskStore } from '../stores/taskStore';
 
-// Realistic task data
 const mockTasks = [
-  // Work-related tasks
   {
     title: "Team standup meeting",
     description: "Daily sync with development team to discuss progress and blockers",
@@ -49,7 +47,6 @@ const mockTasks = [
     sequentialInterval: 300,
   },
 
-  // Personal tasks
   {
     title: "Doctor appointment",
     description: "Annual checkup with Dr. Smith - bring insurance card and medication list",
@@ -96,7 +93,6 @@ const mockTasks = [
     sequentialInterval: 900, // 15 minutes
   },
 
-  // Home & maintenance
   {
     title: "Water plants",
     description: "Water all indoor plants and check soil moisture levels",
@@ -134,7 +130,6 @@ const mockTasks = [
     sequentialInterval: 600,
   },
 
-  // Learning & development
   {
     title: "Spanish lesson",
     description: "Practice conversation with Duolingo and review grammar notes",
@@ -163,7 +158,6 @@ const mockTasks = [
     sequentialInterval: 1800,
   },
 
-  // Social & events
   {
     title: "Birthday party planning",
     description: "Organize surprise party for Sarah - book venue and send invitations",
@@ -193,11 +187,8 @@ const mockTasks = [
   }
 ];
 
-// Function to generate tasks with variations
 export const generateMockTasks = async () => {
   const { addTask } = useTaskStore.getState();
-  
-  console.log('Starting to generate 20 mock tasks...');
   
   for (let i = 0; i < mockTasks.length; i++) {
     const taskData = mockTasks[i];
@@ -214,9 +205,6 @@ export const generateMockTasks = async () => {
         sequentialInterval: taskData.sequentialInterval,
       });
       
-      console.log(`✅ Created task ${i + 1}/20: "${taskData.title}"`);
-      
-      // Add a small delay to avoid overwhelming the database
       await new Promise(resolve => setTimeout(resolve, 100));
       
     } catch (error) {
@@ -224,19 +212,12 @@ export const generateMockTasks = async () => {
     }
   }
   
-  console.log('🎉 Finished generating mock tasks!');
-  
-  // Now let's add some tasks with delays and different states for variety
   await addVariationTasks();
 };
 
-// Add some tasks with delays and completed states
 const addVariationTasks = async () => {
   const { addTask, delayTask, toggleComplete } = useTaskStore.getState();
   
-  console.log('Adding tasks with variations...');
-  
-  // Add a few completed tasks
   const completedTasks = [
     {
       title: "Morning coffee",
@@ -263,16 +244,12 @@ const addVariationTasks = async () => {
       const tasks = useTaskStore.getState().tasks;
       const newTask = tasks[tasks.length - 1];
       
-      // Mark as completed
       await toggleComplete(newTask.id);
-      
-      console.log(`✅ Created and completed: "${taskData.title}"`);
     } catch (error) {
       console.error(`❌ Failed to create completed task: "${taskData.title}"`, error);
     }
   }
   
-  // Add some delayed tasks
   const delayedTasks = [
     {
       title: "Update resume",
@@ -291,18 +268,12 @@ const addVariationTasks = async () => {
       const tasks = useTaskStore.getState().tasks;
       const newTask = tasks[tasks.length - 1];
       
-      // Delay it a couple times
       await delayTask(newTask.id, "30m");
       await delayTask(newTask.id, "1h");
-      
-      console.log(`✅ Created and delayed: "${taskData.title}"`);
     } catch (error) {
       console.error(`❌ Failed to create delayed task: "${taskData.title}"`, error);
     }
   }
-  
-  console.log('🎨 Finished adding task variations!');
 };
 
-// Export for use in the app
 export default generateMockTasks;

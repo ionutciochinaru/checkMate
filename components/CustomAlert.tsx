@@ -33,7 +33,6 @@ const CustomAlert: React.FC<CustomAlertProps> = ({
   const { theme } = useTheme();
   const [isVisible, setIsVisible] = useState(visible);
   
-  // Animation values
   const opacity = useSharedValue(0);
   const scale = useSharedValue(0.8);
   const translateY = useSharedValue(20);
@@ -192,7 +191,6 @@ const CustomAlert: React.FC<CustomAlertProps> = ({
 
   if (!isVisible) return null;
 
-  // Determine alert type for icon
   const getAlertIcon = () => {
     if (title.toLowerCase().includes('error') || title.toLowerCase().includes('invalid')) {
       return '[ERR]';
@@ -264,7 +262,6 @@ const CustomAlert: React.FC<CustomAlertProps> = ({
   );
 };
 
-// Alert state management
 interface AlertState {
   visible: boolean;
   title: string;
@@ -312,7 +309,6 @@ class AlertManager {
   }
 }
 
-// Alert Provider Component
 export const AlertProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const alertRef = React.useRef<any>(null);
   const [alertState, setAlertState] = useState<AlertState>({
@@ -353,7 +349,6 @@ export const AlertProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   );
 };
 
-// Convenience function to show alerts
 export const showAlert = (title: string, message?: string, buttons?: AlertButton[]) => {
   AlertManager.getInstance().show(title, message, buttons);
 };

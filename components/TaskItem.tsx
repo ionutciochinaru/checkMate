@@ -9,7 +9,7 @@ import Animated, {
   withTiming,
   withSequence,
   interpolate,
-  Extrapolate,
+  Extrapolation,
 } from 'react-native-reanimated';
 import { useTheme, useThemedStyles } from '../hooks/useTheme';
 import { getTaskCardColor } from '../theme';
@@ -36,7 +36,6 @@ const TaskItem: React.FC<TaskItemProps> = React.memo(({ task }) => {
   const cardColor = getTaskCardColor(task.id, theme, task.isCompleted);
   const isHighContrast = settings.highContrast;
   
-  // Use theme colors for high contrast, white text for normal light theme
   const textColor = theme.isDark 
     ? theme.colors.cardTextDark 
     : (isHighContrast ? theme.colors.cardText : '#ffffff');
@@ -44,7 +43,6 @@ const TaskItem: React.FC<TaskItemProps> = React.memo(({ task }) => {
     ? theme.colors.cardTextInverseDark 
     : (isHighContrast ? theme.colors.cardTextInverse : '#000000');
   
-  // Day circle text should always be black in light theme (as requested)
   const dayCircleTextColor = theme.isDark 
     ? theme.colors.cardTextDark 
     : (isHighContrast ? theme.colors.cardText : '#000000');
@@ -53,19 +51,16 @@ const TaskItem: React.FC<TaskItemProps> = React.memo(({ task }) => {
   const strikethroughProgress = useSharedValue(0);
   const timeChangeProgress = useSharedValue(0);
 
-  // State for UI feedback
   const [isDelaying, setIsDelaying] = useState(false);
   const [isProcessingNext, setIsProcessingNext] = useState(false);
 
 
-  // Truncate description text
   const getTruncatedDescription = (text: string, maxLength: number = 50) => {
     if (!text) return '';
     if (text.length <= maxLength) return text;
     return text.substring(0, maxLength).trim() + '...';
   };
 
-  // Get natural language time display (Option 1 format)
   const getFormattedTimeDisplay = (dateToUse?: Date, isOriginal = false) => {
     const reminderDate = dateToUse || (task.reminderTime instanceof Date ? task.reminderTime : new Date(task.reminderTime));
     const now = new Date();
@@ -107,12 +102,10 @@ const TaskItem: React.FC<TaskItemProps> = React.memo(({ task }) => {
   };
 
 
-  // Check if task was delayed
   const wasDelayed = () => {
     return task.delayCount > 0 && task.originalReminderTime;
   };
 
-  // Get day info for completed tasks (for the existing design)
   const getCompletedDayInfo = () => {
     const reminderDate = task.reminderTime instanceof Date ? task.reminderTime : new Date(task.reminderTime);
     const dayNumber = reminderDate.getDate();
@@ -121,7 +114,6 @@ const TaskItem: React.FC<TaskItemProps> = React.memo(({ task }) => {
   };
 
 
-  // Effect to handle time change animations after delays
   useEffect(() => {
     if (wasDelayed() && !theme.reducedMotion) {
       timeChangeProgress.value = withSequence(
@@ -135,7 +127,6 @@ const TaskItem: React.FC<TaskItemProps> = React.memo(({ task }) => {
     container: {
       marginBottom: theme.spacing.xs,
     },
-    // Normal task card (card_normal.png style)
     taskCard: {
       backgroundColor: cardColor,
       borderRadius: theme.borderRadius.xl,
@@ -149,7 +140,6 @@ const TaskItem: React.FC<TaskItemProps> = React.memo(({ task }) => {
       shadowRadius: 8,
       elevation: theme.elevation.medium,
     },
-    // Completed task card (card_done.png style)
     completedCard: {
       backgroundColor: cardColor,
       flexDirection: 'row',
@@ -368,7 +358,6 @@ const TaskItem: React.FC<TaskItemProps> = React.memo(({ task }) => {
       marginTop: 2,
       opacity: 0.7,
     },
-    // Strikethrough animation styles
     strikethroughOverlay: {
       position: 'absolute',
       top: 0,
@@ -387,7 +376,6 @@ const TaskItem: React.FC<TaskItemProps> = React.memo(({ task }) => {
       width: '80%',
       borderRadius: 2,
     },
-    // Unified time container styles
     timeInfoContainer: {
       backgroundColor: cardColor,
       marginBottom: 8,
@@ -409,7 +397,6 @@ const TaskItem: React.FC<TaskItemProps> = React.memo(({ task }) => {
       fontWeight: '400',
       opacity: 0.8,
     },
-    // Time change styles (when delayed)
     timeChangeContainer: {
       borderTopWidth: 1,
       borderTopColor: theme.isDark ? 'rgba(255,68,68,0.4)' : textColor,
@@ -447,7 +434,6 @@ const TaskItem: React.FC<TaskItemProps> = React.memo(({ task }) => {
       color: textColor,
       fontWeight: '400',
     },
-    // Enhanced button states
     actionBtnPressed: {
       backgroundColor: theme.colors.accent,
       transform: [{ scale: 0.95 }],
@@ -457,7 +443,6 @@ const TaskItem: React.FC<TaskItemProps> = React.memo(({ task }) => {
     },
   }));
 
-  // Animation styles
   const animatedCardStyle = useAnimatedStyle(() => ({
     transform: [{ scale: cardScale.value }]
   }));
@@ -466,19 +451,18 @@ const TaskItem: React.FC<TaskItemProps> = React.memo(({ task }) => {
   const animatedStrikethroughStyle = useAnimatedStyle(() => ({
     opacity: strikethroughProgress.value,
     transform: [{ 
-      scaleX: interpolate(strikethroughProgress.value, [0, 1], [0, 1], Extrapolate.CLAMP) 
+      scaleX: interpolate(strikethroughProgress.value, [0, 1], [0, 1], Extrapolation.CLAMP)
     }],
   }));
 
   const animatedTimeChangeStyle = useAnimatedStyle(() => ({
-    opacity: interpolate(timeChangeProgress.value, [0, 0.5, 1], [1, 0.3, 1], Extrapolate.CLAMP),
+    opacity: interpolate(timeChangeProgress.value, [0, 0.5, 1], [1, 0.3, 1], Extrapolation.CLAMP),
     transform: [{ 
-      scale: interpolate(timeChangeProgress.value, [0, 0.5, 1], [1, 1.1, 1], Extrapolate.CLAMP) 
+      scale: interpolate(timeChangeProgress.value, [0, 0.5, 1], [1, 1.1, 1], Extrapolation.CLAMP) 
     }],
   }));
 
 
-  // Animate card when task updates
   const animateCardUpdate = () => {
     if (theme.reducedMotion) return;
     
@@ -488,8 +472,6 @@ const TaskItem: React.FC<TaskItemProps> = React.memo(({ task }) => {
   };
 
   const handleToggleComplete = async () => {
-    console.log('Toggle complete called for task:', task.id, 'isRecurring:', task.isRecurring);
-    
     if (task.isRecurring) {
       setIsProcessingNext(true);
     }
@@ -498,10 +480,7 @@ const TaskItem: React.FC<TaskItemProps> = React.memo(({ task }) => {
       await toggleComplete(task.id);
       animateCardUpdate();
       
-      // Show feedback for recurring tasks
       if (task.isRecurring) {
-        console.log('Recurring task completed, should reschedule');
-        // Reset processing state after a brief delay
         setTimeout(() => {
           setIsProcessingNext(false);
         }, 1000);
@@ -518,13 +497,11 @@ const TaskItem: React.FC<TaskItemProps> = React.memo(({ task }) => {
     setIsDelaying(true);
     
     if (!theme.reducedMotion) {
-      // Animate strikethrough effect
       strikethroughProgress.value = withTiming(1, { duration: 600 }, () => {
         strikethroughProgress.value = withTiming(0, { duration: 300 });
       });
     }
     
-    // Delay the actual task update to sync with animation
     setTimeout(() => {
       delayTask(task.id, delayTime);
       animateCardUpdate();
@@ -550,14 +527,12 @@ const TaskItem: React.FC<TaskItemProps> = React.memo(({ task }) => {
     );
   };
 
-  // Menu options for completed tasks
   const completedTaskMenuOptions = [
     {
       id: 'edit',
       label: 'Edit Task',
       icon: 'create-outline',
       onPress: () => {
-        console.log('Edit task pressed for:', task.id);
         router.push(`/add-task?edit=${task.id}`);
       },
     },
@@ -567,14 +542,12 @@ const TaskItem: React.FC<TaskItemProps> = React.memo(({ task }) => {
       icon: 'trash-outline',
       destructive: true,
       onPress: () => {
-        console.log('Delete task pressed for:', task.id);
         showDeleteConfirmation();
       },
     },
   ];
 
   if (task.isCompleted) {
-    // Completed task design (card_done.png style)
     return (
       <Animated.View 
         entering={theme.reducedMotion ? undefined : FadeInUp} 
@@ -609,7 +582,6 @@ const TaskItem: React.FC<TaskItemProps> = React.memo(({ task }) => {
     );
   }
 
-  // Normal task design (card_normal.png style)
   return (
     <Animated.View 
       entering={theme.reducedMotion ? undefined : FadeInUp} 

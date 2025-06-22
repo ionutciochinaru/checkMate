@@ -35,7 +35,6 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     Appearance.getColorScheme()
   );
   
-  // Get settings directly from main store and subscribe to changes
   const mainStore = useMainStore();
   const settings = mainStore.isInitialized ? mainStore.settings : {
     fontScale: 1.0,
@@ -43,12 +42,10 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     reducedMotion: false
   };
 
-  // Animated values for smooth transitions
   const backgroundProgress = useSharedValue(0);
 
   const isDark = themeMode === 'dark' || (themeMode === 'auto' && systemColorScheme === 'dark');
   
-  // Get theme based on mode and settings
   const getTheme = (): Theme => {
     const baseTheme = settings.highContrast 
       ? (isDark ? darkHighContrastTheme : lightHighContrastTheme)
@@ -63,7 +60,6 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
   const theme = getTheme();
 
-  // Load saved theme on mount
   useEffect(() => {
     const loadTheme = async () => {
       try {
@@ -72,13 +68,11 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
           setThemeModeState(savedTheme as ThemeMode);
         }
       } catch {
-        // Use default theme
       }
     };
     loadTheme();
   }, []);
 
-  // Listen to system color scheme changes
   useEffect(() => {
     const subscription = Appearance.addChangeListener(({ colorScheme }) => {
       setSystemColorScheme(colorScheme);
@@ -86,7 +80,6 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     return () => subscription?.remove();
   }, []);
 
-  // Animate theme transitions (respect reduced motion setting)
   useEffect(() => {
     const targetValue = isDark ? 1 : 0;
     const duration = settings.reducedMotion ? 0 : 300;
@@ -98,11 +91,9 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     try {
       await AsyncStorage.setItem('theme', newMode);
     } catch {
-      // Silently fail theme save
     }
   };
 
-  // Animated styles for smooth transitions
   const animatedBackgroundStyle = useAnimatedStyle(() => {
     return {
       backgroundColor: theme.colors.background,
@@ -120,7 +111,6 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
   const toggleTheme = () => {
     const newMode = isDark ? 'light' : 'dark';
-    console.log('Toggling theme from', themeMode, 'to', newMode);
     setThemeMode(newMode);
   };
 
@@ -146,7 +136,6 @@ export const useTheme = (): ThemeContextValue => {
   return context;
 };
 
-// Legacy support - will be deprecated
 export const useThemedStyles = <T extends Record<string, any>>(
   styleFactory: (theme: Theme) => T
 ): T => {

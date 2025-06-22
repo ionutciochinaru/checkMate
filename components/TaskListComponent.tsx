@@ -45,7 +45,6 @@ export default function TaskListComponent({
     container: {
       flex: 1,
     },
-    // Header Bar
     headerBar: {
       backgroundColor: theme.colors.surfaceVariant,
       borderWidth: 1,
@@ -116,7 +115,6 @@ export default function TaskListComponent({
       alignItems: 'center',
       justifyContent: 'center',
     },
-    // Filter and Search Section
     filterSearchContainer: {
       backgroundColor: 'transparent',
       padding: 0,
@@ -147,18 +145,9 @@ export default function TaskListComponent({
       color: theme.colors.text,
       paddingVertical: theme.spacing.md,
     },
-    // Tasks List - Modern 2025 Design
     tasksList: {
-      backgroundColor: theme.colors.surfaceVariant,
       borderWidth: 0,
       borderRadius: theme.borderRadius.lg,
-      padding: theme.spacing.sm,
-      marginBottom: theme.spacing.sm,
-      shadowColor: theme.isDark ? '#000000' : '#000000',
-      shadowOffset: { width: 0, height: 1 },
-      shadowOpacity: theme.isDark ? 0.2 : 0.08,
-      shadowRadius: 6,
-      elevation: 2,
     },
     tasksHeader: {
       flexDirection: 'row',
@@ -189,7 +178,6 @@ export default function TaskListComponent({
       color: theme.colors.background,
       letterSpacing: theme.typography.letterSpacing * 0.2,
     },
-    // Results and Status Indicators
     resultsIndicator: {
       flexDirection: 'row',
       alignItems: 'center',
@@ -217,7 +205,6 @@ export default function TaskListComponent({
       color: theme.colors.accent,
       letterSpacing: theme.typography.letterSpacing * 0.3,
     },
-    // Modern Empty State
     emptyState: {
       alignItems: 'center',
       paddingVertical: theme.spacing.xl,
@@ -331,20 +318,8 @@ export default function TaskListComponent({
             ))}
           </>
         ) : (
-          <View style={styles.emptyState}>
-            <Ionicons 
-              name="checkmark-circle-outline" 
-              size={48} 
-              color={theme.colors.textMuted} 
-              style={{ marginBottom: theme.spacing.md }}
-            />
-            <Text style={styles.emptyStateText}>
-              No tasks yet{'\n'}
-              <Text style={{ fontSize: theme.typography.fontSize.md, opacity: 0.7 }}>
-                Add your first task to get started
-              </Text>
-            </Text>
-          </View>
+          <>
+          </>
         )}
       </View>
 

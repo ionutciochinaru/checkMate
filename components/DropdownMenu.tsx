@@ -10,6 +10,7 @@ interface DropdownMenuProps {
   children: React.ReactNode;
   dropdownWidth?: number;
   position?: 'left' | 'right' | 'center';
+  isIcon?: boolean;
 }
 
 const DropdownMenu: React.FC<DropdownMenuProps> = ({
@@ -20,6 +21,7 @@ const DropdownMenu: React.FC<DropdownMenuProps> = ({
   children,
   dropdownWidth = 180,
   position = 'center',
+  isIcon = false,
 }) => {
   const { theme } = useTheme();
   const triggerRef = useRef<View>(null);
@@ -57,34 +59,62 @@ const DropdownMenu: React.FC<DropdownMenuProps> = ({
         let dropdownX = px;
         let dropdownY = py + height + 4;
         
-        // Adjust horizontal position based on prop
-        if (position === 'right') {
-          dropdownX = px + width - dropdownWidth;
-        } else if (position === 'center') {
-          dropdownX = px + width / 2 - dropdownWidth / 2;
+        if (isIcon) {
+          // Icon dropdown positioning - smaller, positioned relative to icon
+          if (position === 'right') {
+            dropdownX = px + width - dropdownWidth;
+          } else if (position === 'center') {
+            dropdownX = px + width / 2 - dropdownWidth / 2;
+          }
+          
+          // Adjust for screen edges
+          if (dropdownX + dropdownWidth > screenWidth - 16) {
+            dropdownX = screenWidth - dropdownWidth - 16;
+          }
+          if (dropdownX < 16) {
+            dropdownX = 16;
+          }
+          
+          // Check if dropdown would go below screen
+          if (dropdownY + 200 > screenHeight - 50) {
+            dropdownY = py - 200 - 4; // Show above icon
+          }
+          
+          setLayout({
+            x: dropdownX,
+            y: dropdownY - 40,
+            width: dropdownWidth,
+          });
+        } else {
+          // Input dropdown positioning - wider, centered under input
+          if (position === 'right') {
+            dropdownX = px + width - dropdownWidth;
+          } else if (position === 'center') {
+            dropdownX = px + width / 2 - dropdownWidth / 2;
+          }
+          
+          // Adjust for screen edges
+          if (dropdownX + dropdownWidth > screenWidth - 16) {
+            dropdownX = screenWidth - dropdownWidth - 16;
+          }
+          if (dropdownX < 16) {
+            dropdownX = 16;
+          }
+          
+          // Check if dropdown would go below screen
+          if (dropdownY + 200 > screenHeight - 50) {
+            dropdownY = py - 200 - 4; // Show above input
+          }
+          
+          setLayout({
+            x: dropdownX,
+            y: dropdownY - 40, // Offset for input dropdowns
+            width: dropdownWidth,
+          });
         }
-        
-        // Ensure dropdown doesn't go off screen
-        if (dropdownX + dropdownWidth > screenWidth - 16) {
-          dropdownX = screenWidth - dropdownWidth - 16;
-        }
-        if (dropdownX < 16) {
-          dropdownX = 16;
-        }
-        
-        // Check if dropdown would go below screen
-        if (dropdownY + 200 > screenHeight - 50) {
-          dropdownY = py - 200 - 4; // Show above button
-        }
-        
-        setLayout({
-          x: dropdownX,
-          y: dropdownY,
-          width: dropdownWidth,
-        });
       });
     }
-  }, [visible, dropdownWidth, position]);
+  }, [visible, dropdownWidth, position, isIcon]);
 
   return (
     <View>
@@ -107,7 +137,7 @@ const DropdownMenu: React.FC<DropdownMenuProps> = ({
                       top: layout.y,
                       left: layout.x,
                       width: layout.width,
-                      maxHeight: 240, // Limit height to ensure scrolling
+                      maxHeight: 310, // Limit height to ensure scrolling
                     },
                   ]}>
                   {children}

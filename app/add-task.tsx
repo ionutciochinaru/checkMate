@@ -28,7 +28,6 @@ export default function AddTaskScreen() {
   const isEditing = !!edit;
   const editingTask = isEditing ? tasks.find(t => t.id === edit) : null;
 
-  // Form state - set default time 10 minutes ahead
   const getDefaultTime = () => {
     const now = new Date();
     return new Date(now.getTime() + 10 * 60 * 1000); // Add 10 minutes
@@ -45,7 +44,6 @@ export default function AddTaskScreen() {
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [showTimePicker, setShowTimePicker] = useState(false);
 
-  // Load existing task data when editing
   useEffect(() => {
     if (editingTask) {
       setTitle(editingTask.title);
@@ -102,7 +100,6 @@ export default function AddTaskScreen() {
       return;
     }
 
-    // Only check past time for new tasks, not when editing
     if (!isEditing) {
       const now = new Date();
       if (reminderTime <= now) {
@@ -132,7 +129,6 @@ export default function AddTaskScreen() {
         await addTask(taskData);
       }
       
-      // Small delay to ensure task is saved before navigation
       setTimeout(() => {
         router.back();
       }, 100);
@@ -156,7 +152,6 @@ export default function AddTaskScreen() {
             newDateTime.setMonth(selectedDate.getMonth());
             newDateTime.setDate(selectedDate.getDate());
             
-            // Only check past date for new tasks, not when editing
             if (!isEditing) {
               const now = new Date();
               if (newDateTime <= now) {
@@ -193,7 +188,6 @@ export default function AddTaskScreen() {
             newDateTime.setSeconds(0);
             newDateTime.setMilliseconds(0);
             
-            // Only check past time for new tasks, not when editing
             if (!isEditing) {
               const now = new Date();
               if (newDateTime <= now) {
@@ -221,7 +215,6 @@ export default function AddTaskScreen() {
       newDateTime.setMonth(selectedDate.getMonth());
       newDateTime.setDate(selectedDate.getDate());
       
-      // Only check past date for new tasks, not when editing
       if (!isEditing) {
         const now = new Date();
         if (newDateTime <= now) {
@@ -241,14 +234,12 @@ export default function AddTaskScreen() {
 
   const handleTimeChange = (event: any, selectedTime?: Date) => {
     if (event?.type !== 'dismissed' && selectedTime) {
-      // Preserve the date, only update the time
       const newDateTime = new Date(reminderTime);
       newDateTime.setHours(selectedTime.getHours());
       newDateTime.setMinutes(selectedTime.getMinutes());
       newDateTime.setSeconds(0);
       newDateTime.setMilliseconds(0);
       
-      // Only check past time for new tasks, not when editing
       if (!isEditing) {
         const now = new Date();
         if (newDateTime <= now) {
@@ -301,7 +292,13 @@ export default function AddTaskScreen() {
       fontWeight: '800',
     },
     backButton: {
-      padding: 0,
+      flexDirection: 'row',
+      alignItems: 'center',
+      paddingVertical: theme.spacing.sm,
+      minWidth: 80,
+      minHeight: 44,
+      borderRadius: theme.borderRadius.md,
+      backgroundColor: 'transparent',
     },
     backButtonText: {
       fontFamily: theme.typography.fontFamily.bold,
@@ -309,6 +306,7 @@ export default function AddTaskScreen() {
       color: theme.colors.textSecondary,
       letterSpacing: theme.typography.letterSpacing * 0.8,
       fontWeight: '700',
+      marginLeft: theme.spacing.xs,
     },
     helpText: {
       fontFamily: theme.typography.fontFamily.regular,
@@ -521,12 +519,14 @@ export default function AddTaskScreen() {
               onPress={() => {
                 router.back();
               }}
+              activeOpacity={0.7}
           >
             <Ionicons 
               name="arrow-back" 
               size={20} 
               color={theme.colors.textSecondary} 
             />
+            <Text style={styles.backButtonText}>Back</Text>
           </TouchableOpacity>
           <Text style={styles.terminalTitle}>
 {isEditing ? 'Edit Task' : 'New Task'}

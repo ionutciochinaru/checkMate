@@ -58,25 +58,18 @@ export default function TaskMenuDropdown({
   }));
 
   const handleOptionSelect = (option: TaskMenuOption) => {
-    console.log('TaskMenu option selected:', option.id, option.label);
     setVisible(false);
-    // Execute the action
     option.onPress();
   };
 
   return (
     <DropdownMenu
       visible={visible}
-      handleOpen={() => {
-        console.log('TaskMenu dropdown opened');
-        setVisible(true);
-      }}
-      handleClose={() => {
-        console.log('TaskMenu dropdown closed');
-        setVisible(false);
-      }}
+      handleOpen={() => setVisible(true)}
+      handleClose={() => setVisible(false)}
       dropdownWidth={180}
       position="right"
+      isIcon={true}
       trigger={
         <View style={styles.triggerButton}>
           <Ionicons

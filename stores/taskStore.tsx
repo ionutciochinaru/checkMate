@@ -3,16 +3,13 @@ import * as Notifications from 'expo-notifications';
 import { Task } from '../types/task';
 import { initializeDatabase , useMainStore } from './mainStore';
 
-// Re-export useMainStore for convenience
 export { useMainStore };
 
 
-// Parse delay string formats like "30m", "1h", "1h30m", "90s", etc.
 const parseDelayString = (delayStr: string): number => {
   const str = delayStr.toLowerCase().trim();
   let totalMs = 0;
   
-  // Match patterns like 1h, 30m, 45s
   const patterns = [
     { regex: /(\d+)d/g, multiplier: 24 * 60 * 60 * 1000 }, // days
     { regex: /(\d+)h/g, multiplier: 60 * 60 * 1000 },      // hours
@@ -27,11 +24,9 @@ const parseDelayString = (delayStr: string): number => {
     }
   });
   
-  // Default to 30 minutes if nothing parsed
   return totalMs || (30 * 60 * 1000);
 };
 
-// Task database operations
 export const loadTasks = async (): Promise<Task[]> => {
   try {
     const database = await initializeDatabase();
@@ -119,10 +114,8 @@ interface TaskStore {
   isLoaded: boolean;
   isLoading: boolean;
   
-  // Lifecycle
   loadTasks: () => Promise<void>;
   
-  // Task operations
   addTask: (task: Omit<Task, 'id' | 'createdAt' | 'delayCount' | 'isCompleted'>) => Promise<void>;
   updateTask: (id: string, updates: Partial<Task>) => Promise<void>;
   toggleComplete: (id: string) => Promise<void>;
@@ -130,7 +123,6 @@ interface TaskStore {
   deleteTask: (id: string) => Promise<void>;
   deleteAllTasks: () => Promise<void>;
   
-  // Notification scheduling
   scheduleNotification: (task: Task, settings?: any) => Promise<void>;
 }
 
@@ -180,7 +172,6 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
       await saveTask(newTask);
       set(state => ({ tasks: [...state.tasks, newTask] }));
       
-      // Schedule notification for the new task
       await get().scheduleNotification(newTask);
     } catch (error) {
       throw error;
@@ -203,7 +194,6 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
         tasks: state.tasks.map(task => task.id === id ? updatedTask : task)
       }));
 
-      // If reminder time was updated, reschedule notification
       if (updates.reminderTime) {
         await get().scheduleNotification(updatedTask);
       }
@@ -224,7 +214,6 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
       let updatedTask: Task;
       
       if (task.isRecurring) {
-        // Loop mode: increment counter and reschedule, never mark as completed
         const now = new Date();
         const nextReminderTime = new Date(now.getTime() + (task.recurringInterval || 24) * 60 * 60 * 1000);
         
@@ -238,7 +227,6 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
         };
         
       } else {
-        // Regular task: toggle completion status
         updatedTask = { ...task, isCompleted: !task.isCompleted };
       }
       
@@ -248,19 +236,14 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
         tasks: state.tasks.map(t => t.id === id ? updatedTask : t)
       }));
 
-      // Handle notifications
       if (updatedTask.isCompleted) {
-        // Only cancel notifications for regular completed tasks
         await Notifications.cancelScheduledNotificationAsync(id);
-        // Also cancel follow-up notification if it exists
         try {
           await Notifications.cancelScheduledNotificationAsync(`${id}_followup`);
         } catch (error) {
-          // Silently handle cancellation errors
         }
         await Notifications.dismissAllNotificationsAsync();
       } else {
-        // Schedule notification for active tasks (including rescheduled loop tasks)
         await get().scheduleNotification(updatedTask);
       }
       
@@ -270,7 +253,6 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
   },
 
   delayTask: async (id, delayAmount?: string) => {
-    // Get default delay from settings if not provided
     const defaultDelay = delayAmount || useMainStore.getState().getSettings().defaultDelay || '30m';
     const delayMs = parseDelayString(defaultDelay);
     const currentTasks = get().tasks;
@@ -281,19 +263,15 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
     }
 
     try {
-      // Cancel current notification first
       await Notifications.cancelScheduledNotificationAsync(id);
-      // Also cancel follow-up notification if it exists
       try {
         await Notifications.cancelScheduledNotificationAsync(`${id}_followup`);
       } catch (error) {
-        // Silently handle cancellation errors
       }
 
       const updatedTask = {
         ...task,
         delayCount: task.delayCount + 1,
-        // Save original time on first delay
         originalReminderTime: task.delayCount === 0 ? task.reminderTime : task.originalReminderTime,
         reminderTime: new Date(task.reminderTime.getTime() + delayMs)
       };
@@ -304,7 +282,6 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
         tasks: state.tasks.map(t => t.id === id ? updatedTask : t)
       }));
 
-      // Reschedule notification with new delay time
       await get().scheduleNotification(updatedTask);
     } catch (error) {
       throw error;
@@ -313,13 +290,10 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
 
   deleteTask: async (id) => {
     try {
-      // Cancel notification before deleting task
       await Notifications.cancelScheduledNotificationAsync(id);
-      // Also cancel follow-up notification if it exists
       try {
         await Notifications.cancelScheduledNotificationAsync(`${id}_followup`);
       } catch (error) {
-        // Silently handle cancellation errors
       }
       await deleteTaskFromDb(id);
       
@@ -335,20 +309,16 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
     try {
       const currentTasks = get().tasks;
       
-      // Cancel all notifications for all tasks
       for (const task of currentTasks) {
         try {
           await Notifications.cancelScheduledNotificationAsync(task.id);
           await Notifications.cancelScheduledNotificationAsync(`${task.id}_followup`);
         } catch (error) {
-          // Silently handle cancellation errors
         }
       }
       
-      // Delete all tasks from database
       await deleteAllTasksFromDb();
       
-      // Clear tasks from state
       set({ tasks: [] });
     } catch (error) {
       throw error;
@@ -361,15 +331,12 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
     }
 
     try {
-      // Cancel existing notifications first
       await Notifications.cancelScheduledNotificationAsync(task.id);
       try {
         await Notifications.cancelScheduledNotificationAsync(`${task.id}_followup`);
       } catch (error) {
-        // Silently handle cancellation errors
       }
 
-      // Create notification content
       const title = task.title.length > 30 ? `${task.title.substring(0, 27)}...` : task.title;
       let body = '';
       
@@ -387,7 +354,6 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
         body = 'Task reminder - tap for details';
       }
 
-      // Schedule primary notification
       await Notifications.scheduleNotificationAsync({
         identifier: task.id,
         content: {
@@ -407,7 +373,6 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
         } as any
       });
 
-      // Schedule follow-up notification if enabled
       if (task.enableSequentialNotification && task.sequentialInterval) {
         const followUpTime = new Date(task.reminderTime.getTime() + (task.sequentialInterval * 1000));
         const followUpId = `${task.id}_followup`;
@@ -433,7 +398,6 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
         });
       }
     } catch (error) {
-      // Silently fail notification scheduling
     }
   }
 }));

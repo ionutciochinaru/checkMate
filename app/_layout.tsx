@@ -63,7 +63,6 @@ const createPaperTheme = (theme: any) => ({
 
 function ThemedLayout() {
   const { theme } = useTheme();
-  // Initialize notifications system
   useNotifications();
   
   return (
@@ -113,10 +112,8 @@ export default function RootLayout() {
       });
       setFontsLoaded(true);
       
-      // Initialize main store first (database & settings)
       await initializeMain();
       
-      // Then load tasks
       await loadTasks();
     }
     

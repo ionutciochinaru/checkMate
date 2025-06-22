@@ -18,7 +18,6 @@ export function useFilterPresets() {
     isLoading: true,
   });
 
-  // Load presets and recent filters from storage
   const loadPresets = useCallback(async () => {
     try {
       setState(prev => ({ ...prev, isLoading: true }));
@@ -51,7 +50,6 @@ export function useFilterPresets() {
     }
   }, []);
 
-  // Save presets to storage
   const savePresetsToStorage = useCallback(async (presets: FilterPreset[]) => {
     try {
       await AsyncStorage.setItem(PRESETS_STORAGE_KEY, JSON.stringify(presets));
@@ -60,7 +58,6 @@ export function useFilterPresets() {
     }
   }, []);
 
-  // Save recent filters to storage
   const saveRecentToStorage = useCallback(async (recent: FilterPreset[]) => {
     try {
       await AsyncStorage.setItem(RECENT_FILTERS_STORAGE_KEY, JSON.stringify(recent));
@@ -69,7 +66,6 @@ export function useFilterPresets() {
     }
   }, []);
 
-  // Save a new preset
   const savePreset = useCallback(async (
     name: string,
     primaryFilter: FilterType,
@@ -94,7 +90,6 @@ export function useFilterPresets() {
     return newPreset;
   }, [state.presets, savePresetsToStorage]);
 
-  // Update an existing preset
   const updatePreset = useCallback(async (id: string, updates: Partial<FilterPreset>) => {
     const updatedPresets = state.presets.map(preset => 
       preset.id === id ? { ...preset, ...updates } : preset
@@ -104,21 +99,18 @@ export function useFilterPresets() {
     await savePresetsToStorage(updatedPresets);
   }, [state.presets, savePresetsToStorage]);
 
-  // Delete a preset
   const deletePreset = useCallback(async (id: string) => {
     const updatedPresets = state.presets.filter(preset => preset.id !== id);
     setState(prev => ({ ...prev, presets: updatedPresets }));
     await savePresetsToStorage(updatedPresets);
   }, [state.presets, savePresetsToStorage]);
 
-  // Add to recent filters (automatically when filters are applied)
   const addToRecent = useCallback(async (
     primaryFilter: FilterType,
     additionalFilters: FilterType[],
     filterLogic: 'AND' | 'OR',
     searchText: string
   ) => {
-    // Skip if it's the default "All" filter with no additional criteria
     if (primaryFilter === 'All' && additionalFilters.length === 0 && !searchText.trim()) {
       return;
     }
@@ -134,7 +126,6 @@ export function useFilterPresets() {
       lastUsed: new Date(),
     };
 
-    // Remove duplicates and limit to 10 recent filters
     const filteredRecent = state.recentFilters.filter(recent => 
       !(recent.primaryFilter === primaryFilter && 
         JSON.stringify(recent.additionalFilters) === JSON.stringify(additionalFilters) &&
@@ -147,9 +138,7 @@ export function useFilterPresets() {
     await saveRecentToStorage(updatedRecent);
   }, [state.recentFilters, saveRecentToStorage]);
 
-  // Load preset (mark as recently used)
   const loadPreset = useCallback((preset: FilterPreset) => {
-    // Update last used time for saved presets
     if (!preset.id.startsWith('recent_')) {
       updatePreset(preset.id, { lastUsed: new Date() });
     }
@@ -162,13 +151,11 @@ export function useFilterPresets() {
     };
   }, [updatePreset]);
 
-  // Clear recent filters
   const clearRecent = useCallback(async () => {
     setState(prev => ({ ...prev, recentFilters: [] }));
     await AsyncStorage.removeItem(RECENT_FILTERS_STORAGE_KEY);
   }, []);
 
-  // Load presets on mount
   useEffect(() => {
     loadPresets();
   }, [loadPresets]);
