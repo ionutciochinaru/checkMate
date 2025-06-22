@@ -34,4 +34,7 @@ export interface AppSettings {
   dateUseMonthNames: boolean; // Use month names instead of numbers
   dateSeparator: DateSeparator; // Separator between date parts
   timeFormat: TimeFormat; // 24H or 12H format
+  googleCalendarEnabled: boolean; // Enable Google Calendar integration
+  googleCalendarAutoSync: boolean; // Auto-sync calendar events
+  googleCalendarSyncInterval: number; // Sync interval in hours (1, 6, 12, 24)
 }

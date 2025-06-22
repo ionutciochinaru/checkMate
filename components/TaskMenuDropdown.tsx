@@ -59,7 +59,10 @@ export default function TaskMenuDropdown({
 
   const handleOptionSelect = (option: TaskMenuOption) => {
     setVisible(false);
-    option.onPress();
+    // Add delay to prevent modal race condition between dropdown and alert
+    setTimeout(() => {
+      option.onPress();
+    }, 200);
   };
 
   return (

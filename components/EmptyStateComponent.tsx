@@ -1,9 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { router } from 'expo-router';
 import { useThemedStyles, useTheme } from '../hooks/useTheme';
 import { FilterType } from '../hooks/useTaskFilter';
 import { Ionicons } from '@expo/vector-icons';
+import { useGoogleCalendarSync } from '../hooks/useGoogleCalendarSync';
+import GoogleCalendarSyncModal from './GoogleCalendarSyncModal';
 
 interface EmptyStateComponentProps {
   tasks: any[];
@@ -19,6 +21,8 @@ export default function EmptyStateComponent({
   setSelectedFilter
 }: EmptyStateComponentProps) {
   const { theme } = useTheme();
+  const [showGoogleCalendarModal, setShowGoogleCalendarModal] = useState(false);
+  const { signInWithGoogle, syncCalendarEvents, authState, isLoading } = useGoogleCalendarSync();
   
   const styles = useThemedStyles((theme) => StyleSheet.create({
     emptyState: {
@@ -56,14 +60,16 @@ export default function EmptyStateComponent({
     },
     emptyStateButton: {
       marginTop: 16,
+      marginRight: 30,
+      textAlign: 'center',
     },
     emptyCommand: {
       fontFamily: 'JetBrainsMono_500Medium',
       fontSize: 12 * 1.0,
       color: theme.colors.surface,
       backgroundColor: theme.colors.accent,
-      paddingHorizontal: 12,
-      paddingVertical: 6,
+      paddingHorizontal: 24,
+      paddingVertical: 12,
       borderWidth: 1,
       borderColor: theme.colors.border,
       borderRadius: theme.borderRadius.md,
@@ -72,6 +78,24 @@ export default function EmptyStateComponent({
       fontWeight: 'normal',
       alignItems: 'center',
       justifyContent: 'center',
+    },
+    calendarButton: {
+      marginTop: 12,
+      backgroundColor: 'transparent',
+      borderWidth: 1.5,
+      borderColor: theme.colors.textMuted,
+      paddingHorizontal: 16,
+      paddingVertical: 12,
+      borderRadius: theme.borderRadius.md,
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 8,
+    },
+    calendarButtonText: {
+      fontFamily: 'JetBrainsMono_500Medium',
+      fontSize: 12,
+      color: theme.colors.textMuted,
+      letterSpacing: 0.5,
     },
     filterEmptyState: {
       flex: 1,
@@ -153,6 +177,26 @@ export default function EmptyStateComponent({
             </Text>
           </View>
         </TouchableOpacity>
+        
+        <TouchableOpacity
+          style={styles.calendarButton}
+          onPress={() => setShowGoogleCalendarModal(true)}
+          disabled={isLoading}
+        >
+          <Ionicons 
+            name="calendar-outline" 
+            size={16} 
+            color={theme.colors.textMuted} 
+          />
+          <Text style={styles.calendarButtonText}>
+            {isLoading ? 'Syncing...' : 'Sync Google Calendar'}
+          </Text>
+        </TouchableOpacity>
+        
+        <GoogleCalendarSyncModal
+          visible={showGoogleCalendarModal}
+          onClose={() => setShowGoogleCalendarModal(false)}
+        />
       </View>
     );
   }

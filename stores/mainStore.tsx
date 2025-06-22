@@ -14,7 +14,10 @@ export const defaultSettings: AppSettings = {
   dateFormat: 'DD-MM-YYYY',
   dateUseMonthNames: false,
   dateSeparator: '-',
-  timeFormat: '24H'
+  timeFormat: '24H',
+  googleCalendarEnabled: false,
+  googleCalendarAutoSync: false,
+  googleCalendarSyncInterval: 24
 };
 
 let db: SQLite.SQLiteDatabase | null = null;

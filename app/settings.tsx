@@ -20,6 +20,8 @@ import DeleteAllTasksComponent from '../components/DeleteAllTasksComponent';
 import { showAlert } from '../components/CustomAlert';
 import { availableDateFormats, availableSeparators, availableTimeFormats, getDateFormatDisplayName, getTimeFormatDisplayName } from '../utils/dateFormatters';
 import { Ionicons } from '@expo/vector-icons';
+import { useGoogleCalendarSync } from '../hooks/useGoogleCalendarSync';
+import GoogleCalendarSyncModal from '../components/GoogleCalendarSyncModal';
 
 export default function SettingsScreen() {
   const { 
@@ -34,6 +36,8 @@ export default function SettingsScreen() {
 
   const [showStartPicker, setShowStartPicker] = useState(false);
   const [showEndPicker, setShowEndPicker] = useState(false);
+  const [showGoogleCalendarModal, setShowGoogleCalendarModal] = useState(false);
+  const { authState, isLoading: googleCalendarLoading } = useGoogleCalendarSync();
 
   useFocusEffect(
     React.useCallback(() => {
@@ -602,6 +606,39 @@ Restrict notifications to working hours only
           </View>
         </View>
 
+        {/* Google Calendar Integration */}
+        <View style={styles.sectionCard}>
+          <Text style={styles.sectionTitle}>Google Calendar</Text>
+          
+          <View style={styles.settingRow}>
+            <View style={{ flex: 1 }}>
+              <Text style={styles.settingLabel}>Calendar Sync</Text>
+              <Text style={styles.settingSubtext}>
+                Import events from Google Calendar as tasks
+              </Text>
+              {authState.isAuthenticated && authState.userEmail && (
+                <Text style={[styles.settingSubtext, { color: theme.colors.textMuted, fontSize: 10, marginTop: 4 }]}>
+                  Connected as: {authState.userEmail}
+                </Text>
+              )}
+            </View>
+            <TouchableOpacity
+              style={[
+                styles.fontScaleButton,
+                authState.isAuthenticated && styles.fontScaleButtonActive
+              ]}
+              onPress={() => setShowGoogleCalendarModal(true)}
+              disabled={googleCalendarLoading}
+            >
+              <Text style={[
+                styles.fontScaleText,
+                authState.isAuthenticated && styles.fontScaleTextActive
+              ]}>
+                {googleCalendarLoading ? 'Loading...' : (authState.isAuthenticated ? 'Connected' : 'Connect')}
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </View>
 
         {/* Accessibility Settings */}
         <View style={styles.sectionCard}>
@@ -868,6 +905,12 @@ Thank you for using CheckMate! Every bit of support
         </>
         )}
       </ScrollView>
+      
+      {/* Google Calendar Sync Modal */}
+      <GoogleCalendarSyncModal
+        visible={showGoogleCalendarModal}
+        onClose={() => setShowGoogleCalendarModal(false)}
+      />
     </View>
   );
 }
