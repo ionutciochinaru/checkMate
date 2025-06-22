@@ -5,46 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="171acf02-a826-4aaf-937f-dcb4d8420b57" name="Changes" comment="fixed the build">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app.config.ts" beforeDir="false" afterPath="$PROJECT_DIR$/app.config.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/_layout.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/_layout.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/add-task.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/add-task.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/index.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/index.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/settings.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/settings.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/components/CustomAlert.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/components/CustomAlert.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/components/DashboardTaskList.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/components/DropdownMenu.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/components/DropdownMenu.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/components/EmptyStateComponent.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/components/EmptyStateComponent.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/components/FilterDropdown.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/components/FilterDropdown.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/components/FilterInlineLayout.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/components/FilterPresetManager.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/components/FilterStackedLayout.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/components/FilterTabLayout.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/components/HeaderComponent.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/components/MenuTrigger.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/components/MinimalSectionedList.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/components/SearchSuggestions.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/components/SectionedTaskList.tsx" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/components/TaskItem.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/components/TaskItem.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/components/TaskListComponent.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/components/TaskListComponent.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/components/TaskMenuDropdown.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/components/TaskMenuDropdown.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/hooks/useFilterPresets.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/hooks/useFilterPresets.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/hooks/useNotifications.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/hooks/useNotifications.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/hooks/useSettingsStore.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/hooks/useSettingsStore.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/hooks/useTaskFilter.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/hooks/useTaskFilter.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/hooks/useTaskStore.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/hooks/useTaskStore.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/hooks/useTheme.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/hooks/useTheme.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/scripts/generateMockTasks.ts" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/generateMockTasks.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/stores/mainStore.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/stores/mainStore.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/stores/settingsStore.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/stores/settingsStore.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/stores/taskStore.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/stores/taskStore.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/theme/base.ts" beforeDir="false" afterPath="$PROJECT_DIR$/theme/base.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/theme/darkTheme.ts" beforeDir="false" afterPath="$PROJECT_DIR$/theme/darkTheme.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/theme/highContrastThemes.ts" beforeDir="false" afterPath="$PROJECT_DIR$/theme/highContrastThemes.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/theme/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/theme/index.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/theme/lightTheme.ts" beforeDir="false" afterPath="$PROJECT_DIR$/theme/lightTheme.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/theme/types.ts" beforeDir="false" afterPath="$PROJECT_DIR$/theme/types.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/types/task.ts" beforeDir="false" afterPath="$PROJECT_DIR$/types/task.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -190,7 +152,7 @@
       <workItem from="1750230783597" duration="11922000" />
       <workItem from="1750352941908" duration="300000" />
       <workItem from="1750493573337" duration="20612000" />
-      <workItem from="1750596014666" duration="12768000" />
+      <workItem from="1750596014666" duration="12964000" />
     </task>
     <task id="LOCAL-00001" summary="first commit">
       <option name="closed" value="true" />
@@ -424,7 +386,15 @@
       <option name="project" value="LOCAL" />
       <updated>1750605859722</updated>
     </task>
-    <option name="localTasksCounter" value="30" />
+    <task id="LOCAL-00030" summary="fixed the build">
+      <option name="closed" value="true" />
+      <created>1750612057322</created>
+      <option name="number" value="00030" />
+      <option name="presentableId" value="LOCAL-00030" />
+      <option name="project" value="LOCAL" />
+      <updated>1750612057322</updated>
+    </task>
+    <option name="localTasksCounter" value="31" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">

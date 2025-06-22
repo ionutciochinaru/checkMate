@@ -710,8 +710,8 @@ const TaskItem: React.FC<TaskItemProps> = React.memo(({ task }) => {
             onPress={showDeleteConfirmation}
             activeOpacity={0.7}
           >
-            <Ionicons name="trash-outline" size={14} color={theme.colors.danger} />
-            <Text style={[styles.actionBtnText, { color: theme.colors.danger }]}>DEL</Text>
+            <Ionicons name="trash-outline" size={14} color={theme.isDark ? theme.colors.danger : '#ffffff'} />
+            <Text style={[styles.actionBtnText, { color: theme.isDark ? theme.colors.danger : '#ffffff' }]}>DEL</Text>
           </TouchableOpacity>
 
         </View>

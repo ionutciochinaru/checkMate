@@ -183,6 +183,7 @@ export default function TaskListComponent({
       alignItems: 'center',
       justifyContent: 'space-between',
       paddingTop: theme.spacing.sm,
+      paddingLeft: theme.spacing.sm,
       borderTopWidth: 1,
       borderTopColor: theme.colors.border,
       marginTop: theme.spacing.sm,
