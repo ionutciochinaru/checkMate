@@ -20,6 +20,7 @@ import { formatTime } from '../utils/dateFormatters';
 import { Ionicons } from '@expo/vector-icons';
 
 import { showAlert } from './CustomAlert';
+import TaskMenuDropdown from './TaskMenuDropdown';
 
 interface TaskItemProps {
   task: Task;
@@ -33,15 +34,26 @@ const TaskItem: React.FC<TaskItemProps> = React.memo(({ task }) => {
   const settings = getSettings();
   const delayTime = settings.defaultDelay || '30m';
   const cardColor = getTaskCardColor(task.id, theme, task.isCompleted);
-  const textColor = theme.isDark ? theme.colors.cardTextDark : theme.colors;
-  const textColorVariant = theme.isDark ? theme.colors.cardTextInverseDark : theme.colors.cardText;
+  const isHighContrast = settings.highContrast;
+  
+  // Use theme colors for high contrast, white text for normal light theme
+  const textColor = theme.isDark 
+    ? theme.colors.cardTextDark 
+    : (isHighContrast ? theme.colors.cardText : '#ffffff');
+  const textColorVariant = theme.isDark 
+    ? theme.colors.cardTextInverseDark 
+    : (isHighContrast ? theme.colors.cardTextInverse : '#000000');
+  
+  // Day circle text should always be black in light theme (as requested)
+  const dayCircleTextColor = theme.isDark 
+    ? theme.colors.cardTextDark 
+    : (isHighContrast ? theme.colors.cardText : '#000000');
   
   const cardScale = useSharedValue(1);
   const strikethroughProgress = useSharedValue(0);
   const timeChangeProgress = useSharedValue(0);
 
-  // State for menu dropdown and UI feedback
-  const [showMenu, setShowMenu] = useState(false);
+  // State for UI feedback
   const [isDelaying, setIsDelaying] = useState(false);
   const [isProcessingNext, setIsProcessingNext] = useState(false);
 
@@ -161,12 +173,12 @@ const TaskItem: React.FC<TaskItemProps> = React.memo(({ task }) => {
     dayText: {
       fontSize: theme.typography.fontSize.lg,
       fontWeight: 'bold',
-      color: theme.colors.cardText,
+      color: dayCircleTextColor,
       textAlign: 'center',
     },
     dayLabel: {
       fontSize: theme.typography.fontSize.xs,
-      color: theme.colors.cardText,
+      color: dayCircleTextColor,
       textAlign: 'center',
       textTransform: 'uppercase',
       letterSpacing: theme.typography.letterSpacing * 0.5,
@@ -348,49 +360,6 @@ const TaskItem: React.FC<TaskItemProps> = React.memo(({ task }) => {
       gap: 4,
       display: "flex",
       flexDirection: "row",
-    },
-    menuButton: {
-      width: 40,
-      height: 40,
-      borderRadius: 20,
-      backgroundColor: theme.isDark ? 'rgba(255,255,255,0.05)' : 'transparent',
-      borderWidth: 0.5,
-      borderColor: theme.isDark ? 'rgba(255,255,255,0.3)' : '#666',
-      justifyContent: 'center',
-      alignItems: 'center',
-      marginLeft: 8,
-    },
-    menuDropdown: {
-      position: 'absolute',
-      top: 45,
-      right: 0,
-      backgroundColor: theme.isDark ? '#1a1a1a' : '#fff',
-      borderRadius: 12,
-      padding: 8,
-      minWidth: 220,
-      borderWidth: theme.isDark ? 1 : 0,
-      borderColor: theme.isDark ? 'rgba(255,68,68,0.3)' : 'transparent',
-      shadowColor: theme.isDark ? '#ff4444' : '#000',
-      shadowOffset: { width: 0, height: 2 },
-      shadowOpacity: theme.isDark ? 0.4 : 0.15,
-      shadowRadius: 8,
-      elevation: 5,
-      zIndex: 1000,
-    },
-    menuItem: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      padding: 12,
-      borderRadius: 8,
-    },
-    menuItemText: {
-      marginLeft: 8,
-      fontSize: 14,
-      fontWeight: '500',
-      color: textColor,
-    },
-    deleteMenuItem: {
-      color: textColor,
     },
     doneStatus: {
       fontSize: 12,
@@ -581,6 +550,29 @@ const TaskItem: React.FC<TaskItemProps> = React.memo(({ task }) => {
     );
   };
 
+  // Menu options for completed tasks
+  const completedTaskMenuOptions = [
+    {
+      id: 'edit',
+      label: 'Edit Task',
+      icon: 'create-outline',
+      onPress: () => {
+        console.log('Edit task pressed for:', task.id);
+        router.push(`/add-task?edit=${task.id}`);
+      },
+    },
+    {
+      id: 'delete',
+      label: 'Delete Task',
+      icon: 'trash-outline',
+      destructive: true,
+      onPress: () => {
+        console.log('Delete task pressed for:', task.id);
+        showDeleteConfirmation();
+      },
+    },
+  ];
+
   if (task.isCompleted) {
     // Completed task design (card_done.png style)
     return (
@@ -608,40 +600,10 @@ const TaskItem: React.FC<TaskItemProps> = React.memo(({ task }) => {
             <Ionicons name="arrow-undo" size={16} color={textColor} />
           </TouchableOpacity>
           
-          <View style={{ position: 'relative' }}>
-            <TouchableOpacity 
-              style={styles.menuButton} 
-              onPress={() => setShowMenu(!showMenu)}
-            >
-              <Ionicons name="ellipsis-horizontal" size={16} color={textColor} />
-            </TouchableOpacity>
-            
-            {showMenu && (
-              <View style={styles.menuDropdown}>
-                <TouchableOpacity 
-                  style={styles.menuItem} 
-                  onPress={() => {
-                    setShowMenu(false);
-                    router.push(`/add-task?edit=${task.id}`);
-                  }}
-                >
-                  <Ionicons name="create-outline" size={16} color={textColor} />
-                  <Text style={styles.menuItemText}>Edit</Text>
-                </TouchableOpacity>
-                
-                <TouchableOpacity 
-                  style={styles.menuItem} 
-                  onPress={() => {
-                    setShowMenu(false);
-                    showDeleteConfirmation();
-                  }}
-                >
-                  <Ionicons name="trash-outline" size={16} color={textColor} />
-                  <Text style={[styles.menuItemText, styles.deleteMenuItem]}>Delete</Text>
-                </TouchableOpacity>
-              </View>
-            )}
-          </View>
+          <TaskMenuDropdown
+            options={completedTaskMenuOptions}
+            textColor={textColor}
+          />
         </Animated.View>
       </Animated.View>
     );
@@ -779,6 +741,7 @@ const TaskItem: React.FC<TaskItemProps> = React.memo(({ task }) => {
             <Ionicons name="trash-outline" size={14} color={theme.colors.danger} />
             <Text style={[styles.actionBtnText, { color: theme.colors.danger }]}>DEL</Text>
           </TouchableOpacity>
+
         </View>
       </Animated.View>
     </Animated.View>

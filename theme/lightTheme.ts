@@ -25,15 +25,15 @@ export const lightTheme: Theme = {
     warning: '#ff6600',
     info: '#0066cc',
     
-    // Card colors - vibrant palette for light theme
+    // Card colors - darker vibrant palette for white text contrast
     cardPrimary: [
-      '#EB8146', // orange
-      '#A9CEF2', // blue
-      '#D7D982', // yellow
-      '#F09BAF', // pink
-      '#EEC045', // light yellow
+      '#D2691E', // darker orange
+      '#4682B4', // steel blue
+      '#8B8B00', // dark yellow
+      '#B22A6B', // dark pink
+      '#DAA520', // goldenrod
     ],
-    cardCompleted: '#F0EFEC', // light gray
+    cardCompleted: '#6B7280', // dark gray for white text contrast
     cardText: '#313131',
     cardTextInverse: '#ffffff',
   },

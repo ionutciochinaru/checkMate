@@ -24,6 +24,10 @@ export default function HomeScreen() {
         workingHoursEnd: settings.workingHoursEnd,
     });
 
+    // Calculate unfiltered totals for header stats
+    const allPendingTasks = tasks.filter(task => !task.isCompleted);
+    const allCompletedTasks = tasks.filter(task => task.isCompleted);
+
     const styles = useThemedStyles((theme) => StyleSheet.create({
         container: {
             flex: 1,
@@ -45,15 +49,15 @@ export default function HomeScreen() {
             <ScrollView
                 style={styles.content}
                 contentContainerStyle={styles.contentContainer}
-                onTouchStart={() => {
-                    // Native pickers handle their own interactions
-                }}
                 scrollEventThrottle={16}
             >
                 <TaskListComponent
                     tasks={filteredTasks}
                     pendingTasks={pendingTasks}
                     completedTasks={completedTasks}
+                    allTasks={tasks}
+                    allPendingTasks={allPendingTasks}
+                    allCompletedTasks={allCompletedTasks}
                     selectedFilter={selectedFilter}
                     setSelectedFilter={setSelectedFilter}
                     getFilterCount={getFilterCount}
