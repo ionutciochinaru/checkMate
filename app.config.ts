@@ -36,12 +36,12 @@ export default {
       backgroundColor: "#f5f5f0"
     },
     ios: {
-      bundleIdentifier: "com.yourname.checkmate",
+      bundleIdentifier: "com.cjohnd.checkmate",
       supportsTablet: true,
       jsEngine: "jsc"
     },
     android: {
-      package: "com.yourname.checkmate",
+      package: "com.cjohnd.checkmate",
       adaptiveIcon: {
         foregroundImage: "./assets/icon.png",
         backgroundColor: "#ffffff"
