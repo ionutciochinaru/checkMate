@@ -9,7 +9,7 @@ export default {
       }
     },
     jsEngine: "hermes",
-    version: "1.0.3",
+    version: "1.0.2",
     orientation: "portrait",
     icon: "./assets/android/playstore-icon.png",
     userInterfaceStyle: "automatic",
